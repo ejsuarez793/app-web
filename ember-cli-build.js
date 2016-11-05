@@ -9,7 +9,8 @@ module.exports = function(defaults) {
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
-  //
+  app.import('bower_components/jquery-validation/dist/jquery.validate.js');
+  app.import('bower_components/jquery-validation/dist/additional-methods.js');
   // If you need to use different assets in different
   // environments, specify an object as the first parameter. That
   // object's keys should be the environment name and the values
@@ -20,5 +21,7 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
-  return app.toTree();
+
+
+    return app.toTree();
 };

@@ -1,0 +1,194 @@
+{{header-component}}
+
+<div class="container-fluid">
+
+	<div class="row">
+		<div class="col-md-6 vcenter text-center">
+			<img alt="Bootstrap Image Preview" src="http://placehold.it/350x250" />
+		</div>
+		<div class="col-md-4 vcenter">
+			<div class="well">
+				<form >
+					<div class="form-group">
+						<div class="input-group input-group">
+						  {{input type="text" class="form-control" placeholder="Usuario" value=username}}
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="input-group input-group-">
+						  {{input type="password" class="form-control" placeholder="Contraseña" value=password}}
+						  <span class="input-group-addon">{{fa-icon "lock"}}</span>
+						</div>
+
+					</div>
+					<div class="row">
+					<div class="col-md-3 text-center">
+					<button {{action 'save'}} class="btn btn-primary">
+						Entrar
+					</button>
+					</div>
+					<div class="col-md-4 text-center">
+					<button class="btn btn-success" {{action "toggleShow"}} data-toggle="modal" data-target="#myModal">
+						Registrarse
+					</button>
+					</div>
+					<div class="col-md-4 text-center">
+					<button {{action 'resetPassword'}} class="btn btn-danger">
+						Olvido su clave?
+					</button>
+					</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">Registrar Usuario</h4>
+	        <small class="form-text text-muted">* Campos requeridos</small>
+	      </div>
+	      <div class="modal-body">
+	       		
+	      	<form  id="formulario">
+	      		<div class="row">
+	      			<div class="col-md-6">
+						<div class="form-group">
+							<label>Usuario </label><small class="form-text text-muted">* </small>
+							<div class="input-group">
+							  {{input name="usuario" type="text" class="form-control" placeholder="Usuario" value=registro.usuario}}
+							  <span class="input-group-addon">{{fa-icon "user"}}</span>
+							</div>
+
+						</div>
+					</div>
+
+						<div class="col-md-6">
+					<div class="form-group">
+						<label>Cargo</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  <select class="form-control" name="cargo" id="selectcargo">
+						  	<option disabled selected value="">Seleccione...</option>
+						      <option value="a">Almacenista</option>
+						      <option value="c">Coordinador de Proyectos</option>
+						      <option value="t">Técnico</option>
+						      <option value="v">Vendedor</option>
+						    </select>
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Primer Nombre</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="nombre1" type="text" class="form-control" placeholder="Primer Nombre" value=registro.nombre1}}
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Segundo Nombre</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="nombre2" type="text" class="form-control" placeholder="Segundo Nombre" value=registro.nombre2}}
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Primer Apellido</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="apellido1" type="text" class="form-control" placeholder="Primer Apellido" value=registro.apellido1}}
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Segundo Apellido</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="apellido2" type="text" class="form-control" placeholder="Segundo Apellido" value=registro.apellido2}}
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Teléfono</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="tlf" type="tel" class="form-control" placeholder="Teléfono" value=registro.tlf}}
+						  <span class="input-group-addon">{{fa-icon "phone"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Correo</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="correo" type="email" class="form-control" placeholder="Correo" value=registro.correo}}
+						  <span class="input-group-addon">{{fa-icon "envelope"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-12">
+					<div class="form-group">
+						<label>Dirección</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="dire" type="text" class="form-control" placeholder="Dirección" value=registro.dire}}
+						  <span class="input-group-addon">{{fa-icon "map-marker"}}</span>
+						</div>
+					</div>
+					</div>
+
+				
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Contraseña</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input id="password1" name="password1" type="password" class="form-control" placeholder="Contraseña" value=registro.password1 }}
+						  <span class="input-group-addon">{{fa-icon "lock"}}</span>
+						</div>
+
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Repita Contraseña</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group-">
+						  {{input name="password2" type="password" class="form-control" placeholder="Contraseña" value=registro.password2}}
+						  <span class="input-group-addon">{{fa-icon "lock"}}</span>
+						</div>
+
+					</div>
+					</div>
+				</div>
+			</form>
+
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+	        <button type="submit" id="submit-button" {{action 'register'}} class="btn btn-primary">Guardar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>
+
+<!--
+{{footer-component}} -->
