@@ -1,19 +1,28 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-	username: null,
-    password: null,
-    errorMessage: null,
-
-    fname: 'epale',
-    lname: '',
-
     isExpanded: false,
     showMyModal: false,
+    currentName: "",
 
     registro : {
+        usuario : 'nriqpro5',
+        ci: '20803815',
+        nombre1:'Enrique',
+        nombre2:'Jose',
+        apellido1:'Suarez',
+        apellido2:'Mendoza',
+        tlf: '04142900187',
+        correo: 'asda@cas.com',
+        dire: 'Direccion papa',
+        cargo: 'a',
+        password1: 'e1234567',
+        password2: 'e1234567',
+    },
+
+    /* registro : {
         usuario : '',
-        constrasenia: '',
+        ci: '',
         nombre1:'',
         nombre2:'',
         apellido1:'',
@@ -24,13 +33,12 @@ export default Ember.Controller.extend({
         cargo: '',
         password1: '',
         password2: '',
-    },
-
-     cargos: [
-    {nombre: "Almacenista", letra: 'a'},
-    {nombre: "Coordinador de Proyectos", letra: 'c'},
-    {nombre: "Técnico", letra: 't'},
-    {nombre: "Vendedor", letra: 'v'},
+    */
+    cargos: [
+        {nombre: "Almacenista", letra: 'a'},
+        {nombre: "Coordinador de Proyectos", letra: 'c'},
+        {nombre: "Técnico", letra: 't'},
+        {nombre: "Vendedor", letra: 'v'},
     ],
 
     reset: function() {
@@ -57,51 +65,94 @@ export default Ember.Controller.extend({
         //console.log(fields);
        /* if (fields.usuario === ''  || fields.nombre1 === '' || fields.apellido1 === '' || fields.tlf === '' || fields.correo === '' , fields.password1 === '' )
           ; // alert("hay un campo sin definir"); */
-          $.validator.addMethod('strongPassword', function(value, element){
+        $.validator.addMethod('strongPassword', function(value, element){
             return this.optional(element)
             ||   value.length >= 6
             && /\d/.test(value)
             && /[a-z]/i.test(value);
-          }, 'Contraseña debe ser al menos 6 caracteres y al menos 1 letra');
-          console.log("validar");
+        }, 'Contraseña debe ser al menos 8 caracteres y al menos 1 letra');
+
+        $.validator.addMethod("maxlength", function (value, element, len) {
+            return value == "" || value.length <= len;
+        });
+        $.validator.addMethod("customemail", 
+          function(value, element) {
+            return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value);
+        }, "Por favor ingrese un correo válido");
+
         $("#formulario").validate(
              {
               rules: {
                 usuario: {
                   required: true,
                   nowhitespace: true,
+                  remote: {
+                    url: "http://localhost:8000/validar/usuario/",
+                    type: "GET",
+                    data: {
+                      username: function() {
+                        return $( "#usuario" ).val();
+                      }
+                    }
+                  }
+                },
+                ci:{
+                 required: true,
+                 maxlength: 10,
+                 number: true,
+                 nowhitespace: true,
+                 remote: {
+                    url: "http://localhost:8000/validar/trabajador/",
+                    type: "GET",
+                    data: {
+                      ci: function() {
+                        return $( "#ci" ).val();
+                      }
+                    }
+                  }
                 },
                 cargo:{
                     required: true,
                 },
                 nombre1:{
                     required: true,
+                    maxlength: 15,
                     nowhitespace: true,
                     lettersonly: true,
                 },
                 nombre2:{
                     nowhitespace: true,
+                    maxlength: 15,
                     lettersonly: true,
                 },
                 apellido1:{
                     required: true,
+                    maxlength: 15,
                     nowhitespace: true,
                     lettersonly: true,
                 },
                 apellido2:{
                     nowhitespace: true,
+                    maxlength: 15,
                     lettersonly: true,
                 },
                 tlf:{
                     required: true,
+                    maxlength: 15,
+                    number: true
+
+                },
+                dire:{
+                    maxlength: 200,
                 },
                 correo:{
-                    email: true,
                     required: true,
+                    customemail: true,
                 },
                 password1:{
                     required: true,
                     strongPassword: true,
+                    minlength: 8,
                 },
                 password2:{
                     required: true,
@@ -113,6 +164,12 @@ export default Ember.Controller.extend({
                   required: 'Este campo es requerido',
                   nowhitespace: 'No dejar espacios en blanco',
                 },
+                ci:{
+                  required: 'Este campo es requerido',
+                  nowhitespace: 'No dejar espacios en blanco',
+                  number:'Por favor solo números',
+                  maxlength: 'Longitud máxima de 10 caracteres',
+                },
                 cargo:{
                     required: 'Este campo es requerido',
                 },
@@ -120,29 +177,39 @@ export default Ember.Controller.extend({
                     required: 'Este campo es requerido',
                     nowhitespace: 'No dejar espacios en blanco',
                     lettersonly: 'Sin caracteres especiales o números',
+                    maxlength: 'Longitud máxima de 15 caracteres',
                 },
                 nombre2:{
                     nowhitespace: 'No dejar espacios en blanco',
                     lettersonly: 'Sin caracteres especiales o números',
+                    maxlength: 'Longitud máxima de 15 caracteres',
                 },
                 apellido1:{
                     required: 'Este campo es requerido',
                     nowhitespace: 'No dejar espacios en blanco',
                     lettersonly: 'Sin caracteres especiales o números',
+                    maxlength: 'Longitud máxima de 15 caracteres',
                 },
                 apellido2:{
                     nowhitespace: 'No dejar espacios en blanco',
                     lettersonly: 'Sin caracteres especiales o números',
+                    maxlength: 'Longitud máxima de 15 caracteres',
                 },
                 tlf:{
                     required: 'Este campo es requerido',
+                    number:'Por favor solo números',
+                },
+                dire:{
+                    maxlength: 'Longitud máxima de 50 caracteres',
                 },
                 correo:{
                     required: 'Este campo es requerido',
+                    customemail: 'Por favor ingrese un correo válido',
                     email: 'Por favor ingrese un correo válido',
                 },
                 password1:{
                     required: 'Este campo es requerido',
+                    minlength: 'Al menos 8 caracteres',
                 },
                 password2:{
                     required: 'Este campo es requerido',
@@ -163,11 +230,11 @@ export default Ember.Controller.extend({
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
               },
               success: function(element) {
-                console.log(element);
+               // console.log(element);
                 $(element)
                 .addClass('valid')
                 .closest('.form-group').removeClass('has-error').addClass('has-success');
-                console.log("entra");
+               // console.log("entra");
               }
               /*highlight: function(element) {
                 $(element).closest('.input-group').removeClass('has-success').addClass('has-error');
@@ -179,29 +246,49 @@ export default Ember.Controller.extend({
             }*/
         });
 
-        console.log($("#formulario").valid());
+        //console.log($("#formulario").valid());
     },
     actions: {
-    	save: function () {
-        var data = {};
-        var username = this.get('username');
-        var password = this.get('password');
-        alert(username + ',' + password);
-        data.username = username;
-        data.password = password;
-        console.log(data);
+    	login: function () {
+            var data = {};
+            var token = '';
+            var username = this.get('username');
+            var password = this.get('password');
+            data.username = username;
+            data.password = password;
             $.ajax( {
                 type: "POST",
                 url: "http://localhost:8000/api-token-auth/",
                 contentType: "application/json; charset=utf-8",
                  dataType: "json",
                  data: JSON.stringify(data),
-            }
-            )    
-                .done(function() { alert("success"); })    
-                .fail(function() { alert("error"); })    
-                .always(function() { alert("complete"); }); 
-            },
+            })    
+                .done(function(response) { 
+                    token = response.token
+                    $.ajax( {
+                        type: "GET",
+                        url: "http://localhost:8000/users/current/",
+                        headers:{
+                            Authorization: "Token "+ token,
+                        },
+                        contentType: "application/json; charset=utf-8",
+                         dataType: "json",
+                         data: JSON.stringify(data),
+                    })    
+                        .done(function(response) { 
+                            Cookies.set("token", token);
+                            Cookies.set("current", response);
+                        })    
+                        .fail(function(response) { console.log(response); })    
+
+
+                })    
+                .fail(function(response) { console.log(response); })   
+        },
+        updateCurrentName(){
+             this.set("currentName" ,Cookies.getJSON('current').nombre1 + " "+ Cookies.getJSON('current').apellido1);
+        }
+        ,
         toggleShow() {
             this.set('showMyModal', !this.get('showMyModal'));
             /*if (!this.get('showMyModal'))
@@ -209,44 +296,50 @@ export default Ember.Controller.extend({
 
         },
         register: function(){
-            console.log('registro');
             var registro = null;
             var selects = document.getElementById("selectcargo");
             var  selectedCargo = selects.options[selects.selectedIndex].value;
             registro = this.get('registro');
             registro.cargo = selectedCargo;
-          //  console.log(registro);
             this.validarCampos(registro);
-
-           /*var data = {
-                'username': registro.usuario,
-                'password': registro.password1
-            };
+            if ($("#formulario").valid()){
+                var data = {
+                    user:{
+                        username: registro.usuario,
+                        password: registro.password1,
+                        password2: registro.password2,
+                        email: registro.correo,
+                    },
+                    trabajador:{
+                        ci: registro.ci,
+                        nombre1: registro.nombre1,
+                        nombre2: registro.nombre2,
+                        apellido1: registro.apellido1,
+                        apellido2: registro.apellido2,
+                        tlf: registro.tlf,
+                        correo: registro.correo,
+                        dire: registro.dire,
+                        cargo: registro.cargo,
+                    }
+                };
              $.ajax( {
                 type: "POST",
-                url: "http://localhost:8000/users/register/",
+                url: "http://localhost:8000/users/",
                 contentType: "application/json; charset=utf-8",
                  dataType: "json",
                  data: JSON.stringify(data),
             }
             )    
-                .done(function(response) { alert("success"); console.log(response); })    
-                .fail(function(response) {  console.log(response); })    
-                .always(function(response) {}); */
-        },
-
-        login: function() {
-            var self = this, data = this.getProperties('username', 'password');
-            /*$.post('/session/', data, null, 'json').then(function (response) {
-                Ember.run(function() {
-                    self.set('errorMessage', response.message);
-                    self.setCurrentUser(response.user_id);
-                });
-            });*/
+                .done(function(response) { console.log(response); })    
+                .fail(function(response) { console.log(response); })    
+                .always(function(response) {}); 
+            }
         },
         logout: function() {
            /* $.ajax({url: '/session/', type: 'delete'});*/
             this.reset();
+            Cookies.remove('current');
+            Cookies.remove('token');
             this.transitionToRoute('login');
         }
     }
