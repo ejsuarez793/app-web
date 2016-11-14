@@ -7,6 +7,8 @@ let App;
 
 Ember.MODEL_FACTORY_INJECTIONS = true;
 
+window.serverUrl = 'http://localhost:8000';
+
 App = Ember.Application.extend({
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,

@@ -3,9 +3,15 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
     isExpanded: false,
     showMyModal: false,
-    currentName: "",
 
-    registro : {
+    init() {
+	    this._super(...arguments);
+
+	    this.username = '';
+	    this.password = '';
+  	},
+
+   /* registro : {
         usuario : 'nriqpro5',
         ci: '20803815',
         nombre1:'Enrique',
@@ -18,9 +24,9 @@ export default Ember.Controller.extend({
         cargo: 'a',
         password1: 'e1234567',
         password2: 'e1234567',
-    },
+    },*/
 
-    /* registro : {
+     registro : {
         usuario : '',
         ci: '',
         nombre1:'',
@@ -33,7 +39,7 @@ export default Ember.Controller.extend({
         cargo: '',
         password1: '',
         password2: '',
-    */
+    },
     cargos: [
         {nombre: "Almacenista", letra: 'a'},
         {nombre: "Coordinador de Proyectos", letra: 'c'},
@@ -41,30 +47,7 @@ export default Ember.Controller.extend({
         {nombre: "Vendedor", letra: 'v'},
     ],
 
-    reset: function() {
-        this.setProperties({
-            username: null,
-            password: null,
-            errorMessage: null,
-            model: null
-        });
-    },
-
-    isAuthenticated: function() {
-        return (!Ember.isEmpty(this.get('model')));
-    }.property('model'),
-
-    setCurrentUser: function(user_id) {
-        if (!Ember.isEmpty(user_id)) {
-            var currentUser = this.store.find('user', user_id);
-            this.set('model', currentUser);
-        }
-    },
-
     validarCampos: function(fields){
-        //console.log(fields);
-       /* if (fields.usuario === ''  || fields.nombre1 === '' || fields.apellido1 === '' || fields.tlf === '' || fields.correo === '' , fields.password1 === '' )
-          ; // alert("hay un campo sin definir"); */
         $.validator.addMethod('strongPassword', function(value, element){
             return this.optional(element)
             ||   value.length >= 6
@@ -219,10 +202,7 @@ export default Ember.Controller.extend({
               errorElement: 'small',
               errorClass: 'help-block',
               errorPlacement: function(error, element) {
-                //console.log(element);#a94442
-                /*console.log(error);*/
                 error.insertAfter(element.parent().parent().find("small"));
-                /* element.parent().parent().find("small").css('color', '#a94442');*/
                 element.parent().parent().find("small").css('display', 'inline');
                
               },
@@ -230,23 +210,12 @@ export default Ember.Controller.extend({
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
               },
               success: function(element) {
-               // console.log(element);
                 $(element)
                 .addClass('valid')
                 .closest('.form-group').removeClass('has-error').addClass('has-success');
-               // console.log("entra");
               }
-              /*highlight: function(element) {
-                $(element).closest('.input-group').removeClass('has-success').addClass('has-error');
-              },
-              success: function(element) {
-                element
-                .text('OK!').addClass('valid')
-                .closest('.input-group').removeClass('has-error').addClass('has-success');
-            }*/
         });
 
-        //console.log($("#formulario").valid());
     },
     actions: {
     	login: function () {
@@ -259,6 +228,7 @@ export default Ember.Controller.extend({
             $.ajax( {
                 type: "POST",
                 url: "http://localhost:8000/api-token-auth/",
+                context:this,
                 contentType: "application/json; charset=utf-8",
                  dataType: "json",
                  data: JSON.stringify(data),
@@ -267,6 +237,7 @@ export default Ember.Controller.extend({
                     token = response.token
                     $.ajax( {
                         type: "GET",
+                        context:this,
                         url: "http://localhost:8000/users/current/",
                         headers:{
                             Authorization: "Token "+ token,
@@ -278,22 +249,15 @@ export default Ember.Controller.extend({
                         .done(function(response) { 
                             Cookies.set("token", token);
                             Cookies.set("current", response);
+                            this.transitionToRoute('/vendedor/clientes/');
+                            document.getElementById("loginForm").reset();
                         })    
                         .fail(function(response) { console.log(response); })    
-
-
                 })    
                 .fail(function(response) { console.log(response); })   
         },
-        updateCurrentName(){
-             this.set("currentName" ,Cookies.getJSON('current').nombre1 + " "+ Cookies.getJSON('current').apellido1);
-        }
-        ,
         toggleShow() {
             this.set('showMyModal', !this.get('showMyModal'));
-            /*if (!this.get('showMyModal'))
-                $("#formulario").get(0).reset()*/
-
         },
         register: function(){
             var registro = null;
@@ -335,12 +299,5 @@ export default Ember.Controller.extend({
                 .always(function(response) {}); 
             }
         },
-        logout: function() {
-           /* $.ajax({url: '/session/', type: 'delete'});*/
-            this.reset();
-            Cookies.remove('current');
-            Cookies.remove('token');
-            this.transitionToRoute('login');
-        }
     }
 });

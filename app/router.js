@@ -10,6 +10,7 @@ Router.map(function() {
   this.route('login');
   this.route('vendedor', function() {
     this.route('clientes');
+    this.route('solicitud');
   });
 });
 

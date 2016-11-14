@@ -1,0 +1,46 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Solicitudes</h2>
+          </div>
+
+          <div class="col-lg-4 ">
+            <h2>
+              <div class="input-group">
+                 {{input name="cliente" id="cliente" type="text" class="form-control" placeholder="Buscar solicitud" value=registro.usuario}}
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                  </span>
+              </div>
+            </h2>
+          </div>
+
+          <div class="col-lg-4 "></div>
+
+          <div class="col-lg-1 ">
+            <h2>
+            </h2>
+          </div>
+
+          <div class="col-lg-1 ">
+            <h2>
+              <button class="btn btn-primary" {{action 'modalCreate'}} type="submit">Crear</button>
+
+            </h2>
+          </div>
+
+        </div>
+
+
+<div class="row ">
+	{{vendedor-sidebar-component}}
+	<div class="col-md-10">
+
+	</div>
+</div>
+
+
+</div>
+<button {{action 'logout'}}>Logout</button>
