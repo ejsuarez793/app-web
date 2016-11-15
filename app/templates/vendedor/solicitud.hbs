@@ -26,7 +26,7 @@
 
           <div class="col-lg-1 ">
             <h2>
-              <button class="btn btn-primary" {{action 'modalCreate'}} type="submit">Crear</button>
+              <button class="btn btn-primary" {{action 'openModal' false}} type="submit">Crear</button>
 
             </h2>
           </div>
@@ -38,9 +38,284 @@
 	{{vendedor-sidebar-component}}
 	<div class="col-md-10">
 
+  <table class="table table-bordered table-hover" id="solicitudes">  
+          <thead class="header-tabla">
+            <tr>
+            <th class="tg-yw4l">Código</th>
+            <th class="tg-yw4l">Cliente</th>
+            <th class="tg-yw4l">Descripción</th>
+            <th class="tg-yw4l">Ubicación</th>
+            <th class="tg-yw4l">Estatus</th>
+            <th class="tg-yw4l">Contacto</th>
+            <th class="tg-yw4l">Disponibilidad</th>
+            <th class="tg-yw4l">Referencia</th>
+            <th class="tg-yw4l">Editar</th>
+          </tr>
+        </thead>
+        <tbody id="tbody" class="text-center">
+        {{#each clientes as |cliente|}}
+          <tr>
+          <td><{{cliente.rif}}</td>
+          <td><{{cliente.nombre}}</td>
+          <td><{{cliente.tlf1}} <br> {{cliente.tlf2}} </td>
+          <td><{{cliente.fax}}</td>
+          <td><{{cliente.dire}}</td>
+          <td><{{cliente.act_eco}}</td>
+          <td>{{format-atrib 'cond_contrib' cliente.cond_contrib}}</td>
+          <td><button {{action 'openModal' 'true' cliente}} class="btn btn-default btn-xs">editar</button></td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+
 	</div>
 </div>
 
 
 </div>
+
+<!-- Modal -->
+<div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Nueva Solicitud</h4>
+        <small class="form-text text-muted">* Campos requeridos</small>
+      </div>
+      <div class="modal-body">
+          
+        <form  id="formulario">
+
+        <!-- SECCION CLIENTE -->
+          <div class="row">
+            <div class="col-md-1"> </div>
+            <div class="col-md-10 well">
+            <h3>Cliente</h3>
+
+              <div class="form-group">
+                <div class="row">
+                  <div class="row">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-2">
+                    <label>Rif</label><small class="form-text text-muted"></small>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                      <span class="input-group-addon">{{fa-icon "user"}}</span>
+                    </div>
+                  </div>
+                  <div class="col-md-1"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="row">
+                <div class="row">
+                  <div class="col-md-1"></div>
+                  <div class="col-md-2">
+                    <label>Nombre</label><small class="form-text text-muted"></small>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      {{input disabled="true" name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                      <span class="input-group-addon">{{fa-icon "user"}}</span>
+                    </div>
+                  </div>
+                  <div class="col-md-1"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <div class="col-md-1"></div>
+        </div>
+
+
+        <!-- SECCION ESPECIFICACIONES -->
+        <div class="row">
+              <div class="col-md-1"> </div>
+              <div class="col-md-10 well">
+              <h3>Especificaciones</h3>
+
+                <div class="form-group">
+                  <div class="row">
+                    <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                      <label>Detalles Iniciales</label><small class="form-text text-muted"></small>
+                    </div>
+                     <div class="col-md-1"></div>
+                     </div>
+                     <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                      <div class="input-group">
+                        {{textarea name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                        <span class="input-group-addon">{{fa-icon "user"}}</span>
+                      </div>
+                    </div>
+                     <div class="col-md-1"></div>
+                     </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="row">
+                    <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                      <label>Ubicacion</label><small class="form-text text-muted"></small>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="input-group">
+                        {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                        <span class="input-group-addon">{{fa-icon "user"}}</span>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                  </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="row">
+                    <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                      <label>Disp. <br> Atención</label><small class="form-text text-muted"></small>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="input-group">
+                        {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                        <span class="input-group-addon">{{fa-icon "user"}}</span>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    </div>
+                  </div>
+                </div>
+
+                 <div class="form-group">
+                  <div class="row">
+                    <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                      <label>Referido <br> Por</label><small class="form-text text-muted"></small>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="input-group">
+                        {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                        <span class="input-group-addon">{{fa-icon "user"}}</span>
+                      </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    </div>
+                  </div>
+                </div>
+
+          </div>
+          <div class="col-md-1"></div>
+<!--
+          <div class="col-md-10">
+          <div class="form-group">
+            <label>Condición contribuyente</label><small class="form-text text-muted"> </small>
+            <div class="input-group input-group">
+              <select class="form-control" name="cond_contrib" id="selectcond">
+                  <option disabled selected value="">Seleccione...</option>
+                  <option value="o">Ordinario</option>
+                  <option value="e">Especial</option>
+                  <option value="f">Formal</option>
+                </select>
+              <span class="input-group-addon">{{fa-icon "user"}}</span>
+            </div>
+          </div>
+          </div>-->
+        </div>
+        <!-- SECCION CLIENTE -->
+
+        <div class="row">
+            <div class="col-md-1"> </div>
+            <div class="col-md-10 well">
+            <h3>Persona Contacto</h3>
+
+            <div class="form-group">
+              <div class="row">
+                <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                  <label>Nombre</label><small class="form-text text-muted"></small>
+                </div>
+                <div class="col-md-5">
+                  <label>Cargo</label><small class="form-text text-muted"></small>
+                </div>
+                 <div class="col-md-1"></div>
+                 </div>
+                 <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                    <span class="input-group-addon">{{fa-icon "user"}}</span>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                    <span class="input-group-addon">{{fa-icon "user"}}</span>
+                  </div>
+                </div>
+                 <div class="col-md-1"></div>
+                 </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="row">
+                <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                  <label>Teléfono</label><small class="form-text text-muted"></small>
+                </div>
+                <div class="col-md-5">
+                  <label>Correo</label><small class="form-text text-muted"></small>
+                </div>
+                 <div class="col-md-1"></div>
+                 </div>
+                 <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                    <span class="input-group-addon">{{fa-icon "user"}}</span>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="input-group">
+                    {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                    <span class="input-group-addon">{{fa-icon "user"}}</span>
+                  </div>
+                </div>
+                 <div class="col-md-1"></div>
+                 </div>
+              </div>
+            </div>        
+            </div>
+          <div class="col-md-1"></div>
+        </div>
+
+        <!-- SECCION REFERENCIA-->
+
+    </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" id="submit-button" {{action 'save'}} class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <button {{action 'logout'}}>Logout</button>

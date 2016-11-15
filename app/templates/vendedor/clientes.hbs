@@ -39,7 +39,7 @@
 	{{vendedor-sidebar-component}}
 	<div class="col-md-10">
 		   <table class="table table-bordered table-hover" id="clientes">	
-        	<thead>
+        	<thead class="header-tabla">
         		<tr>
 				    <th class="tg-yw4l">Rif</th>
 				    <th class="tg-yw4l">Nombre</th>
@@ -61,7 +61,7 @@
 					<td><{{cliente.dire}}</td>
 					<td><{{cliente.act_eco}}</td>
 					<td>{{format-atrib 'cond_contrib' cliente.cond_contrib}}</td>
-					<td><button {{action 'openModal' 'true' cliente}} class="btn btn-success btn-xs">editar</button></td>
+					<td><button {{action 'openModal' 'true' cliente}} class="btn btn-default btn-xs">editar</button></td>
 				</tr>
 			{{/each}}
  			</tbody>

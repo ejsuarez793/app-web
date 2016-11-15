@@ -33,28 +33,25 @@ export default Ember.Controller.extend({
 
 	init(){
 		this._super();
+
 		if (!(Cookies.get('token')===undefined) || !(Cookies.getJSON('current')===undefined)){
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1); 
 			$.ajax({
 						type: "GET",
 						context:this,
-						url: window.serverUrl + '/clientes/',
+						url: window.serverUrl + '/cliente/',
 						headers:{
 								Authorization: "Token "+ Cookies.get('token'),
 						},
 						contentType: "application/json; charset=utf-8",
 				})    
 						.done(function(response) { 
-							//console.log(response);
-							this.set('clientes',{});
 							this.set('clientes',response);
-						//  this.llenarTabla(response,this);
 						})    
 						.fail(function(response) { console.log(response); })
 						
 		}
 	},
-
 
 	/*llenarTabla(clientes,context) {
 
@@ -81,7 +78,6 @@ export default Ember.Controller.extend({
 					body.append($tr);
 			});
 	},*/
-
 	validarCampos: function(fields){
 		$.validator.addMethod("maxlength", function (value, element, len) {
 				return value == "" || value.length <= len;
@@ -209,7 +205,7 @@ export default Ember.Controller.extend({
 				dataType: "json",
 				data: JSON.stringify(data),
 		})    
-		.done(function(response) { console.log(response); this.init();})    
+		.done(function(response) { /*console.log(response);*/ this.init();})    
 		.fail(function(response) { console.log(response); }); 
 	},
 	prepararModal(editing,cliente){
@@ -251,11 +247,11 @@ export default Ember.Controller.extend({
 			var url = "";
 			if (!this.get('editing')){
 				var method = "POST";
-				var url = window.serverUrl + '/clientes/';
+				var url = window.serverUrl + '/cliente/';
 				console.log("creando save");
 			}else{
 				var method = "PATCH";
-				var url = window.serverUrl +'/clientes/' + this.get('registro.rif') +'/';
+				var url = window.serverUrl +'/cliente/' + this.get('registro.rif') +'/';
 				console.log("editando save");
 			}
 

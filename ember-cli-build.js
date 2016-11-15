@@ -9,9 +9,11 @@ module.exports = function(defaults) {
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
+  //minificar todo esto luego
   app.import('bower_components/jquery-validation/dist/jquery.validate.js');
   app.import('bower_components/jquery-validation/dist/additional-methods.js');
   app.import('bower_components/js-cookie/src/js.cookie.js');
+  app.import('bower_components/jquery-ui/jquery-ui.js');
   // If you need to use different assets in different
   // environments, specify an object as the first parameter. That
   // object's keys should be the environment name and the values
