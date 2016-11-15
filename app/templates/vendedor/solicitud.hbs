@@ -26,7 +26,7 @@
 
           <div class="col-lg-1 ">
             <h2>
-              <button class="btn btn-primary" {{action 'openModal' false}} type="submit">Crear</button>
+              <button class="btn btn-primary" {{action 'openModal' 'false'}} type="submit">Crear</button>
 
             </h2>
           </div>
@@ -41,28 +41,41 @@
   <table class="table table-bordered table-hover" id="solicitudes">  
           <thead class="header-tabla">
             <tr>
-            <th class="tg-yw4l">Código</th>
-            <th class="tg-yw4l">Cliente</th>
-            <th class="tg-yw4l">Descripción</th>
-            <th class="tg-yw4l">Ubicación</th>
-            <th class="tg-yw4l">Estatus</th>
-            <th class="tg-yw4l">Contacto</th>
-            <th class="tg-yw4l">Disponibilidad</th>
-            <th class="tg-yw4l">Referencia</th>
-            <th class="tg-yw4l">Editar</th>
+            <th class="col-md-1">Código</th>
+            <th class="col-md-1">Cliente</th>
+            <th class="col-md-4">Descripción</th>
+            <th class="col-md-1">Fecha</th>
+            <th class="col-md-1">Ubicación</th>
+            <th class="col-md-1">Estatus</th>
+            <th class="col-md-1">Contacto</th>
+            <th class="col-md-1">Disponibilidad</th>
+            <th class="col-md-1">Referencia</th>
           </tr>
         </thead>
         <tbody id="tbody" class="text-center">
-        {{#each clientes as |cliente|}}
+        {{#each solicitudes as |solicitud|}}
           <tr>
-          <td><{{cliente.rif}}</td>
-          <td><{{cliente.nombre}}</td>
-          <td><{{cliente.tlf1}} <br> {{cliente.tlf2}} </td>
-          <td><{{cliente.fax}}</td>
-          <td><{{cliente.dire}}</td>
-          <td><{{cliente.act_eco}}</td>
-          <td>{{format-atrib 'cond_contrib' cliente.cond_contrib}}</td>
-          <td><button {{action 'openModal' 'true' cliente}} class="btn btn-default btn-xs">editar</button></td>
+          <td  class="col-tabla">{{solicitud.codigo}}</td>
+          <td  class="col-tabla">{{format-atrib 'solicitud_cliente' solicitud.rif_c clientes}}</td>
+          <td class="col-tabla">{{solicitud.desc}} </td>
+          <td class="col-tabla">{{solicitud.f_sol}} </td>
+         <td  class="col-tabla">{{solicitud.ubicacion}}</td>
+          <td  class="col-tabla">{{format-atrib 'solicitud_estatus' solicitud.estatus}}</td>
+          <td  class="col-tabla">
+           <!-- <ul>
+              <li>Nombre: {{solicitud.nombre_cc}}</li>
+              <li>Cargo: {{solicitud.cargo_cc}}</li>
+              <li>Correo: {{solicitud.correo_cc}}</li>
+              <li>Teléfono: {{solicitud.tlf_cc}}</li>
+            </ul>-->
+
+            <strong>Nombre:</strong> {{solicitud.nombre_cc}}
+            <strong>Cargo:</strong> {{solicitud.cargo_cc}}
+            <strong>Correo:</strong> {{solicitud.correo_cc}}
+            <strong>Tlf:</strong> {{solicitud.tlf_cc}}
+          </td>
+          <td  class="col-tabla">{{solicitud.disp}}</td>
+          <td  class="col-tabla">{{solicitud.referido_p}}</td>
         </tr>
       {{/each}}
       </tbody>
@@ -102,7 +115,7 @@
                   </div>
                   <div class="col-md-8">
                     <div class="input-group">
-                      {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                      {{input name="rif_c" id="rif_c" readonly="true" type="text" class="form-control" placeholder="Rif Cliente" value=solicitud.rif_c}}
                       <span class="input-group-addon">{{fa-icon "user"}}</span>
                     </div>
                   </div>
@@ -120,7 +133,7 @@
                   </div>
                   <div class="col-md-8">
                     <div class="input-group">
-                      {{input disabled="true" name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                      {{input name="nombre_c" id="nombre_c" type="text" class="form-control" placeholder="Nombre Cliente" value=nombre_c}}
                       <span class="input-group-addon">{{fa-icon "user"}}</span>
                     </div>
                   </div>
@@ -152,7 +165,7 @@
                     <div class="col-md-1"></div>
                     <div class="col-md-10">
                       <div class="input-group">
-                        {{textarea name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                        {{textarea name="desc" id="desc" type="text" class="form-control" placeholder="Descripción requerimiento" value=solicitud.desc}}
                         <span class="input-group-addon">{{fa-icon "user"}}</span>
                       </div>
                     </div>
@@ -169,8 +182,8 @@
                       <label>Ubicacion</label><small class="form-text text-muted"></small>
                     </div>
                     <div class="col-md-8">
-                      <div class="input-group">
-                        {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                      <div class="input-group"><div class="errores"></div>
+                        {{input name="ubicacion" id="ubicacion" type="text" class="form-control" placeholder="Ubicación requerimiento" value=solicitud.ubicacion}}
                         <span class="input-group-addon">{{fa-icon "user"}}</span>
                       </div>
                     </div>
@@ -188,7 +201,7 @@
                     </div>
                     <div class="col-md-8">
                       <div class="input-group">
-                        {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                        {{input name="disp" id="disp" type="text" class="form-control" placeholder="Disponibilidad de atención" value=solicitud.disp}}
                         <span class="input-group-addon">{{fa-icon "user"}}</span>
                       </div>
                     </div>
@@ -206,7 +219,7 @@
                     </div>
                     <div class="col-md-8">
                       <div class="input-group">
-                        {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                        {{input name="referido_p" id="referido_p" type="text" class="form-control" placeholder="Referencia" value=solicitud.referido_p}}
                         <span class="input-group-addon">{{fa-icon "user"}}</span>
                       </div>
                     </div>
@@ -256,15 +269,17 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-5">
                   <div class="input-group">
-                    {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                    {{input name="nombre_cc" id="nombre_cc" type="text" class="form-control" placeholder="Nombre contacto" value=solicitud.nombre_cc}}
                     <span class="input-group-addon">{{fa-icon "user"}}</span>
                   </div>
+                  <small class="form-text text-muted"></small>
                 </div>
                 <div class="col-md-5">
                   <div class="input-group">
-                    {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                    {{input name="cargo_cc" id="cargo_cc" type="text" class="form-control" placeholder="Cargo contacto" value=solicitud.cargo_cc}}
                     <span class="input-group-addon">{{fa-icon "user"}}</span>
                   </div>
+                  <small class="form-text text-muted"></small>
                 </div>
                  <div class="col-md-1"></div>
                  </div>
@@ -287,13 +302,13 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-5">
                   <div class="input-group">
-                    {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                    {{input name="tlf_cc" id="tlf_cc" type="text" class="form-control" placeholder="Teléfono contacto" value=solicitud.tlf_cc}}
                     <span class="input-group-addon">{{fa-icon "user"}}</span>
                   </div>
                 </div>
                 <div class="col-md-5">
                   <div class="input-group">
-                    {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif Cliente" value=registro.rif}}
+                    {{input name="correo_cc" id="correo_cc" type="text" class="form-control" placeholder="Correo contacto" value=solicitud.correo_cc}}
                     <span class="input-group-addon">{{fa-icon "user"}}</span>
                   </div>
                 </div>
@@ -310,12 +325,10 @@
     </form>
       </div>
       <div class="modal-footer">
+
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
         <button type="submit" id="submit-button" {{action 'save'}} class="btn btn-primary">Guardar</button>
       </div>
     </div>
   </div>
 </div>
-
-
-<button {{action 'logout'}}>Logout</button>

@@ -10,8 +10,8 @@ export default Ember.Route.extend({
 	    }
 	    else {
 	    	var current = Cookies.getJSON('current');
-	    	if (current.cargo === 'v'){
-	    		this.transitionTo('/vendedor/clientes');
+	    	if (current.cargo !== 'v'){
+	    		this.transitionTo('login');
 	    	}
 	    }
   	}

@@ -17,19 +17,7 @@ export default Ember.Controller.extend({
 		cond_contrib: '',
 	},
 	editing: false,
-
-	beforeModel: function(transition) {
-		console.log("epale");
-			if (Cookies.get('token')===undefined || Cookies.getJSON('current')===undefined) {
-				this.transitionTo('login');
-			}
-			else {
-				var current = Cookies.getJSON('current');
-				if (current.cargo === 'v'){
-					this.transitionTo('/vendedor/clientes');
-				}
-			}
-		},          
+          
 
 	init(){
 		this._super();
