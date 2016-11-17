@@ -1,0 +1,195 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Solicitudes</h2>
+          </div>
+
+          <div class="col-lg-4 ">
+            <h2>
+              <div class="input-group">
+                 {{input name="cliente" id="cliente" type="text" class="form-control" placeholder="Buscar solicitud" value=registro.usuario}}
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                  </span>
+              </div>
+            </h2>
+          </div>
+
+
+        </div>
+
+    <div class="row ">
+		{{coordinador-sidebar-component}}
+		<div class="col-md-10">
+			   <table class="table table-bordered table-hover" id="clientes">	
+	        	<thead class="header-tabla">
+	        		<tr>
+					    <th class="col-md-1">Código</th>
+					    <th class="col-md-2">Cliente</th>
+					    <th class="col-md-6">Detalles</th>
+					    <th class="col-md-1">Fecha</th>
+					    <th class="col-md-1">Estatus</th>
+					    <th class="col-md-1">Ver</th>
+	  				</tr>
+	  			</thead>
+	  			<tbody id="tbody" class="text-center">
+	  			{{#each solicitudes as |solicitud|}}
+	  				<tr>
+						<td class="col-tabla"><{{solicitud.codigo}}</td>
+						<td class="col-tabla"> <{{format-atrib 'solicitud_cliente' solicitud.rif_c clientes}}</td>
+						<td class="col-tabla"><{{solicitud.desc}} </td>
+						<td class="col-tabla"><{{solicitud.f_sol}}</td>
+						<td class="col-tabla"><{{format-atrib 'solicitud_estatus' solicitud.estatus}}</td>
+						<td class="col-tabla"><button {{action 'openModal' solicitud}} class="btn btn-default btn-xs">editar</button></td>
+					</tr>
+				{{/each}}
+	 			</tbody>
+			</table>
+		</div>
+	</div>
+
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Solicitud código</h4>
+        <small class="form-text text-muted">código</small>
+      </div>
+      <div class="modal-body">
+          
+    	
+
+	        <div class="row">
+
+		        <div class="col-md-6 ">
+
+		        	<div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">Cliente</h3>
+					  </div>
+					  <div class="panel-body">
+					    <dl class="dl-horizontal">
+					    	<dt>Rif</dt> <dd>{{cliente.rif}}</dd>
+							<dt>Nombre</dt> <dd>{{cliente.nombre}}</dd>
+							<dt>Tlfs</dt> <dd>{{cliente.tlf1}} / {{cliente.tlf2}}</dd>
+							<dt>Fax</dt> <dd>{{cliente.fax}}</dd>					
+						</dl>	
+					  </div>
+					</div>
+
+		        </div>
+
+		         <div class="col-md-6 ">
+		        
+			        <div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">Contacto</h3>
+					  </div>
+					  <div class="panel-body">
+					    	<dl class="dl-horizontal">
+					    	<dt>Nombre</dt> <dd>{{solicitud.nombre_cc}}</dd>
+							<dt>Cargo</dt> <dd>{{solicitud.cargo_cc}}</dd>
+							<dt>Tlf</dt> <dd>{{solicitud.tlf_cc}}</dd>
+							<dt>Correo</dt> <dd>{{solicitud.correo_cc}}</dd>
+
+
+					
+						</dl>
+					  </div>
+					</div>
+
+		        </div>
+
+
+		        <div class="col-md-12 ">
+		        
+			        <div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">Detalles</h3>
+					     <small class="form-text text-muted">fecha solicitud {{solicitud.f_sol}}</small>
+					  </div>
+					  <div class="panel-body">
+					    	<dt>Descripción</dt> <dd><p>{{solicitud.desc}}</p></dd>
+					    	<dt>Ubicación</dt> <dd>{{solicitud.ubicacion}}</dd>
+							<dt>Disponibilidad</dt> <dd>{{solicitud.disp}}</dd>
+					  </div>
+					</div>
+
+		        </div>
+
+	        </div>
+
+	    	<div class="row">
+
+		        <div class="col-md-12">
+
+		        	<div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">Procesar</h3>
+					  </div>
+					  <div class="panel-body">
+					  <form  id="formulario">
+					   <div class="form-group">
+			              <div class="row">
+			                <div class="row">
+			                <div class="col-md-1"></div>
+			                <div class="col-md-3">
+			                  <label>Ci Técnico</label><small class="form-text text-muted"></small>
+			                </div>
+			                <div class="col-md-4">
+			                  <label>Nombre Técnico</label><small class="form-text text-muted"></small>
+			                </div>
+			                 <div class="col-md-3">
+			                  <label>Asignar Fecha de visita</label><small class="form-text text-muted"></small>
+			                </div>
+			                 <div class="col-md-1"></div>
+			                 </div>
+			                 <div class="row">
+			                 <div class="col-md-1"></div>
+			                <div class="col-md-3">
+			                  <div class="input-group">
+			                    {{input name="ci_tecnico" id="ci_tecnico" type="text" class="form-control" placeholder="Cédula técnico" value=proceso.ci_tecnico}}
+			                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+			                  </div>
+			                </div>
+			                <div class="col-md-4">
+			                  <div class="input-group">
+			                    {{input name="nombre_t" id="nombre_t" readonly="true" type="text" class="form-control" placeholder="Nombre técnico" value=proceso.nombre_t}}
+			                    <span class="input-group-addon">{{fa-icon "user"}}</span>
+			                  </div>
+			                </div>
+			                <div class="col-md-3">
+			                  <div class="input-group">
+			                    {{input name="f_vis" id="f_vis" type="date" class="form-control" placeholder="Fecha visita" value=proceso.f_vis}}
+			                    <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+			                  </div>
+			                </div>
+			                <div class="col-md-1"></div>
+			                 </div>
+			              </div>
+			            </div>
+			            </form> 
+					  </div>
+					</div>
+
+		        </div>
+		        
+	        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" id="submit-button" {{action 'save'}} class="btn btn-primary">Procesar</button>
+      </div>
+    </div>
+  </div>
+</div>

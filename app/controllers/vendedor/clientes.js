@@ -252,12 +252,5 @@ export default Ember.Controller.extend({
 			var data = registro;
 			this.salvar(method,url,data);
 		},
-		logout: function() {
-					Cookies.remove('current');
-					Cookies.remove('token');
-
-					this.transitionToRoute('login');
-					window.location.reload(true);
-		},
 		}
 });

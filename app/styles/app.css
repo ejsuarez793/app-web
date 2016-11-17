@@ -68,3 +68,10 @@ ul {
 }
 
 .ui-helper-hidden-accessible { display:none; }
+
+.dl-horizontal dt{
+    text-align: left;
+    width: auto;
+    padding-right: 1em;
+}
+

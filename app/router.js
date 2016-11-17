@@ -12,6 +12,10 @@ Router.map(function() {
     this.route('clientes');
     this.route('solicitud');
   });
+
+  this.route('proyectos', function() {
+    this.route('solicitudes');
+  });
 });
 
 export default Router;
