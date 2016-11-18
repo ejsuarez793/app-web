@@ -249,7 +249,13 @@ export default Ember.Controller.extend({
                         .done(function(response) { 
                             Cookies.set("token", token);
                             Cookies.set("current", response);
-                            this.transitionToRoute('/vendedor/clientes/');
+                            if(response.cargo === 'v'){
+                                this.transitionToRoute('/vendedor/clientes/');
+                            }else if (response.cargo === 'c'){
+                                this.transitionToRoute('/proyectos/solicitudes/');
+                            }else if (response.cargo === 'a'){
+                                console.log("almacenista no implementado redirect")
+                            }
                             document.getElementById("loginForm").reset();
                         })    
                         .fail(function(response) { console.log(response); })    
