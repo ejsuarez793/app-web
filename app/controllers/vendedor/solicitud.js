@@ -36,11 +36,9 @@ export default Ember.Controller.extend({
 	    var method = 'GET';
 	    var url = window.serverUrl + /cliente/;
 	    this.getElements(method,url,this.asignarClientes,this);
-	    var url = window.serverUrl + /solicitud/;
+
+	    url = window.serverUrl + /solicitud/;
 	    this.getElements(method,url,this.asignarSolicitudes,this);
-	    
-	    
-	    //console.log("init");
 	},
 	prepararModal(){
 
@@ -56,17 +54,15 @@ export default Ember.Controller.extend({
 	},
 	validarCampos: function(){
 		$.validator.addMethod("maxlength", function (value, element, len) {
-				return value == "" || value.length <= len;
+				return value === "" || value.length <= len;
 		});
 
 		$.validator.addMethod('rifValido', function(value, element){
-				return this.optional(element)
-				||   value.length <= 15
-				&& /[J]\-\d+\-\d/.test(value);
+				return this.optional(element) ||   value.length <= 15 && /[J]\-\d+\-\d/.test(value);
 		}, 'Rif no válido');
 
 		$.validator.addMethod("customemail", 
-          function(value, element) {
+          function(value/*, element*/) {
             return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value);
         }, "Por favor ingrese un correo válido");
 

@@ -22,7 +22,7 @@ export default Ember.Controller.extend({
 	init(){
 		this._super();
 
-		if (!(Cookies.get('token')===undefined) || !(Cookies.getJSON('current')===undefined)){
+		if (!((Cookies.get('token')===undefined) || (Cookies.getJSON('current')===undefined))){
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1); 
 			$.ajax({
 						type: "GET",
@@ -36,7 +36,7 @@ export default Ember.Controller.extend({
 						.done(function(response) { 
 							this.set('clientes',response);
 						})    
-						.fail(function(response) { console.log(response); })
+						.fail(function(response) { console.log(response); });
 						
 		}
 	},
@@ -66,15 +66,13 @@ export default Ember.Controller.extend({
 					body.append($tr);
 			});
 	},*/
-	validarCampos: function(fields){
+	validarCampos: function(){
 		$.validator.addMethod("maxlength", function (value, element, len) {
-				return value == "" || value.length <= len;
+				return value === "" || value.length <= len;
 		});
 
 		$.validator.addMethod('rifValido', function(value, element){
-				return this.optional(element)
-				||   value.length <= 15
-				&& /[J]\-\d+\-\d/.test(value);
+				return this.optional(element) ||   value.length <= 15 && /[J]\-\d+\-\d/.test(value);
 		}, 'Rif no válido');
 
 		$("#formulario").validate({
@@ -193,7 +191,7 @@ export default Ember.Controller.extend({
 				dataType: "json",
 				data: JSON.stringify(data),
 		})    
-		.done(function(response) { /*console.log(response);*/ this.init();})    
+		.done(function(/*response*/) { /*console.log(response);*/ this.init();})    
 		.fail(function(response) { console.log(response); }); 
 	},
 	prepararModal(editing,cliente){
@@ -205,7 +203,7 @@ export default Ember.Controller.extend({
 		}else{
 			this.set('editing',true);
 			$("#rif").prop('disabled', true);
-			var registro =  jQuery.extend(true, {}, cliente);
+			var registro =  $.extend(true, {}, cliente);
 			$("#selectcond").val(registro.cond_contrib);
 			this.set('registro',registro);
 		}
@@ -234,13 +232,11 @@ export default Ember.Controller.extend({
 			var method = "";
 			var url = "";
 			if (!this.get('editing')){
-				var method = "POST";
-				var url = window.serverUrl + '/cliente/';
-				console.log("creando save");
+				method = "POST";
+				url = window.serverUrl + '/cliente/';
 			}else{
-				var method = "PATCH";
-				var url = window.serverUrl +'/cliente/' + this.get('registro.rif') +'/';
-				console.log("editando save");
+				method = "PATCH";
+				url = window.serverUrl +'/cliente/' + this.get('registro.rif') +'/';
 			}
 
 			//agarro el dato del select y lo asigno a mi registro
@@ -252,5 +248,5 @@ export default Ember.Controller.extend({
 			var data = registro;
 			this.salvar(method,url,data);
 		},
-		}
+	}
 });

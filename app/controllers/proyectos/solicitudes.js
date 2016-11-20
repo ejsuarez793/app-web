@@ -17,10 +17,10 @@ export default Ember.Controller.extend({
 		var url = window.serverUrl + /solicitud/;
 		this.getElements(method,url,this.asignarSolicitudes,this);
 
-		var url = window.serverUrl + /cliente/;
+		url = window.serverUrl + /cliente/;
 	    this.getElements(method,url,this.asignarClientes,this);
 
-	    var url = window.serverUrl + '/proyectos/tecnicos/';
+	    url = window.serverUrl + '/proyectos/tecnicos/';
 	    this.getElements(method,url,this.asignarTecnicos,this);
 	},
 	getElements(method,url,callback,context){
@@ -102,8 +102,9 @@ export default Ember.Controller.extend({
 
 		this.set('solicitud',solicitud);
 		$.each(this.get('clientes'), function(i,cliente){
-			if (cliente.rif === solicitud.rif_c)
+			if (cliente.rif === solicitud.rif_c){
 				aux=cliente;
+			}
 		});
 		this.set('cliente',aux);
 		
@@ -151,7 +152,7 @@ export default Ember.Controller.extend({
 			'ci_tecnico': ci_tecnico,
 		};
 
-		var solicitud = {
+		var solicitud_s = {
 			'codigo': codigo_s,
 			'f_vis': f_vis,
 		};
@@ -159,7 +160,7 @@ export default Ember.Controller.extend({
 		var data = {
 			'proyecto': proyecto,
 			'proyecto_tecnico': proyecto_tecnico,
-			'solicitud': solicitud,
+			'solicitud': solicitud_s,
 		};
 
 		return data;

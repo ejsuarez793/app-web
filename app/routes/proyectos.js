@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Route.extend({
 
 
-	beforeModel: function(transition) {
+	beforeModel: function(/*transition*/) {
 	    if (!Cookies.get('token') || !Cookies.getJSON('current')) {
 	      //console.log("no logeado");
 	      this.transitionTo('login');

@@ -42,7 +42,7 @@
 						<td class="col-tabla"><{{solicitud.desc}} </td>
 						<td class="col-tabla"><{{solicitud.f_sol}}</td>
 						<td class="col-tabla"><{{format-atrib 'solicitud_estatus' solicitud.estatus}}</td>
-						<td class="col-tabla"><button {{action 'openModal' solicitud}} class="btn btn-default btn-xs">editar</button></td>
+						<td class="col-tabla"><button {{action 'openModal' solicitud}} class="btn btn-default btn-xs">ver</button></td>
 					</tr>
 				{{/each}}
 	 			</tbody>
@@ -62,7 +62,7 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Solicitud código</h4>
-        <small class="form-text text-muted">código</small>
+        <small class="form-text text-muted">{{solicitud.codigo}}</small>
       </div>
       <div class="modal-body">
           

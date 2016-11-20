@@ -75,3 +75,5 @@ ul {
     padding-right: 1em;
 }
 
+.dataTables_filter, .dataTables_info { display: none; }
+

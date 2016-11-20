@@ -47,19 +47,16 @@ export default Ember.Controller.extend({
         {nombre: "Vendedor", letra: 'v'},
     ],
 
-    validarCampos: function(fields){
+    validarCampos: function(){
         $.validator.addMethod('strongPassword', function(value, element){
-            return this.optional(element)
-            ||   value.length >= 6
-            && /\d/.test(value)
-            && /[a-z]/i.test(value);
+            return this.optional(element) ||   value.length >= 6 && /\d/.test(value) && /[a-z]/i.test(value);
         }, 'Contraseña debe ser al menos 8 caracteres y al menos 1 letra');
 
         $.validator.addMethod("maxlength", function (value, element, len) {
-            return value == "" || value.length <= len;
+            return value === "" || value.length <= len;
         });
         $.validator.addMethod("customemail", 
-          function(value, element) {
+          function(value/*, element*/) {
             return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value);
         }, "Por favor ingrese un correo válido");
 
@@ -234,7 +231,7 @@ export default Ember.Controller.extend({
                  data: JSON.stringify(data),
             })    
                 .done(function(response) { 
-                    token = response.token
+                    token = response.token;
                     $.ajax( {
                         type: "GET",
                         context:this,
@@ -254,13 +251,13 @@ export default Ember.Controller.extend({
                             }else if (response.cargo === 'c'){
                                 this.transitionToRoute('/proyectos/solicitudes/');
                             }else if (response.cargo === 'a'){
-                                console.log("almacenista no implementado redirect")
+                                console.log("almacenista no implementado redirect");
                             }
                             document.getElementById("loginForm").reset();
                         })    
-                        .fail(function(response) { console.log(response); })    
+                        .fail(function(response) { console.log(response); });    
                 })    
-                .fail(function(response) { console.log(response); })   
+                .fail(function(response) { console.log(response); });   
         },
         toggleShow() {
             this.set('showMyModal', !this.get('showMyModal'));
@@ -292,17 +289,15 @@ export default Ember.Controller.extend({
                         cargo: registro.cargo,
                     }
                 };
-             $.ajax( {
+             $.ajax({
                 type: "POST",
                 url: "http://localhost:8000/users/",
                 contentType: "application/json; charset=utf-8",
                  dataType: "json",
                  data: JSON.stringify(data),
-            }
-            )    
+            })    
                 .done(function(response) { console.log(response); })    
-                .fail(function(response) { console.log(response); })    
-                .always(function(response) {}); 
+                .fail(function(response) { console.log(response); });
             }
         },
     }
