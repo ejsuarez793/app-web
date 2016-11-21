@@ -9,7 +9,7 @@
           <div class="col-lg-3 ">
             <h2>
               <div class="input-group">
-                 {{input name="serv" id="serv" type="text" class="form-control" placeholder="Filtrar servicio" value=theFilter}}
+                 {{input name="serv" id="serv" type="text" class="form-control" placeholder="Filtrar servicio" value=filtro}}
                   <span class="input-group-btn">
                     <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
                   </span>
@@ -43,7 +43,7 @@
               <button class="btn btn-primary" {{action 'openModal' 'false'}} type="submit">Crear</button>
             </h2>
           </div>
-          
+
         </div>
 
 
@@ -61,7 +61,7 @@
   				</tr>
   			</thead>
   			<tbody id="tbody" class="text-center">
-  			{{#each filterPeople as |servicio|}}
+  			{{#each filter as |servicio|}}
   				<tr id="{{servicio.codigo}}">
 					<td class="col-tabla">{{servicio.codigo}}</td>
 					<td class="col-tabla"><{{servicio.desc}}</td>

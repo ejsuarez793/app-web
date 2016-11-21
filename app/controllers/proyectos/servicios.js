@@ -4,9 +4,9 @@ export default Ember.Controller.extend({
 	servicio:{},
 	editing:false,
 	servicios: [],
-	sortProperties: ['codigo'],
-	theFilter: null,
+	filtro: null,
 	alert: {},
+	select:{},//notificacion a filter
 
 
 	init(){
@@ -151,38 +151,40 @@ export default Ember.Controller.extend({
 			servicios = aux;
 		}	
 		_this.set('servicios',servicios);
-	 	_this.paginationInitialize(1);	
+	 	_this.paginationInitialize(10);	
 	},
 
-	checkFilterMatch: function(theObject, str) {
+	filtrar: function(theObject, str) {
     	var field, match;
     	match = false;
+    	//console.log(str);
     	for (field in theObject) {
       	//if (theObject[field].toString().slice(0, str.length).toLowerCase() === str.toLowerCase()) {
-     	if ( theObject[field].toString().toLowerCase().includes(str.toLowerCase()) ){
-        	match = true;
-      	}
+	     	if ( theObject[field].toString().toLowerCase().includes(str.toLowerCase()) ){
+	        	match = true;
+	      	}
     	}
     	return match;
   	},
 
-  	filterPeople: (function() {
+  	filter: (function() {
     	return this.get("servicios").filter(
 
     	(
     		function(_this) {
-      			return function(theObject, index, enumerable) {
-			        if (_this.get("theFilter")) {
-			          return _this.checkFilterMatch(theObject, _this.get("theFilter"));
-			        } else {
-			          return true;
+      			return function(theObject/*, index, enumerable*/) {
+			    	if (_this.get("filtro") && theObject.show){
+			        	return _this.filtrar(theObject, _this.get("filtro"));
+			        }else if (theObject.show){
+			        	return true;
 			        }
+
       			};
     		}
     	)(this)
 
     	);
-  	}).property("theFilter", "sortProperties","servicios"),
+  	}).property("filtro","servicios","select"),
 
   	ordenar(prop, asc,array) {
   			if (prop==="precio_act"){
@@ -207,17 +209,17 @@ export default Ember.Controller.extend({
 		paginationInitialize(tamPagina){
 			var _this = this;
 			$('#page').on('change',function(){
-				_this.paginate(parseInt(this.value));
+				_this.paginate(parseInt(this.value),true);
+				_this.set('tamPagina',this.value);
 			});
 			this.paginate(tamPagina);
 		},
-		paginate(tamPagina){
+		paginate(tamPagina,update){
 			console.log("paginate");
-						
+			var _this = this;
 			$( document ).ready(function(){
 
-
-				var servicios = $("table tbody tr");
+	    		var servicios = _this.get('servicios').toArray();
 				var totalServicios = servicios.length;
 				var nPaginas = Math.round((totalServicios/tamPagina) + 0.5);
 
@@ -231,17 +233,24 @@ export default Ember.Controller.extend({
 		        	last: 'Última',
 
 			        onPageClick: function (event, page) {
-			           // console.log(page);
-			             // someone changed page, lets hide/show trs appropriately
+
 			            var showFrom = tamPagina * (page - 1);
 			            var showTo = showFrom + tamPagina;
-			            console.log(tamPagina);
-			            console.log("from: "+showFrom);
-			            console.log("to: "+showTo);
-			            servicios.hide() // first hide everything, then show for the new page
-			                 .slice(showFrom, showTo).show();
+			            var mostrables = servicios.slice(showFrom, showTo);
+			            $.each(servicios,function(i,servicio){
+			            	if($.inArray(servicio, mostrables) !== -1){
+			            		//console.log(servicio);
+			            		servicio.show = true;
+			            	}else{
+			            		servicio.show = false;
+			            	}
+			            });
+			            _this.set('select',page);//AQUI ES IMPORTANTE ya que asi notifica a filter
+
+			            _this.set('servicios',servicios);
+
 			        }
-	    		})
+	    		});
 	    	});
 
 		},
@@ -250,6 +259,7 @@ export default Ember.Controller.extend({
 
 		openModal: function(editing,cliente){
 			this.prepararModal(editing,cliente);
+
 		},
 		save: function(){
 			var servicio = this.get('servicio');
