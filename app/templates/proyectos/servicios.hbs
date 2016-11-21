@@ -9,7 +9,7 @@
           <div class="col-lg-4 ">
             <h2>
               <div class="input-group">
-                 {{input name="serv" id="serv" type="text" class="form-control" placeholder="Buscar servicio"}}
+                 {{input name="serv" id="serv" type="text" class="form-control" placeholder="Buscar servicio" value=theFilter}}
                   <span class="input-group-btn">
                     <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
                   </span>
@@ -31,9 +31,8 @@
 
           </div>
           <div class="col-lg-4">
-            <div class="alert alert-success" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Creado!</strong> Servicio creado exitosamente.
+            <div id="alert" class="alert alert-success hidden" role="alert">
+              <strong>{{alert.strong}}!</strong> {{alert.msg}}
             </div>
           </div>
           <div class="col-lg-1 ">
@@ -49,18 +48,18 @@
 <div class="row ">
 	{{coordinador-sidebar-component}}
 	<div class="col-md-10">
-		   <table class="table table-bordered table-hover" id="tabla">	
+		   <table class="table table-bordered table-hover " id="tabla">	
         	<thead class="header-tabla">
         		<tr>
-				    <th class="tg-yw4l">Codigo</th>
-				    <th class="tg-yw4l">Descripción</th>
-				    <th class="tg-yw4l">Precio Actual</th>
-				    <th class="tg-yw4l">Fecha Actualización</th>
-				    <th class="tg-yw4l">Editar</th>
+				    <th {{action "sortBy" "codigo"}}>Codigo <span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th {{action "sortBy" "desc"}}>Descripción <span id="th-desc" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th {{action "sortBy" "precio_act"}}>Precio Actual <span id="th-precio_act" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th{{action "sortBy" "f_act"}} >Fecha Actualización <span id="th-f_act" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th>Editar</th>
   				</tr>
   			</thead>
   			<tbody id="tbody" class="text-center">
-  			{{#each servicios as |servicio|}}
+  			{{#each filterPeople as |servicio|}}
   				<tr>
 					<td class="col-tabla">{{servicio.codigo}}</td>
 					<td class="col-tabla"><{{servicio.desc}}</td>

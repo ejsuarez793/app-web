@@ -4,6 +4,9 @@ export default Ember.Controller.extend({
 	servicio:{},
 	editing:false,
 	servicios: [],
+	sortProperties: ['codigo'],
+	theFilter: null,
+	alert: {},
 
 
 	init(){
@@ -14,7 +17,7 @@ export default Ember.Controller.extend({
 		var method = "GET";
 		var url = window.serverUrl + '/servicio/';
 	    this.getElements(method,url,this.asignarServicios,this);
-	    this.inicializarTabla();
+	    this.paginate();
 	},
 	validarCampos: function(){
 		$.validator.addMethod("maxlength", function (value, element, len) {
@@ -74,7 +77,6 @@ export default Ember.Controller.extend({
 		});
 	},
 	prepararModal(editing,servicio){
-		 $("#tabla").tablesorter();
 		if (editing==='false'){
 			this.set('editing',false);
 			$("#codigo").prop('disabled', false);
@@ -117,8 +119,29 @@ export default Ember.Controller.extend({
 				dataType: "json",
 				data: JSON.stringify(data),
 		})    
-		.done(function(response) { if(method==="PATCH"){alert('Servicio editado con exito!');} else if (method==="POST"){alert('Servicio creado con exito!');} console.log(response); })    
-		.fail(function(response) { console.log(response); alert("Ocurrio un problema en la llamada al servidor"); }); 
+		.done(function(response) { 
+			if(method==="PATCH"){
+				this.set('alert.strong','Editado'); 
+				this.set('alert.msg','Servicio '+response.codigo+' editado exitosamente'); 
+			} 
+			else if (method==='POST'){
+				this.set('alert.strong','Creado');
+				this.set('alert.msg','Servicio '+response.codigo+' creado exitosamente'); 
+			} 
+			$("#alert").removeClass('hidden');
+			$("#alert").removeClass('alert-danger');
+			$("#alert").addClass('alert-success');
+			console.log(response); 
+			this.init(); 
+		})    
+		.fail(function(response) { 
+			console.log(response); this.set('alert.strong','Error'); 
+			this.set('alert.msg','Ocurrio un error en el servidor'); 
+
+			$("#alert").removeClass('hidden');
+			$("#alert").removeClass('alert-success');
+			$("#alert").addClass('alert-danger');
+		});
 	},
 	asignarServicios(servicios,context){
 		var _this = context;
@@ -127,25 +150,64 @@ export default Ember.Controller.extend({
 			var aux = [];
 			aux.push(servicios);
 			servicios = aux;
-		}
-		_this.set('servicios',servicios);
-		
-		
+		}	
+		_this.set('servicios',servicios);	
 	},
-	inicializarTabla(){
 
-		setTimeout(function(){ 
+	checkFilterMatch: function(theObject, str) {
+    	var field, match;
+    	match = false;
+    	for (field in theObject) {
+      	//if (theObject[field].toString().slice(0, str.length).toLowerCase() === str.toLowerCase()) {
+     	if ( theObject[field].toString().toLowerCase().includes(str.toLowerCase()) ){
+        	match = true;
+      	}
+    	}
+    	return match;
+  	},
 
-			var table = $('#tabla').DataTable({"bLengthChange": false}); //quitamos el buton por defecto
+  	filterPeople: (function() {
+    	return this.get("servicios").filter(
 
-			$('#serv').on( 'keyup', function (){ table.search( this.value).draw(); } ); //button de filtrado
+    	(
+    		function(_this) {
+      			return function(theObject, index, enumerable) {
+			        if (_this.get("theFilter")) {
+			          return _this.checkFilterMatch(theObject, _this.get("theFilter"));
+			        } else {
+			          return true;
+			        }
+      			};
+    		}
+    	)(this)
 
-			$('#page').on( 'change', function (){ table.page.len(this.value).draw(); }); //buton de tamanio de pagina
+    	);
+  	}).property("theFilter", "sortProperties","servicios"),
 
-			table.draw();
-		},1000);
+  	ordenar(prop, asc,array) {
+  			if (prop==="precio_act"){
+  				array = array.sort(function(a, b) {
+			        if (asc) {
+			            return ( parseFloat(a[prop]) > parseFloat(b[prop]) ) ? 1 : (( parseFloat(a[prop]) < parseFloat(b[prop]) )? -1 : 0);
+			        } else {
+			            return (parseFloat(b[prop]) > parseFloat(a[prop])) ? 1 : (( parseFloat(b[prop]) < parseFloat(a[prop])) ? -1 : 0);
+			        }
+			    });
+  			}else{
+			    array = array.sort(function(a, b) {
+			        if (asc) {
+			            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
+			        } else {
+			            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
+			        }
+			    });
+			}
+		   	return array;
+		},
+		paginate(){
+			console.log("paginate");
 
-	},
+		},
 
 	actions: {
 
@@ -169,7 +231,25 @@ export default Ember.Controller.extend({
 			if ($("#formulario").valid()){
 				this.llamadaServidor(method,url,data);
 			}
+			$('#modal').modal('hide');
 			//this.salvar(method,url,data);
 		},
+		sortBy: function(property) {
+			var asc = null;
+			var th = '#th-'+property;
+			if ($(th).hasClass('glyphicon-chevron-down')){
+				asc = true;
+				$(th).removeClass('glyphicon-chevron-down');
+				$(th).addClass('glyphicon-chevron-up');
+			}else{
+				asc = false;
+				$(th).removeClass('glyphicon-chevron-up');
+				$(th).addClass('glyphicon-chevron-down');
+			}
+			var aux = this.ordenar(property,asc,this.get('servicios').toArray());
+			this.set('servicios',aux);
+			//this.get('servicios').sortBy('codigo');
+
+    	}
 	}
 });

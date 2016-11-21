@@ -14,9 +14,7 @@ module.exports = function(defaults) {
   app.import('bower_components/jquery-validation/dist/additional-methods.js');
   app.import('bower_components/js-cookie/src/js.cookie.js');
   app.import('bower_components/jquery-ui/jquery-ui.js');
-  app.import('bower_components/tablesorter/dist/js/jquery.tablesorter.js');
-  app.import('bower_components/datatables/media/js/jquery.dataTables.js');
-  app.import('bower_components/datatables/media/js/dataTables.bootstrap.js');
+  app.import('bower_components/twbs-pagination/jquery.twbsPagination.js');
   // If you need to use different assets in different
   // environments, specify an object as the first parameter. That
   // object's keys should be the environment name and the values
