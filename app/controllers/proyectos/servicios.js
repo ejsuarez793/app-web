@@ -17,7 +17,6 @@ export default Ember.Controller.extend({
 		var method = "GET";
 		var url = window.serverUrl + '/servicio/';
 	    this.getElements(method,url,this.asignarServicios,this);
-	    this.paginate();
 	},
 	validarCampos: function(){
 		$.validator.addMethod("maxlength", function (value, element, len) {
@@ -151,7 +150,8 @@ export default Ember.Controller.extend({
 			aux.push(servicios);
 			servicios = aux;
 		}	
-		_this.set('servicios',servicios);	
+		_this.set('servicios',servicios);
+	 	_this.paginationInitialize(1);	
 	},
 
 	checkFilterMatch: function(theObject, str) {
@@ -204,8 +204,45 @@ export default Ember.Controller.extend({
 			}
 		   	return array;
 		},
-		paginate(){
+		paginationInitialize(tamPagina){
+			var _this = this;
+			$('#page').on('change',function(){
+				_this.paginate(parseInt(this.value));
+			});
+			this.paginate(tamPagina);
+		},
+		paginate(tamPagina){
 			console.log("paginate");
+						
+			$( document ).ready(function(){
+
+
+				var servicios = $("table tbody tr");
+				var totalServicios = servicios.length;
+				var nPaginas = Math.round((totalServicios/tamPagina) + 0.5);
+
+				$('#pagination').twbsPagination('destroy');
+				$('#pagination').twbsPagination({
+		        	totalPages: nPaginas,
+		        	visiblePages: 10,
+		        	first: 'Primera',
+		        	prev: 'Prev',
+		        	next: 'Sig',
+		        	last: 'Última',
+
+			        onPageClick: function (event, page) {
+			           // console.log(page);
+			             // someone changed page, lets hide/show trs appropriately
+			            var showFrom = tamPagina * (page - 1);
+			            var showTo = showFrom + tamPagina;
+			            console.log(tamPagina);
+			            console.log("from: "+showFrom);
+			            console.log("to: "+showTo);
+			            servicios.hide() // first hide everything, then show for the new page
+			                 .slice(showFrom, showTo).show();
+			        }
+	    		})
+	    	});
 
 		},
 

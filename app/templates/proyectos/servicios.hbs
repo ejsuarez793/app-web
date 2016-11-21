@@ -6,10 +6,10 @@
             <h2>Servicios</h2>
           </div>
 
-          <div class="col-lg-4 ">
+          <div class="col-lg-3 ">
             <h2>
               <div class="input-group">
-                 {{input name="serv" id="serv" type="text" class="form-control" placeholder="Buscar servicio" value=theFilter}}
+                 {{input name="serv" id="serv" type="text" class="form-control" placeholder="Filtrar servicio" value=theFilter}}
                   <span class="input-group-btn">
                     <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
                   </span>
@@ -17,31 +17,33 @@
             </h2>
           </div>
 
-          <div class="col-lg-1 ">
-             <h2>
-              <div class="input-group">
-                  <select class="form-control" name="page" id="page">
-                <option value="1">1</option>
-               <option value="25">25</option>
-               <option value="50">50</option>
-               <option value="100">100</option>
-              </select>
+          <div class="col-lg-2 ">
+            <h2>
+              <div class="input-group" aria-describedby="basic-addon2">
+                <select class="form-control" name="page" id="page">
+                  <option value="1">1</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>   
+                <span class="input-group-addon" id="basic-addon2">Tam. Pag.</span>
               </div>
             </h2>
-
           </div>
+
           <div class="col-lg-4">
             <div id="alert" class="alert alert-success hidden" role="alert">
               <strong>{{alert.strong}}!</strong> {{alert.msg}}
             </div>
           </div>
+
           <div class="col-lg-1 ">
             <h2>
               <button class="btn btn-primary" {{action 'openModal' 'false'}} type="submit">Crear</button>
-
             </h2>
           </div>
-
+          
         </div>
 
 
@@ -60,7 +62,7 @@
   			</thead>
   			<tbody id="tbody" class="text-center">
   			{{#each filterPeople as |servicio|}}
-  				<tr>
+  				<tr id="{{servicio.codigo}}">
 					<td class="col-tabla">{{servicio.codigo}}</td>
 					<td class="col-tabla"><{{servicio.desc}}</td>
 					<td class="col-tabla">{{servicio.precio_act}}</td>
@@ -70,6 +72,9 @@
 			{{/each}}
  			</tbody>
 		</table>
+    <div class="text-center">
+     <ul id="pagination" class="pagination-sm"></ul>
+     </div>
 	</div>
 </div>
 
