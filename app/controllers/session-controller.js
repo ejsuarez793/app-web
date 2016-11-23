@@ -249,7 +249,7 @@ export default Ember.Controller.extend({
                             if(response.cargo === 'v'){
                                 this.transitionToRoute('/vendedor/clientes/');
                             }else if (response.cargo === 'c'){
-                                this.transitionToRoute('/proyectos/solicitudes/');
+                                this.transitionToRoute('/proyectos/proyectos/');
                             }else if (response.cargo === 'a'){
                                 console.log("almacenista no implementado redirect");
                             }

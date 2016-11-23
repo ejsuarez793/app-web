@@ -34,6 +34,15 @@ export default Ember.Controller.extend({
 					codigoServicio: true,
 					required:true,
 					maxlength:6,
+					remote: {
+						url: window.serverUrl + '/validar/servicio/',
+						type: "GET",
+						data: {
+							codigo: function() {
+								return $( "#codigo" ).val();
+							}
+						}
+					}
 				},
 				desc:{
 					required: true,
@@ -62,8 +71,7 @@ export default Ember.Controller.extend({
 			errorClass: 'help-block',
 			errorPlacement: function(error, element) {
 				error.insertAfter(element.parent().parent().find("small"));
-				element.parent().parent().find("small").css('display', 'inline');
-			 
+				element.parent().parent().find("small").css('display', 'inline');	 
 			},
 			highlight: function(element) {
 				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
@@ -186,79 +194,83 @@ export default Ember.Controller.extend({
     	);
   	}).property("filtro","servicios","select"),
 
-  	ordenar(prop, asc,array) {
-  			if (prop==="precio_act"){
-  				array = array.sort(function(a, b) {
-			        if (asc) {
-			            return ( parseFloat(a[prop]) > parseFloat(b[prop]) ) ? 1 : (( parseFloat(a[prop]) < parseFloat(b[prop]) )? -1 : 0);
-			        } else {
-			            return (parseFloat(b[prop]) > parseFloat(a[prop])) ? 1 : (( parseFloat(b[prop]) < parseFloat(a[prop])) ? -1 : 0);
-			        }
-			    });
-  			}else{
-			    array = array.sort(function(a, b) {
-			        if (asc) {
-			            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
-			        } else {
-			            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
-			        }
-			    });
-			}
-		   	return array;
-		},
-		paginationInitialize(tamPagina){
-			var _this = this;
-			$('#page').on('change',function(){
-				_this.paginate(parseInt(this.value),true);
-				_this.set('tamPagina',this.value);
-			});
-			this.paginate(tamPagina);
-		},
-		paginate(tamPagina,update){
-			console.log("paginate");
-			var _this = this;
-			$( document ).ready(function(){
+		ordenar(prop, asc,array) {
+			if (prop==="precio_act"){
+				array = array.sort(function(a, b) {
+		        if (asc) {
+		            return ( parseFloat(a[prop]) > parseFloat(b[prop]) ) ? 1 : (( parseFloat(a[prop]) < parseFloat(b[prop]) )? -1 : 0);
+		        } else {
+		            return (parseFloat(b[prop]) > parseFloat(a[prop])) ? 1 : (( parseFloat(b[prop]) < parseFloat(a[prop])) ? -1 : 0);
+		        }
+		    });
+			}else{
+		    array = array.sort(function(a, b) {
+		        if (asc) {
+		            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
+		        } else {
+		            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
+		        }
+		    });
+		}
+	   	return array;
+	},
+	paginationInitialize(tamPagina){
+		var _this = this;
+		$('#page').on('change',function(){
+			_this.paginate(parseInt(this.value));
+			_this.set('tamPagina',this.value);
+		});
+		this.paginate(tamPagina);
+	},
+	paginate(tamPagina){
+		var _this = this;
+		$( document ).ready(function(){
 
-	    		var servicios = _this.get('servicios').toArray();
-				var totalServicios = servicios.length;
+    		var servicios = _this.get('servicios').toArray();
+			var totalServicios = servicios.length;
+			var res = totalServicios % tamPagina;
+			if (res!==0){
 				var nPaginas = Math.round((totalServicios/tamPagina) + 0.5);
+			}else{
+				var nPaginas = totalServicios/tamPagina;
+			}
 
-				$('#pagination').twbsPagination('destroy');
-				$('#pagination').twbsPagination({
-		        	totalPages: nPaginas,
-		        	visiblePages: 10,
-		        	first: 'Primera',
-		        	prev: 'Prev',
-		        	next: 'Sig',
-		        	last: 'Última',
+			$('#pagination').twbsPagination('destroy');
+			$('#pagination').twbsPagination({
+	        	totalPages: nPaginas,
+	        	visiblePages: 10,
+	        	first: 'Primera',
+	        	prev: 'Prev',
+	        	next: 'Sig',
+	        	last: 'Última',
 
-			        onPageClick: function (event, page) {
+		        onPageClick: function (event, page) {
 
-			            var showFrom = tamPagina * (page - 1);
-			            var showTo = showFrom + tamPagina;
-			            var mostrables = servicios.slice(showFrom, showTo);
-			            $.each(servicios,function(i,servicio){
-			            	if($.inArray(servicio, mostrables) !== -1){
-			            		//console.log(servicio);
-			            		servicio.show = true;
-			            	}else{
-			            		servicio.show = false;
-			            	}
-			            });
-			            _this.set('select',page);//AQUI ES IMPORTANTE ya que asi notifica a filter
+		            var showFrom = tamPagina * (page - 1);
+		            var showTo = showFrom + tamPagina;
+		            var mostrables = servicios.slice(showFrom, showTo);
+		            $.each(servicios,function(i,servicio){
+		            	if($.inArray(servicio, mostrables) !== -1){
+		            		//console.log(servicio);
+		            		servicio.show = true;
+		            	}else{
+		            		servicio.show = false;
+		            	}
+		            });
+		            _this.set('select',page);//AQUI ES IMPORTANTE ya que asi notifica a filter
 
-			            _this.set('servicios',servicios);
+		            _this.set('servicios',servicios);
 
-			        }
-	    		});
-	    	});
+		        }
+    		});
+    	});
 
-		},
+	},
 
 	actions: {
 
-		openModal: function(editing,cliente){
-			this.prepararModal(editing,cliente);
+		openModal: function(editing,servicio){
+			this.prepararModal(editing,servicio);
 
 		},
 		save: function(){

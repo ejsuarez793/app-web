@@ -23,6 +23,56 @@ export default Ember.Controller.extend({
 	    url = window.serverUrl + '/proyectos/tecnicos/';
 	    this.getElements(method,url,this.asignarTecnicos,this);
 	},
+	validarCampos: function(){
+		var _this = this;
+		$.validator.addMethod("ciValida", function (value, element, len) {
+				var aux = [];
+				$.each(_this.get('tecnicos').toArray(),function(i,tecnico){
+					aux.push(tecnico.ci);
+				});
+				return ($.inArray(value, aux)!=-1);
+		});
+
+		$("#formulario").validate({
+			rules:{
+				ci_tecnico:{
+					required:true,
+					ciValida: true,
+				},
+				f_vis:{
+					required:true,
+					date: true,
+				},
+			},
+			messages:{
+				ci_tecnico:{
+					required:'Este campo es requerido.',
+					ciValida: 'Cédula no registrada',
+				},
+				f_vis:{
+					required:'Este campo es requerido.',
+					date: 'Fecha no válida.',
+				},
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.closest('.input-group'));
+				error.css('color', '#a94442');
+				/*element.parent().parent().find("small").css('display', 'inline');*/
+			 
+			},
+			highlight: function(element) {
+				$(element).closest('.input-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element)
+				.addClass('valid')
+				.parent().find('.input-group').removeClass('has-error').addClass('has-success');
+				
+			}
+		});
+	},
 	getElements(method,url,callback,context){
 		$.ajax({
 			type: method,
@@ -100,6 +150,9 @@ export default Ember.Controller.extend({
 	prepararModal(solicitud){
 		var aux;
 
+		this.set('proceso',{});
+		$("#nombre_t").val('');
+
 		this.set('solicitud',solicitud);
 		$.each(this.get('clientes'), function(i,cliente){
 			if (cliente.rif === solicitud.rif_c){
@@ -112,7 +165,11 @@ export default Ember.Controller.extend({
 		$(".input-group").removeClass('has-success');
 		$(".input-group").removeClass('has-error');
 		$(".help-block").text("");  
-
+		if (solicitud.estatus!=="n"){
+			$('#submit-button').prop('disabled',true);
+		}else{
+			$('#submit-button').prop('disabled',false);
+		}
 		$("#myModal").modal('show');
 
 	},
@@ -154,6 +211,7 @@ export default Ember.Controller.extend({
 
 		var solicitud_s = {
 			'codigo': codigo_s,
+			'estatus': 'p', //procesada
 			'f_vis': f_vis,
 		};
 
@@ -170,12 +228,15 @@ export default Ember.Controller.extend({
 			this.prepararModal(solicitud);
 		},
 		save: function(){
-			var data = this.prepararDatos();
-			console.log(data);
+			this.validarCampos();
+			if ($('#formulario').valid()){
+				var data = this.prepararDatos();
+				console.log(data);
 
-			var method = 'PUT';
-			var url = window.serverUrl + '/proyectos/solicitud/';
-			this.postProcesarSolicitud(method,url,data);
+				var method = 'PUT';
+				var url = window.serverUrl + '/proyectos/solicitud/';
+				//this.postProcesarSolicitud(method,url,data);
+			}
 		}
 	}
 

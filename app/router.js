@@ -16,6 +16,7 @@ Router.map(function() {
   this.route('proyectos', function() {
     this.route('solicitudes');
     this.route('servicios');
+    this.route('proyectos');
   });
 });
 
