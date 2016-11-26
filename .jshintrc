@@ -4,7 +4,9 @@
     "window",
     "-Promise",
     "$",
-    "Cookies"
+    "Cookies",
+    "moment",
+    "numeral"
   ],
   "browser": true,
   "boss": true,

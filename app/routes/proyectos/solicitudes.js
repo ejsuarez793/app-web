@@ -1,5 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
-	controllerName: 'proyectos/solicitudes',
+
+	setupController: function(controller, model) {
+    	this._super(controller, model);
+    	controller.init();
+  	},
 });

@@ -251,7 +251,7 @@ export default Ember.Controller.extend({
                             }else if (response.cargo === 'c'){
                                 this.transitionToRoute('/proyectos/proyectos/');
                             }else if (response.cargo === 'a'){
-                                console.log("almacenista no implementado redirect");
+                                this.transitionToRoute('/almacen/materiales/');
                             }
                             document.getElementById("loginForm").reset();
                         })    

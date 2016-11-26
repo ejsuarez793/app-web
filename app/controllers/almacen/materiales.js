@@ -1,22 +1,48 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-	servicio:{},
+	//material:{},
 	editing:false,
-	servicios: [],
+	materiales: [],
 	filtro: null,
 	alert: {},
-	select:{},//notificacion a filter
-
-
+	select:{},
+	/*material:{
+		codigo: '',
+		serial: '',
+		desc: '',
+		presen: '',
+		precio_act: '',
+		cantidad: '',
+		marca: '',
+		modelo: '',
+		color: '',
+		alto: '',
+		largo: '',
+		ancho: '',
+	},*/
+	material:{
+		'codigo': 'codigo',
+		serial: 'Serial',
+		desc: 'Descripcion',
+		presen: 'Presentacion',
+		precio_act: 'Precio Actual',
+		cantidad: 'Cantidad',
+		marca: 'Marca',
+		modelo: 'Modelo',
+		color: 'Color',
+		alto: 'Alto',
+		largo: 'Largo',
+		ancho: 'Ancho',
+	},
 	init(){
 		this._super();
 		if (!((Cookies.get('token')===undefined) || (Cookies.getJSON('current')===undefined))){
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1);
 		} 
 		var method = "GET";
-		var url = window.serverUrl + '/servicio/';
-	    this.getElements(method,url,this.asignarServicios,this);
+		var url = window.serverUrl + '/material/';
+	    this.getElements(method,url,this.asignarMateriales,this);
 	},
 	validarCampos: function(){
 		$.validator.addMethod("maxlength", function (value, element, len) {
@@ -31,41 +57,95 @@ export default Ember.Controller.extend({
 		$("#formulario").validate({
 			rules:{
 				codigo:{
-					codigoServicio: true,
 					required:true,
-					maxlength:6,
-					remote: {
-						url: window.serverUrl + '/validar/servicio/',
-						type: "GET",
-						data: {
-							codigo: function() {
-								return $( "#codigo" ).val();
-							}
-						}
-					}
+					maxlength:10,
+				},
+				serial:{
+					maxlength:50,
+				},
+				nombre:{
+					required:true,
+					maxlength:100,
 				},
 				desc:{
-					required: true,
-					maxlength:200,
+					maxlength:300,
+				},
+				presen:{
+					maxlength:50,
 				},
 				precio_act:{
-					required: true,
+					required:true,
 					number: true,
 				},
+				cantidad:{
+					required:true,
+					number: true,
+				},
+				marca:{
+					required:true,
+					maxlength:50,
+				},
+				modelo:{
+					maxlength:50,
+				},
+				color:{
+					maxlength:20,
+				},
+				alto:{
+					maxlength:20,
+				},
+				largo:{
+					maxlength:20,
+				},
+				ancho:{
+					maxlength:20,
+				}
 			},
 			messages:{
 				codigo:{
-					required:'Este campo es requerido.',
-					maxlength:'Longitud máxima de 6 caracteres',
+					required:'Este campo es requerido',
+					maxlength:'10',
+				},
+				serial:{
+					maxlength:'Longitud máxima de 50 caracteres',
+				},
+				nombre:{
+					required:'Este campo es requerido',
+					maxlength:'Longitud máxima de 100 caracteres',
 				},
 				desc:{
-					required: 'Este campo es requerido.',
-					maxlength:'Longitud máxima de 200 caracteres',
+					maxlength:'Longitud máxima de 300 caracteres',
+				},
+				presen:{
+					maxlength:'Longitud máxima de 50 caracteres',
 				},
 				precio_act:{
-					required: 'Este campo es requerido.',
+					required:'Este campo es requerido',
 					number: 'Por favor solo números',
 				},
+				cantidad:{
+					required:'Este campo es requerido',
+					number: 'Por favor solo números',
+				},
+				marca:{
+					required:'Este campo es requerido',
+					maxlength:'Longitud máxima de 50 caracteres',
+				},
+				modelo:{
+					maxlength:'Longitud máxima de 50 caracteres',
+				},
+				color:{
+					maxlength:'Longitud máxima de 20 caracteres',
+				},
+				alto:{
+					maxlength:'Longitud máxima de 20 caracteres',
+				},
+				largo:{
+					maxlength:'Longitud máxima de 20 caracteres',
+				},
+				ancho:{
+					maxlength:'Longitud máxima de 20 caracteres',
+				}
 			},
 			errorElement: 'small',
 			errorClass: 'help-block',
@@ -82,24 +162,6 @@ export default Ember.Controller.extend({
 				.closest('.form-group').removeClass('has-error').addClass('has-success');
 			}
 		});
-	},
-	prepararModal(editing,servicio){
-		if (editing==='false'){
-			this.set('editing',false);
-			$("#codigo").prop('disabled', false);
-			this.set('servicio', {});
-		}else{
-			this.set('editing',true);
-			var aux =  $.extend(true, {}, servicio);
-			$("#codigo").prop('disabled', true);
-			this.set('servicio',aux/*servicio*/);
-		}
-		//se reinician los errores
-		$(".form-group").removeClass('has-success');
-		$(".form-group").removeClass('has-error');
-		$(".help-block").text("");  
-
-		$("#myModal").modal('show');
 	},
 	getElements(method,url,callback,context){
 		$.ajax({
@@ -129,16 +191,15 @@ export default Ember.Controller.extend({
 		.done(function(response) { 
 			if(method==="PATCH"){
 				this.set('alert.strong','Editado'); 
-				this.set('alert.msg','Servicio '+response.codigo+' editado exitosamente'); 
+				this.set('alert.msg','Material '+response.codigo+' editado exitosamente'); 
 			} 
 			else if (method==='POST'){
 				this.set('alert.strong','Creado');
-				this.set('alert.msg','Servicio '+response.codigo+' creado exitosamente'); 
+				this.set('alert.msg','Material '+response.codigo+' creado exitosamente'); 
 			} 
 			$("#alert").removeClass('hidden');
 			$("#alert").removeClass('alert-danger');
 			$("#alert").addClass('alert-success');
-			console.log(response); 
 			this.init(); 
 		})    
 		.fail(function(response) { 
@@ -150,25 +211,29 @@ export default Ember.Controller.extend({
 			$("#alert").addClass('alert-danger');
 		});
 	},
-	asignarServicios(servicios,context){
+	asignarMateriales(materiales,context){
 		var _this = context;
 
-		if (!Array.isArray(servicios)){
+		if (!Array.isArray(materiales)){
 			var aux = [];
-			aux.push(servicios);
-			servicios = aux;
-		}	
-		_this.set('servicios',servicios);
+			aux.push(materiales);
+			materiales = aux;
+		}
+		console.log(materiales);
+		$.each(materiales, function(i,material){
+			console.log();
+			
+			material.precio_act = numeral(material.precio_act).format('0,0.00');
+			material.f_act = moment(material.f_act).format('l');
+		});
+		_this.set('materiales',materiales);
 	 	_this.paginationInitialize(10);	
 	},
-
 	filtrar: function(theObject, str) {
     	var field, match;
     	match = false;
-    	//console.log(str);
     	for (field in theObject) {
-      	//if (theObject[field].toString().slice(0, str.length).toLowerCase() === str.toLowerCase()) {
-	     	if ( theObject[field].toString().toLowerCase().includes(str.toLowerCase()) ){
+	     	if (theObject[field]!==null && theObject[field].toString().toLowerCase().includes(str.toLowerCase()) ){
 	        	match = true;
 	      	}
     	}
@@ -176,7 +241,7 @@ export default Ember.Controller.extend({
   	},
 
   	filter: (function() {
-    	return this.get("servicios").filter(
+    	return this.get("materiales").filter(
 
     	(
     		function(_this) {
@@ -192,10 +257,10 @@ export default Ember.Controller.extend({
     	)(this)
 
     	);
-  	}).property("filtro","servicios","select"),
+  	}).property("filtro","materiales","select"),
 
-		ordenar(prop, asc,array) {
-			if (prop==="precio_act"){
+  	ordenar(prop, asc,array) {
+			if (prop==="precio_act" || prop==="cantidad"){
 				array = array.sort(function(a, b) {
 		        if (asc) {
 		            return ( parseFloat(a[prop]) > parseFloat(b[prop]) ) ? 1 : (( parseFloat(a[prop]) < parseFloat(b[prop]) )? -1 : 0);
@@ -214,7 +279,8 @@ export default Ember.Controller.extend({
 		}
 	   	return array;
 	},
-	paginationInitialize(tamPagina){
+
+  	paginationInitialize(tamPagina){
 		var _this = this;
 		$('#page').on('change',function(){
 			_this.paginate(parseInt(this.value));
@@ -226,14 +292,14 @@ export default Ember.Controller.extend({
 		var _this = this;
 		$( document ).ready(function(){
 
-    		var servicios = _this.get('servicios').toArray();
-			var totalServicios = servicios.length;
-			var res = totalServicios % tamPagina;
+    		var materiales = _this.get('materiales').toArray();
+			var totalMateriales = materiales.length;
+			var res = totalMateriales % tamPagina;
 			var nPaginas = 0;
 			if (res!==0){
-				nPaginas = Math.round((totalServicios/tamPagina) + 0.5);
+				nPaginas = Math.round((totalMateriales/tamPagina) + 0.5);
 			}else{
-				nPaginas = totalServicios/tamPagina;
+				nPaginas = totalMateriales/tamPagina;
 			}
 
 			$('#pagination').twbsPagination('destroy');
@@ -249,18 +315,17 @@ export default Ember.Controller.extend({
 
 		            var showFrom = tamPagina * (page - 1);
 		            var showTo = showFrom + tamPagina;
-		            var mostrables = servicios.slice(showFrom, showTo);
-		            $.each(servicios,function(i,servicio){
-		            	if($.inArray(servicio, mostrables) !== -1){
-		            		//console.log(servicio);
-		            		servicio.show = true;
+		            var mostrables = materiales.slice(showFrom, showTo);
+		            $.each(materiales,function(i,material){
+		            	if($.inArray(material, mostrables) !== -1){
+		            		material.show = true;
 		            	}else{
-		            		servicio.show = false;
+		            		material.show = false;
 		            	}
 		            });
 		            _this.set('select',page);//AQUI ES IMPORTANTE ya que asi notifica a filter
 
-		            _this.set('servicios',servicios);
+		            _this.set('materiales',materiales);
 
 		        }
     		});
@@ -268,33 +333,50 @@ export default Ember.Controller.extend({
 
 	},
 
+	prepararModal(editing,material){
+		if (editing==='false'){
+			this.set('editing',false);
+			//$("#codigo").prop('disabled', false);
+			this.set('material', {});
+		}else{
+			this.set('editing',true);
+			var aux =  $.extend(true, {}, material);
+			//$("#codigo").prop('disabled', true);
+			this.set('material',aux);
+		}
+		//se reinician los errores
+		$(".form-group").removeClass('has-success');
+		$(".form-group").removeClass('has-error');
+		$(".help-block").text("");  
+
+		$("#myModal").modal('show');
+	},
+
 	actions: {
 
-		openModal: function(editing,servicio){
-			this.prepararModal(editing,servicio);
-
+		openModal: function(editing,material){
+			this.prepararModal(editing,material);
 		},
-		save: function(){
-			var servicio = this.get('servicio');
+		save:function(){
+			var material = this.get('material');
 			var method = "";
 			var url = "";
 			if (!this.get('editing')){
-				 method = "POST";
-				url = window.serverUrl + '/servicio/';
+				method = "POST";
+				url = window.serverUrl + '/material/';
 			}else{
 				method = "PATCH";
-				url = window.serverUrl +'/servicio/' + servicio.codigo +'/';
+				url = window.serverUrl +'/material/' + material.codigo +'/';
 			}
-
-			var data = servicio;
+			material.serial=null;
+			var data = material;
 			this.validarCampos();
 			if ($("#formulario").valid()){
 				this.llamadaServidor(method,url,data);
 			}
-			$('#modal').modal('hide');
-			//this.salvar(method,url,data);
+			$('#myModal').modal('hide');
 		},
-		sortBy: function(property) {
+		ordenarPor: function(property) {
 			var asc = null;
 			var th = '#th-'+property;
 			if ($(th).hasClass('glyphicon-chevron-down')){
@@ -306,8 +388,8 @@ export default Ember.Controller.extend({
 				$(th).removeClass('glyphicon-chevron-up');
 				$(th).addClass('glyphicon-chevron-down');
 			}
-			var aux = this.ordenar(property,asc,this.get('servicios').toArray());
-			this.set('servicios',aux);
+			var aux = this.ordenar(property,asc,this.get('materiales').toArray());
+			this.set('materiales',aux);
 			//this.get('servicios').sortBy('codigo');
 
     	}

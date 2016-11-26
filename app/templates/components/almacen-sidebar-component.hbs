@@ -1,0 +1,17 @@
+<div>
+	<div class="col-md-2 sidebar">
+			<div class="panel panel-primary">
+            <div class="panel-heading">
+              Menu
+            </div>
+		<div class="panel-body">
+         	<ul class="nav nav-pills nav-stacked">
+				{{#link-to 'almacen.materiales' tagName="li"}}<a {{bindAttr href="view.href"}}>Materiales</a>{{/link-to}}
+			    {{#link-to 'almacen.equipos' tagName="li"}}<a {{bindAttr href="view.href"}}>Equipos</a>{{/link-to}}
+			    {{#link-to 'login' tagName="li"}}<a {{bindAttr href="view.href"}}>Historial</a>{{/link-to}}
+			    {{#link-to 'login' tagName="li"}}<a {{bindAttr href="view.href"}}>Movimientos</a>{{/link-to}}			    
+			</ul>
+        </div>
+			</div>
+	</div>      
+</div>

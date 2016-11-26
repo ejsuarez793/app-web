@@ -8,6 +8,25 @@ let App;
 Ember.MODEL_FACTORY_INJECTIONS = true;
 
 window.serverUrl = 'http://localhost:8000';
+numeral.language('ve', {
+    delimiters: {
+        thousands: '.',
+        decimal: ','
+    },
+    abbreviations: {
+        thousand: 'k',
+        million: 'm',
+        billion: 'b',
+        trillion: 't'
+    },
+    currency: {
+        symbol: 'Bs'
+    }
+});
+
+numeral.language('ve');
+
+moment.locale('es');
 
 App = Ember.Application.extend({
   modulePrefix: config.modulePrefix,

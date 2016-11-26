@@ -18,6 +18,14 @@ Router.map(function() {
     this.route('servicios');
     this.route('proyectos');
   });
+
+  this.route('almacenista', function() {});
+
+  this.route('almacen', function() {
+    this.route('materiales');
+    this.route('equipos');
+  });
+  this.route('404notfound', {path: "/*path"});
 });
 
 export default Router;

@@ -25,12 +25,12 @@ export default Ember.Controller.extend({
 	},
 	validarCampos: function(){
 		var _this = this;
-		$.validator.addMethod("ciValida", function (value, element, len) {
+		$.validator.addMethod("ciValida", function (value/*, element, len*/) {
 				var aux = [];
 				$.each(_this.get('tecnicos').toArray(),function(i,tecnico){
 					aux.push(tecnico.ci);
 				});
-				return ($.inArray(value, aux)!=-1);
+				return ($.inArray(value, aux)!==-1);
 		});
 
 		$("#formulario").validate({
@@ -235,7 +235,7 @@ export default Ember.Controller.extend({
 
 				var method = 'PUT';
 				var url = window.serverUrl + '/proyectos/solicitud/';
-				//this.postProcesarSolicitud(method,url,data);
+				this.postProcesarSolicitud(method,url,data);
 			}
 		}
 	}

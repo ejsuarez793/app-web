@@ -46,21 +46,22 @@ export default Ember.Controller.extend({
 	 	_this.paginationInitialize(10);	
 	},
 
-	prepararModal(editing,proyecto){
-		if (editing==='false'){
-			this.set('editing',false);
-			//$("#codigo").prop('disabled', false);
-			this.set('proyecto', {});
-		}else{
-			this.set('editing',true);
-			var aux =  $.extend(true, {}, proyecto);
-			//$("#codigo").prop('disabled', true);
-			this.set('proyecto',aux/*servicio*/);
-		}
-		//se reinician los errores
-		$(".form-group").removeClass('has-success');
-		$(".form-group").removeClass('has-error');
-		$(".help-block").text("");  
+	prepararModal(proyecto){
+		var aux = ['progress-bar-success','progress-bar-success','progress-bar-info','progress-bar-info','progress-bar-warning','progress-bar-warning','progress-bar-warning','progress-bar-danger','progress-bar-danger','progress-bar-danger'];
+
+		this.set('reporte_ini',proyecto.reporte_inicial);
+		var cwidth =proyecto.reporte_inicial.complejidad * 10;
+		var cclass = aux[(cwidth/10)-1];
+
+		var fwidth =Math.abs(proyecto.reporte_inicial.factibilidad - 10) * 10;
+		var fclass = aux[(fwidth/10)-1];
+
+		$("#factibilidad").css("width", fwidth+"%");
+		$('#factibilidad').addClass(fclass);
+
+		$("#complejidad").css("width", cwidth+"%");
+		$('#complejidad').addClass(cclass);
+
 
 		$("#myModal").modal('show');
 	},
@@ -162,8 +163,8 @@ export default Ember.Controller.extend({
 
 
 	actions:{
-		openModal: function(editing,proyecto){
-			this.prepararModal(editing,proyecto);
+		openModal: function(proyecto){
+			this.prepararModal(proyecto);
 
 		},
 		ordenarPor: function(property) {

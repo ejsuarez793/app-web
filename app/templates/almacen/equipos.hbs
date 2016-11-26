@@ -1,0 +1,172 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Equipos</h2>
+          </div>
+
+          <div class="col-lg-3 ">
+            <h2>
+              <div class="input-group">
+                 {{input name="serv" id="serv" type="text" class="form-control" placeholder="Filtrar equipo" value=filtro}}
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                  </span>
+              </div>
+            </h2>
+          </div>
+
+          <div class="col-lg-2 ">
+            <h2>
+              <div class="input-group" aria-describedby="basic-addon2">
+                <select class="form-control" name="page" id="page">
+                  <option value="1">1</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>   
+                <span class="input-group-addon" id="basic-addon2">Tam. Pag.</span>
+              </div>
+            </h2>
+          </div>
+
+          <div class="col-lg-4">
+            <div id="alert" class="alert alert-success hidden" role="alert">
+              <strong>{{alert.strong}}!</strong> {{alert.msg}}
+            </div>
+          </div>
+
+          <div class="col-lg-1 ">
+            <h2>
+              <button class="btn btn-primary" {{action 'openModal' 'false'}} type="submit">Crear</button>
+            </h2>
+          </div>
+
+        </div>
+
+
+<div class="row ">
+	{{almacen-sidebar-component}}
+	<div class="col-md-10">
+		   <table class="table table-bordered table-hover " id="tabla">	
+        	<thead class="header-tabla">
+        		<tr>
+				    <th {{action "ordenarPor" "codigo"}}>Codigo <span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th{{action "ordenarPor" "serial"}} >Serial<span id="th-serial" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th {{action "ordenarPor" "nombre"}}>Nombre <span id="th-nombre" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th {{action "ordenarPor" "desc"}}>Descripción <span id="th-desc" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th{{action "ordenarPor" "costo_uso"}} >Costo de Uso<span id="th-costo_uso" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th{{action "ordenarPor" "cantidad"}} >Cantidad<span id="th-cantidad" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th>Editar</th>
+  				</tr>
+  			</thead>
+  			<tbody id="tbody" class="text-center">
+  			{{#each filter as |equipo|}}
+  				<tr id="{{servicio.codigo}}">
+					<td class="col-tabla">{{equipo.codigo}}</td>
+					<td class="col-tabla">{{equipo.serial}}</td>
+					<td class="col-tabla"><{{equipo.nombre}}</td>
+					<td class="col-tabla">{{equipo.desc}}</td>
+					<td class="col-tabla">{{equipo.costo_uso}}</td>
+					<td class="col-tabla">{{equipo.cantidad}}</td>
+					<td class="col-tabla"><button {{action 'openModal' 'true' equipo}} class="btn btn-default btn-xs">editar</button></td>
+				</tr>
+			{{/each}}
+ 			</tbody>
+		</table>
+    <div class="text-center">
+     <ul id="pagination" class="pagination-sm"></ul>
+     </div>
+	</div>
+</div>
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Registrar Servicio</h4>
+        <small class="form-text text-muted">* Campos requeridos</small>
+      </div>
+      <div class="modal-body">
+       		
+      	<form  id="formulario">
+      		<div class="row">
+      			<div class="col-md-6">
+					<div class="form-group">
+						<label>Codigo</label><small class="form-text text-muted">* </small>
+						<div class="input-group">
+						  {{input name="codigo" id="codigo" type="text" class="form-control" placeholder="Codigo equipo" value=equipo.codigo}}
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="col-md-6">
+				<div class="form-group">
+					<label>Serial</label><small class="form-text text-muted"></small>
+					<div class="input-group input-group">
+					  {{input name="serial" type="text" class="form-control" placeholder="Serial del equipo" value=equipo.serial}}
+					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					</div>
+				</div>
+				</div>
+
+				<div class="col-md-6">
+				<div class="form-group">
+					<label>Nombre</label><small class="form-text text-muted">* </small>
+					<div class="input-group input-group">
+					  {{input name="nombre" type="text" class="form-control" placeholder="Nombre del equipo" value=equipo.nombre}}
+					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					</div>
+				</div>
+				</div>
+
+				<div class="col-md-12">
+				<div class="form-group">
+					<label>Descripción</label><small class="form-text text-muted"> </small>
+					<div class="input-group input-group">
+					  {{bs-textarea  name="desc" type="text" class="form-control" placeholder="Descripción del equipo" value=equipo.desc}}
+					  <span class="input-group-addon">{{fa-icon "info"}}</span>
+					</div>
+				</div>
+				</div>
+
+				<div class="col-md-6">
+				<div class="form-group">
+					<label>Costo de uso</label><small class="form-text text-muted">* </small>
+					<div class="input-group input-group">
+					  {{input  name="costo_uso" type="text" class="form-control" placeholder="Costo de uso del equipo" value=equipo.costo_uso}}
+					  <span class="input-group-addon">{{fa-icon "info"}}</span>
+					</div>
+				</div>
+				</div>
+
+				<div class="col-md-6">
+				<div class="form-group">
+					<label>Cantidad</label><small class="form-text text-muted">* </small>
+					<div class="input-group input-group">
+					  {{input name="cantidad" type="text" class="form-control" placeholder="Cantidad de equipos" value=equipo.cantidad}}
+					  <span class="input-group-addon">{{fa-icon "info"}}</span>
+					</div>
+				</div>
+				</div>	
+
+
+			</div>
+		</form>
+      </div>
+      <div class="modal-footer">   
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <button type="submit" id="submit-button" {{action 'save'}} class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
