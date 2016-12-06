@@ -10,6 +10,7 @@
     "jquery-ui": "^1.12.1",
     "twbs-pagination": "^1.4.1",
     "moment": "^2.17.0",
-    "numeral-js": "^0.1.2"
+    "numeral-js": "^0.1.2",
+    "lodash": "^4.17.2"
   }
 }

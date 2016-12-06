@@ -20,7 +20,7 @@ export default Ember.Controller.extend({
 		url = window.serverUrl + /cliente/;
 	    this.getElements(method,url,this.asignarClientes,this);
 
-	    url = window.serverUrl + '/proyectos/tecnicos/';
+	    url = window.serverUrl + '/tecnicos/';
 	    this.getElements(method,url,this.asignarTecnicos,this);
 	},
 	validarCampos: function(){
@@ -234,7 +234,7 @@ export default Ember.Controller.extend({
 				console.log(data);
 
 				var method = 'PUT';
-				var url = window.serverUrl + '/proyectos/solicitud/';
+				var url = window.serverUrl + '/solicitud/procesar/';
 				this.postProcesarSolicitud(method,url,data);
 			}
 		}

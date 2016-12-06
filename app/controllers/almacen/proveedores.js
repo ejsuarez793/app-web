@@ -1,12 +1,12 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-	equipo:{},
 	editing:false,
-	equipos: [],
+	proveedores: [],
 	filtro: null,
 	alert: {},
-	select:{},//notificacion a filter
+	select:{},
+	proveedor: {},
 
 
 	init(){
@@ -15,64 +15,80 @@ export default Ember.Controller.extend({
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1);
 		} 
 		var method = "GET";
-		var url = window.serverUrl + '/equipo/';
-	    this.getElements(method,url,this.asignarEquipos,this);
+		var url = window.serverUrl + '/proveedor/';
+	    this.getElements(method,url,this.setProveedores,this);
 	},
 	validarCampos: function(){
 		$.validator.addMethod("maxlength", function (value, element, len) {
 				return value === "" || value.length <= len;
 		});
 
-		$.validator.addMethod('codigoServicio', function(value, element){
-				return this.optional(element) ||   value.length <= 15 && /[S][T][-]\d{3}/.test(value);
-		}, 'Código no válido');
+		$.validator.addMethod('rifValido', function(value, element){
+				return this.optional(element) ||   value.length <= 15 && /[J]\-\d+\-\d/.test(value);
+		}, 'Rif no válido');
 
 
 		$("#formulario").validate({
 			rules:{
-				codigo:{
-					required:true,
-				},
-				serial:{
-					maxlength:50,
+				rif: {
+					required: true,
+					maxlength: 15,
+					nowhitespace: true,
+					rifValido: true,
+					/*remote: {
+						url: window.serverUrl + '/validar/cliente/',
+						type: "GET",
+						data: {
+							rif: function() {
+								return $( "#rif" ).val();
+							}
+						}
+					}*/
 				},
 				nombre:{
-					required:true,
-					maxlength:50,
+					required: true,
+					maxlength: 75,
 				},
-				desc:{
-					maxlength:200,
+				dire:{
+					required: true,
+					maxlength: 200,
 				},
-				costo_uso:{
-					required:true,
-					number:true,
+				tlf1:{
+					required: true,
+					maxlength: 15,
+					nowhitespace: true,
+					number: true,
 				},
-				cantidad:{
-					required:true,
-					number:true,
+				tlf2:{
+					nowhitespace: true,
+					maxlength: 15,
+					number: true,
 				},
 			},
 			messages:{
-				codigo:{
-					required:'Este campo es requerido.',
-				},
-				serial:{
-					maxlength:'Longitud máxima de 50 caracteres',
+				rif: {
+					required: 'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 15 caracteres',
+					nowhitespace: 'No dejar espacios en blanco',
 				},
 				nombre:{
-					required:'Este campo es requerido.',
-					maxlength:'Longitud máxima de 50 caracteres',
+					required: 'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 75 caracteres',
 				},
-				desc:{
-					maxlength:'Longitud máxima de 200 caracteres',
+				dire:{
+					required: 'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 200 caracteres',
 				},
-				costo_uso:{
-					required:'Este campo es requerido.',
-					number:'Por favor solo números',
+				tlf1:{
+					required: 'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 15 caracteres',
+					nowhitespace: 'No dejar espacios en blanco',
+					number: 'Por favor solo números',
 				},
-				cantidad:{
-					required:'Este campo es requerido.',
-					number:'Por favor solo números',
+				tlf2:{
+					nowhitespace: 'No dejar espacios en blanco',
+					maxlength: 'Longitud máxima de 15 caracteres',
+					number: 'Por favor solo números',
 				},
 			},
 			errorElement: 'small',
@@ -105,6 +121,7 @@ export default Ember.Controller.extend({
 		.fail(function(response) { console.log(response); }); 
 	},
 	llamadaServidor(method,url,data){
+		console.log(data);
 		$.ajax({
 			type: method,
 			url: url,
@@ -116,57 +133,47 @@ export default Ember.Controller.extend({
 				dataType: "json",
 				data: JSON.stringify(data),
 		})    
-		.done(function(response) { 
+		.done(function(response) {
+			this.alertMsg(true,method,response);
+			this.init(); 
+		})    
+		.fail(function(response) {
+			this.alertMsg(false,method,response); 
+			console.log(response);
+		});
+	},
+	alertMsg(success,method,response){
+		if (success){
 			if(method==="PATCH"){
 				this.set('alert.strong','Editado'); 
-				this.set('alert.msg','equipo '+response.codigo+' editado exitosamente'); 
+				this.set('alert.msg','Proveedor '+response.rif+' editado exitosamente'); 
 			} 
 			else if (method==='POST'){
 				this.set('alert.strong','Creado');
-				this.set('alert.msg','Equipo '+response.codigo+' creado exitosamente'); 
+				this.set('alert.msg','Proveedor '+response.rif+' creado exitosamente'); 
 			} 
 			$("#alert").removeClass('hidden');
 			$("#alert").removeClass('alert-danger');
 			$("#alert").addClass('alert-success');
-			this.init(); 
-		})    
-		.fail(function(response) { 
-			console.log(response); this.set('alert.strong','Error'); 
+		}else{
+			this.set('alert.strong','Error'); 
 			this.set('alert.msg','Ocurrio un error en el servidor'); 
 
 			$("#alert").removeClass('hidden');
 			$("#alert").removeClass('alert-success');
 			$("#alert").addClass('alert-danger');
-		});
+		}
 	},
-	asignarEquipos(equipos,context){
+	setProveedores(proveedores,context){
 		var _this = context;
 
-		if (!Array.isArray(equipos)){
+		if (!Array.isArray(proveedores)){
 			var aux = [];
-			aux.push(equipos);
-			equipos = aux;
-		}	
-		_this.set('equipos',equipos);
-	 	_this.paginationInitialize(10);	
-	},
-	prepararModal(editing,equipo){
-		if (editing==='false'){
-			this.set('editing',false);
-			$("#codigo").prop('disabled', false);
-			this.set('equipo', {});
-		}else{
-			this.set('editing',true);
-			var aux =  $.extend(true, {}, equipo);
-			$("#codigo").prop('disabled', true);
-			this.set('equipo',aux/*servicio*/);
+			aux.push(proveedores);
+			proveedores = aux;
 		}
-		//se reinician los errores
-		$(".form-group").removeClass('has-success');
-		$(".form-group").removeClass('has-error');
-		$(".help-block").text("");  
-
-		$("#myModal").modal('show');
+		_this.set('proveedores',proveedores);
+	 	_this.paginationInitialize(10);	
 	},
 	filtrar: function(theObject, str) {
     	var field, match;
@@ -180,7 +187,7 @@ export default Ember.Controller.extend({
   	},
 
   	filter: (function() {
-    	return this.get("equipos").filter(
+    	return this.get("proveedores").filter(
 
     	(
     		function(_this) {
@@ -196,26 +203,16 @@ export default Ember.Controller.extend({
     	)(this)
 
     	);
-  	}).property("filtro","equipos","select"),
+  	}).property("filtro","proveedores","select"),
 
   	ordenar(prop, asc,array) {
-			if (prop==="costo_uso" || prop==="cantidad" || prop==="codigo"){
-				array = array.sort(function(a, b) {
-		        if (asc) {
-		            return ( parseFloat(a[prop]) > parseFloat(b[prop]) ) ? 1 : (( parseFloat(a[prop]) < parseFloat(b[prop]) )? -1 : 0);
-		        } else {
-		            return (parseFloat(b[prop]) > parseFloat(a[prop])) ? 1 : (( parseFloat(b[prop]) < parseFloat(a[prop])) ? -1 : 0);
-		        }
-		    });
-			}else{
-		    array = array.sort(function(a, b) {
-		        if (asc) {
-		            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
-		        } else {
-		            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
-		        }
-		    });
-		}
+	    array = array.sort(function(a, b) {
+	        if (asc) {
+	            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
+	        } else {
+	            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
+	        }
+	    });	
 	   	return array;
 	},
 
@@ -231,18 +228,14 @@ export default Ember.Controller.extend({
 		var _this = this;
 		$( document ).ready(function(){
 
-    		var equipos = _this.get('equipos').toArray();
-			var totalEquipos = equipos.length;
-			var res = totalEquipos % tamPagina;
+    		var proveedores = _this.get('proveedores').toArray();
+			var totalProveedores = proveedores.length;
+			var res = totalProveedores % tamPagina;
 			var nPaginas = 0;
 			if (res!==0){
-				nPaginas = Math.round((totalEquipos/tamPagina) + 0.5);
+				nPaginas = Math.round((totalProveedores/tamPagina) + 0.5);
 			}else{
-				nPaginas = totalEquipos/tamPagina;
-			}
-
-			if (nPaginas===0){
-				return;
+				nPaginas = totalProveedores/tamPagina;
 			}
 
 			$('#pagination').twbsPagination('destroy');
@@ -258,51 +251,63 @@ export default Ember.Controller.extend({
 
 		            var showFrom = tamPagina * (page - 1);
 		            var showTo = showFrom + tamPagina;
-		            var mostrables = equipos.slice(showFrom, showTo);
-		            $.each(equipos,function(i,equipo){
-		            	if($.inArray(equipo, mostrables) !== -1){
-		            		//console.log(servicio);
-		            		equipo.show = true;
+		            var mostrables = proveedores.slice(showFrom, showTo);
+		            $.each(proveedores,function(i,proveedor){
+		            	if($.inArray(proveedor, mostrables) !== -1){
+		            		proveedor.show = true;
 		            	}else{
-		            		equipo.show = false;
+		            		proveedor.show = false;
 		            	}
 		            });
 		            _this.set('select',page);//AQUI ES IMPORTANTE ya que asi notifica a filter
 
-		            _this.set('equipos',equipos);
+		            _this.set('proveedores',proveedores);
 
 		        }
     		});
     	});
 
 	},
+	prepararModal(editing,proveedor){
+		if (editing==='false'){
+			this.set('editing',false);
+			$("#rif").prop('disabled', false);
+			this.set('proveedor', {});
+		}else{
+			this.set('editing',true);
+			var aux =  $.extend(true, {}, proveedor);
+			$("#rif").prop('disabled', true);
+			this.set('proveedor',aux);
+		}
+		//se reinician los errores
+		$(".form-group").removeClass('has-success');
+		$(".form-group").removeClass('has-error');
+		$(".help-block").text("");  
 
+		$("#myModal").modal('show');
+	},
 	actions: {
 
-		openModal: function(editing,equipo){
-			this.prepararModal(editing,equipo);
-
+		openModal: function(editing,proveedor){
+			this.prepararModal(editing,proveedor);
 		},
-		save: function(){
-			var equipo = this.get('equipo');
+		save:function(){
 			var method = "";
 			var url = "";
+			var proveedor = this.get('proveedor');
 			if (!this.get('editing')){
-				 method = "POST";
-				url = window.serverUrl + '/equipo/';
+				method = "POST";
+				url = window.serverUrl + '/proveedor/';
 			}else{
 				method = "PATCH";
-				url = window.serverUrl +'/equipo/' + equipo.codigo +'/';
+				url = window.serverUrl +'/proveedor/' + proveedor.rif +'/';
 			}
-			if (equipo.serial===""){
-				equipo.serial=null;
-			}
-			var data = equipo;
+			var data = proveedor;
 			this.validarCampos();
 			if ($("#formulario").valid()){
 				this.llamadaServidor(method,url,data);
+				$('#myModal').modal('hide');
 			}
-			$('#myModal').modal('hide');
 		},
 		ordenarPor: function(property) {
 			var asc = null;
@@ -316,10 +321,8 @@ export default Ember.Controller.extend({
 				$(th).removeClass('glyphicon-chevron-up');
 				$(th).addClass('glyphicon-chevron-down');
 			}
-			var aux = this.ordenar(property,asc,this.get('equipos').toArray());
-			this.set('equipos',aux);
-			//this.get('servicios').sortBy('codigo');
-
+			var aux = this.ordenar(property,asc,this.get('proveedores').toArray());
+			this.set('proveedores',aux);
     	}
-	}
+	},
 });

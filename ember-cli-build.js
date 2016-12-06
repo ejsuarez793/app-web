@@ -17,6 +17,7 @@ module.exports = function(defaults) {
   app.import('bower_components/twbs-pagination/jquery.twbsPagination.js');
   app.import('bower_components/numeral/numeral.js');
   app.import('bower_components/moment/min/moment-with-locales.js');
+  app.import('bower_components/lodash/dist/lodash.js');
   // If you need to use different assets in different
   // environments, specify an object as the first parameter. That
   // object's keys should be the environment name and the values

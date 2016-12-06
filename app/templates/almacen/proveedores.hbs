@@ -1,0 +1,154 @@
+{{logged-header-component currentName=currentName }}
+<div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Proveedores</h2>
+          </div>
+
+          <div class="col-lg-3 ">
+            <h2>
+              <div class="input-group">
+                 {{input name="filtro" id="filtro" type="text" class="form-control" placeholder="Filtrar proveedor" value=filtro}}
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                  </span>
+              </div>
+            </h2>
+          </div>
+
+          <div class="col-lg-2 ">
+            <h2>
+              <div class="input-group" aria-describedby="basic-addon2">
+                <select class="form-control" name="page" id="page">
+                  <option value="1">1</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>   
+                <span class="input-group-addon" id="basic-addon2">Tam. Pag.</span>
+              </div>
+            </h2>
+          </div>
+
+           <div class="col-lg-4">
+            <div id="alert" class="alert alert-success hidden" role="alert">
+              <strong>{{alert.strong}}!</strong> {{alert.msg}}
+            </div>
+          </div>
+
+          <div class="col-lg-1 ">
+            <h2>
+              <button class="btn btn-primary" {{action 'openModal' 'false'}} type="submit">Crear</button>
+            </h2>
+          </div>
+
+        </div>
+
+        <div class="row ">
+		{{almacen-sidebar-component}}
+			<div class="col-md-10">
+		    <table class="table table-bordered table-hover " id="tabla">	
+        		<thead class="header-tabla">
+	        		<tr>
+					    <th {{action "ordenarPor" "rif"}}>Rif <span id="th-rif" class="glyphicon glyphicon-chevron-down"></span></th>
+					    <th {{action "ordenarPor" "nombre"}}>Nombre <span id="th-nombre" class="glyphicon glyphicon-chevron-down"></span></th>
+					    <th>Teléfonos</th>
+					    <th >Dirección</th>
+					    <th>Editar</th>
+	  				</tr>
+  			</thead>
+  			<tbody id="tbody" class="text-center">
+  			{{#each filter as |proveedor|}}
+  				<tr>
+					<td class="col-tabla">{{proveedor.rif}}</td>
+					<td class="col-tabla"><{{proveedor.nombre}}</td>
+					<td class="col-tabla">{{proveedor.tlf1}} <br> {{proveedor.tlf2}}</td>
+					<td class="col-tabla">{{proveedor.dire}}</td>
+					<td class="col-tabla"><button {{action 'openModal' 'true' proveedor}} class="btn btn-default btn-xs">editar</button></td>
+				</tr>
+			{{/each}}
+ 			</tbody>
+			</table>
+	    	<div class="text-center">
+	     		<ul id="pagination" class="pagination-sm"></ul>
+	    	</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Registrar Proveedor</h4>
+        <small class="form-text text-muted">* Campos requeridos</small>
+      </div>
+      <div class="modal-body">
+	      	<form  id="formulario">
+	      		<div class="row">
+	      			<div class="col-md-6">
+						<div class="form-group">
+							<label>Rif</label><small class="form-text text-muted">* </small>
+							<div class="input-group">
+							  {{input name="rif" id="rif" type="text" class="form-control" placeholder="Rif proveedor" value=proveedor.rif}}
+							  <span class="input-group-addon">{{fa-icon "user"}}</span>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Nombre</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="nombre" type="text" class="form-control" placeholder="Nombre del proveedor" value=proveedor.nombre}}
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-12">
+					<div class="form-group">
+						<label>Dirección</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{bs-textarea name="dire" type="text" class="form-control" placeholder="Dirección del proveedor" value=proveedor.dire}}
+						  <span class="input-group-addon">{{fa-icon "map-marker"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Teléfono 1</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="tlf1" type="text" class="form-control" placeholder="Teléfono del proveedor" value=proveedor.tlf1}}
+						  <span class="input-group-addon">{{fa-icon "phone"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Teléfono 2</label><small class="form-text text-muted"> </small>
+						<div class="input-group input-group">
+						  {{input name="tlf2" type="text" class="form-control" placeholder="Teléfono del proveedor" value=proveedor.tlf2}}
+						  <span class="input-group-addon">{{fa-icon "phone"}}</span>
+						</div>
+					</div>
+					</div>
+		
+				</div>
+			</form>
+      </div>
+      <div class="modal-footer">   
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <button type="submit" id="submit-button" {{action 'save'}} class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -14,13 +14,13 @@ export default Ember.Controller.extend({
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1);
 		} 
 		var method = "GET";
-		var url = window.serverUrl + '/proyectoCoordinador/';
+		var url = window.serverUrl + '/proyecto/coordinador/' + parseInt(Cookies.getJSON('current').ci) + '/';
 	    this.getProyectos(method,url,this.asignarProyectos,this);
 	},
 	getProyectos(method,url,callback,context){
-		var data ={
+		/*var data ={
 			'ci_coord': parseInt(Cookies.getJSON('current').ci),
-		};
+		};*/
 		$.ajax({
 			type: method,
 			url: url,
@@ -29,7 +29,7 @@ export default Ember.Controller.extend({
 			},
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
-				data: data,
+				//data: data,
 		})    
 		.done(function(response){ callback(response, context); })    
 		.fail(function(response) { console.log(response); }); 

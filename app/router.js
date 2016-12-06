@@ -24,6 +24,7 @@ Router.map(function() {
   this.route('almacen', function() {
     this.route('materiales');
     this.route('equipos');
+    this.route('proveedores');
   });
   this.route('404notfound', {path: "/*path"});
 });

@@ -6,7 +6,8 @@
     "$",
     "Cookies",
     "moment",
-    "numeral"
+    "numeral",
+    "_"
   ],
   "browser": true,
   "boss": true,

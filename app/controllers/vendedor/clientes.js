@@ -136,7 +136,7 @@ export default Ember.Controller.extend({
 				},
 				dire:{
 						required: 'Este campo es requerido.',
-						maxlength: 'Longitud máxima de 15 caracteres',
+						maxlength: 'Longitud máxima de 200 caracteres',
 				},
 				tlf1:{
 						required: 'Este campo es requerido.',

@@ -62,7 +62,6 @@
 					    <th{{action "ordenarPor" "precio_act"}} >Precio actual <small class="form-text text-muted">F.Act</small><span id="th-precio_act" class="glyphicon glyphicon-chevron-down"></span></th>
 					   <!-- <th{{action "ordenarPor" "f_act"}} >Fecha Actualización<span id="th-f_Act" class="glyphicon glyphicon-chevron-down"></span></th>-->
 					   	<th>Detalles</th>
-					    <th>Proveedores</th>
 					    <th>Editar</th>
 	  				</tr>
   			</thead>
@@ -74,8 +73,7 @@
 					<td class="col-tabla">{{material.marca}}</td>
 					<td class="col-tabla">{{material.cantidad}}</td>
 					<td class="col-tabla">{{material.precio_act}} <br> <small class="form-text text-muted"> act: {{material.f_act}} </small></td>
-          			<td class="col-tabla"><button {{action 'openModal' 'true' material}} class="btn btn-default btn-xs">ver</button></td>
-          			<td class="col-tabla"><button {{action 'openModal' 'true' material}} class="btn btn-default btn-xs">ver</button></td>
+          			<td class="col-tabla"><button {{action 'openModalDetail' 'true' material}} class="btn btn-default btn-xs">ver</button></td>
 					<td class="col-tabla"><button {{action 'openModal' 'true' material}} class="btn btn-default btn-xs">editar</button></td>
 				</tr>
 			{{/each}}
@@ -99,146 +97,335 @@
         <small class="form-text text-muted">* Campos requeridos</small>
       </div>
       <div class="modal-body">
-       		
-      	<form  id="formulario">
-      		<div class="row">
-      			<div class="col-md-6">
-					<div class="form-group">
-						<label>Codigo</label><small class="form-text text-muted">* </small>
-						<div class="input-group">
-						  {{input name="codigo" id="codigo" type="text" class="form-control" placeholder="Codigo material" value=material.codigo}}
-						  <span class="input-group-addon">{{fa-icon "user"}}</span>
+       	<ul class="nav nav-tabs" role="tablist">
+    		<li role="presentation" class="active"><a href="#material" aria-controls="material" role="tab" data-toggle="tab">Material</a></li>
+    		<li role="presentation"><a href="#proveedores" aria-controls="profile" role="tab" data-toggle="tab">Proveedores</a></li>
+    	</ul>
+    	<div class="tab-content">
+	    	<div role="tabpanel" class="tab-pane active" id="material">
+	      	<form  id="formulario">
+	      		<div class="row">
+	      			<div class="col-md-6">
+						<div class="form-group">
+							<label>Codigo</label><small class="form-text text-muted">* </small>
+							<div class="input-group">
+							  {{input name="codigo" id="codigo" type="text" class="form-control" placeholder="Codigo material" value=material.codigo}}
+							  <span class="input-group-addon">{{fa-icon "user"}}</span>
+							</div>
+
 						</div>
-
 					</div>
-				</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Serial</label><small class="form-text text-muted"> </small>
-					<div class="input-group input-group">
-					  {{input name="serial" type="text" class="form-control" placeholder="Serial del material" value=material.serial}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Serial</label><small class="form-text text-muted"> </small>
+						<div class="input-group input-group">
+						  {{input name="serial" type="text" class="form-control" placeholder="Serial del material" value=material.serial}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Nombre</label><small class="form-text text-muted">* </small>
-					<div class="input-group input-group">
-					  {{input name="nombre" type="text" class="form-control" placeholder="Nombre del material" value=material.nombre}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Nombre</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="nombre" type="text" class="form-control" placeholder="Nombre del material" value=material.nombre}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Descripción</label><small class="form-text text-muted"></small>
-					<div class="input-group input-group">
-					  {{input name="desc" type="text" class="form-control" placeholder="Descripción del material" value=material.desc}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Descripción</label><small class="form-text text-muted"></small>
+						<div class="input-group input-group">
+						  {{input name="desc" type="text" class="form-control" placeholder="Descripción del material" value=material.desc}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Presentación</label><small class="form-text text-muted"> </small>
-					<div class="input-group input-group">
-					  {{input name="presen" type="text" class="form-control" placeholder="Presentación del material" value=material.presen}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Presentación</label><small class="form-text text-muted"> </small>
+						<div class="input-group input-group">
+						  {{input name="presen" type="text" class="form-control" placeholder="Presentación del material" value=material.presen}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Color</label><small class="form-text text-muted"> </small>
-					<div class="input-group input-group">
-					  {{input name="color" type="text" class="form-control" placeholder="Color del material" value=material.color}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Color</label><small class="form-text text-muted"> </small>
+						<div class="input-group input-group">
+						  {{input name="color" type="text" class="form-control" placeholder="Color del material" value=material.color}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Precio Actual</label><small class="form-text text-muted">* </small>
-					<div class="input-group input-group">
-					  {{input name="precio_act" type="text" class="form-control" placeholder="Precio actual del material" value=material.precio_act}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Precio Actual</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="precio_act" type="text" class="form-control" placeholder="Precio actual del material" value=material.precio_act}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Cantidad</label><small class="form-text text-muted">* </small>
-					<div class="input-group input-group">
-					  {{input name="cantidad" type="text" class="form-control" placeholder="Cantidad de material" value=material.cantidad}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Cantidad</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="cantidad" type="text" class="form-control" placeholder="Cantidad de material" value=material.cantidad}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Marca</label><small class="form-text text-muted">* </small>
-					<div class="input-group input-group">
-					  {{input name="marca" type="text" class="form-control" placeholder="Marca del material" value=material.marca}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Marca</label><small class="form-text text-muted">* </small>
+						<div class="input-group input-group">
+						  {{input name="marca" type="text" class="form-control" placeholder="Marca del material" value=material.marca}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-6">
-				<div class="form-group">
-					<label>Modelo</label><small class="form-text text-muted"> </small>
-					<div class="input-group input-group">
-					  {{input name="modelo" type="text" class="form-control" placeholder="Modelo del material" value=material.modelo}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-6">
+					<div class="form-group">
+						<label>Modelo</label><small class="form-text text-muted"> </small>
+						<div class="input-group input-group">
+						  {{input name="modelo" type="text" class="form-control" placeholder="Modelo del material" value=material.modelo}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-4">
-				<div class="form-group">
-					<label>Alto</label><small class="form-text text-muted"> </small>
-					<div class="input-group input-group">
-					  {{input name="alto" type="text" class="form-control" placeholder="Alto del material" value=material.alto}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-4">
+					<div class="form-group">
+						<label>Alto</label><small class="form-text text-muted"> </small>
+						<div class="input-group input-group">
+						  {{input name="alto" type="text" class="form-control" placeholder="Alto del material" value=material.alto}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-4">
-				<div class="form-group">
-					<label>Largo</label><small class="form-text text-muted"></small>
-					<div class="input-group input-group">
-					  {{input name="largo" type="text" class="form-control" placeholder="Largo del material" value=material.largo}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-4">
+					<div class="form-group">
+						<label>Largo</label><small class="form-text text-muted"></small>
+						<div class="input-group input-group">
+						  {{input name="largo" type="text" class="form-control" placeholder="Largo del material" value=material.largo}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
-				</div>
-				</div>
+					</div>
 
-				<div class="col-md-4">
-				<div class="form-group">
-					<label>Ancho</label><small class="form-text text-muted"> </small>
-					<div class="input-group input-group">
-					  {{input name="ancho" type="text" class="form-control" placeholder="Ancho del material" value=material.ancho}}
-					  <span class="input-group-addon">{{fa-icon "money"}}</span>
+					<div class="col-md-4">
+					<div class="form-group">
+						<label>Ancho</label><small class="form-text text-muted"> </small>
+						<div class="input-group input-group">
+						  {{input name="ancho" type="text" class="form-control" placeholder="Ancho del material" value=material.ancho}}
+						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						</div>
 					</div>
+					</div>
+		
 				</div>
-				</div>
-	
+			</form>
 			</div>
-		</form>
+			<div role="tabpanel" class="tab-pane active" id="proveedores"> 
+				<div class="row">
+		        <div class="col-md-12">
+		       		<table class="table table-bordered table-hover">	
+	        			<thead class="header-tabla">
+	        				<tr>
+					    		<th>Rif</th>
+					    		<th>Nombre</th>
+					    		<th>Seleccionar</th>
+					    	</tr>
+					    </thead>
+					    <tbody>
+				        {{#each pcs as |proveedor|}}
+			  				<tr>
+								<td class="col-tabla">{{proveedor.rif}}</td>
+								<td class="col-tabla"><{{proveedor.nombre}}</td>
+								<td><input type="checkbox" value={{proveedor.rif}}></td>
+							</tr>
+						{{/each}}
+						</tbody>
+					</table>
+			    </div>
+		        </div>
+				<div class="row">
+					<div class="col-md-8"></div>
+					<div class="col-md-4">
+						<button type="button" class="btn btn-default" {{action 'eliminarProveedores'}}>Eliminar</button>
+						<button type="button" class="btn btn-default" {{action 'openModalProveedores'}}>Agregar</button>
+					</div>	
+				</div>
+			</div>
+		</div>
       </div>
       <div class="modal-footer">   
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
             <button type="submit" id="submit-button" {{action 'save'}} class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- Modal Detalle-->
+<div class="modal fade " id="myModalDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Material Detalle</h4>
+        <small class="form-text text-muted">{{solicitud.codigo}}</small>
+      </div>
+      <div class="modal-body">
+          
+    	
+
+	        <div class="row">
+
+		        <div class="col-md-6 ">
+
+		        	<div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">Detalles</h3>
+					  </div>
+					  <div class="panel-body">
+					    <dl class="dl-horizontal">
+					    	<dt>Código</dt> <dd>{{material.codigo}}</dd>
+							<dt>Serial</dt> <dd>{{material.serial}}</dd>
+							<dt>Nombre</dt> <dd>{{material.nombre}}</dd>
+							<dt>Precio</dt> <dd>{{material.precio_act}}</dd>						
+						</dl>	
+					  </div>
+					</div>
+
+		        </div>
+
+		         <div class="col-md-6 ">
+		        
+			        <div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">Características</h3>
+					  </div>
+					  <div class="panel-body">
+					    <dl class="dl-horizontal">
+					    	<dt>Marca / Modelo</dt> <dd>{{material.marca}} / {{material.modelo}}</dd>
+							<dt>Presentación</dt> <dd>{{material.presen}}</dd>
+							<dt>Color</dt> <dd>{{material.color}}</dd>
+							<dt>Dimensiones</dt> <dd>{{material.ancho}} {{material.alto}}  {{material.largo}}</dd>						
+						</dl>	
+					  </div>
+					</div>
+
+		        </div>
+
+	        </div>
+
+	        <div class="row">
+
+		        <div class="col-md-12">
+
+		        	<div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">Descripción</h3>
+					  </div>
+					  <div class="panel-body">
+					  	{{material.desc}}
+					  </div>
+					</div>
+
+		        </div>
+		        
+	        </div>
+
+	    	<div class="row">
+
+		        <div class="col-md-12">
+
+		        	<div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">Proveedores</h3>
+					  </div>
+					  <div class="panel-body">
+					  
+					  </div>
+					</div>
+
+		        </div>
+		        
+	        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Modal Proveedores-->
+<div class="modal fade " id="myModalProveedores" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Proveedores</h4>
+      </div>
+      <div class="modal-body">
+          
+	        <div class="row">
+	        <div class="col-md-12">
+	       		<table class="table table-bordered table-hover">	
+        			<thead class="header-tabla">
+        				<tr>
+				    		<th>Rif</th>
+				    		<th>Nombre</th>
+				    		<th>Seleccionar</th>
+				    	</tr>
+				    </thead>
+				    <tbody>
+			        {{#each pss as |proveedor|}}
+		  				<tr>
+							<td class="col-tabla">{{proveedor.rif}}</td>
+							<td class="col-tabla"><{{proveedor.nombre}}</td>
+							<td><input type="checkbox" value={{proveedor.rif}}></td>
+						</tr>
+					{{/each}}
+					</tbody>
+				</table>
+		    </div>
+	        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" id="submit-button" {{action 'agregarProveedores'}} class="btn btn-primary">Guardar</button>
       </div>
     </div>
   </div>

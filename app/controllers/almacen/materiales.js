@@ -4,10 +4,13 @@ export default Ember.Controller.extend({
 	//material:{},
 	editing:false,
 	materiales: [],
+	proveedores: [],
 	filtro: null,
 	alert: {},
 	select:{},
-	/*material:{
+	pcs: [],
+	pss: [],
+	material:{
 		codigo: '',
 		serial: '',
 		desc: '',
@@ -20,8 +23,8 @@ export default Ember.Controller.extend({
 		alto: '',
 		largo: '',
 		ancho: '',
-	},*/
-	material:{
+	},
+	/*material:{
 		'codigo': 'codigo',
 		serial: 'Serial',
 		desc: 'Descripcion',
@@ -34,7 +37,7 @@ export default Ember.Controller.extend({
 		alto: 'Alto',
 		largo: 'Largo',
 		ancho: 'Ancho',
-	},
+	},*/
 	init(){
 		this._super();
 		if (!((Cookies.get('token')===undefined) || (Cookies.getJSON('current')===undefined))){
@@ -43,6 +46,9 @@ export default Ember.Controller.extend({
 		var method = "GET";
 		var url = window.serverUrl + '/material/';
 	    this.getElements(method,url,this.asignarMateriales,this);
+
+	    url = window.serverUrl + '/proveedor/';
+	    this.getElements(method,url,this.setProveedores,this);
 	},
 	validarCampos: function(){
 		$.validator.addMethod("maxlength", function (value, element, len) {
@@ -219,15 +225,23 @@ export default Ember.Controller.extend({
 			aux.push(materiales);
 			materiales = aux;
 		}
-		console.log(materiales);
 		$.each(materiales, function(i,material){
-			console.log();
 			
 			material.precio_act = numeral(material.precio_act).format('0,0.00');
 			material.f_act = moment(material.f_act).format('l');
 		});
 		_this.set('materiales',materiales);
 	 	_this.paginationInitialize(10);	
+	},
+	setProveedores(proveedores,context){
+		var _this = context;
+
+		if (!Array.isArray(proveedores)){
+			var aux = [];
+			aux.push(proveedores);
+			proveedores = aux;
+		}
+		_this.set('proveedores',proveedores);	
 	},
 	filtrar: function(theObject, str) {
     	var field, match;
@@ -338,6 +352,7 @@ export default Ember.Controller.extend({
 			this.set('editing',false);
 			//$("#codigo").prop('disabled', false);
 			this.set('material', {});
+			this.set('pss',this.get('proveedores').toArray());
 		}else{
 			this.set('editing',true);
 			var aux =  $.extend(true, {}, material);
@@ -357,6 +372,10 @@ export default Ember.Controller.extend({
 		openModal: function(editing,material){
 			this.prepararModal(editing,material);
 		},
+		openModalDetail: function(editing,material){
+			$("#myModalDetail").modal('show');
+			this.set('material',material);
+		},
 		save:function(){
 			var material = this.get('material');
 			var method = "";
@@ -373,8 +392,8 @@ export default Ember.Controller.extend({
 			this.validarCampos();
 			if ($("#formulario").valid()){
 				this.llamadaServidor(method,url,data);
+				$('#myModal').modal('hide');
 			}
-			$('#myModal').modal('hide');
 		},
 		ordenarPor: function(property) {
 			var asc = null;
@@ -392,6 +411,64 @@ export default Ember.Controller.extend({
 			this.set('materiales',aux);
 			//this.get('servicios').sortBy('codigo');
 
+    	},
+    	openModalProveedores: function(){
+    		$('#myModalProveedores').modal('show');
+    	},
+    	agregarProveedores: function(){
+    		console.log("agregar");
+    		var pcs = [];
+    		var pss = [];
+    		var _this = this;
+
+
+			$('#myModalProveedores input:checked').each(function() {
+			    pcs.push($(this).val());
+			});
+			//console.log(this.get('proveedores').toArray());
+			var aux =  $.extend(true, {}, this.get('proveedores').toArray())
+			$.each(aux, function(i,proveedor){
+				if ($.inArray(proveedor.rif, pcs) !== -1){
+					_this.get('pcs').pushObject(proveedor);
+				}
+			});
+
+			$.each(this.get('pss').toArray(),function(i,pss){
+				if($.inArray(pss.rif, pcs) !== -1){
+					_this.get('pss').removeObject(pss);
+				}
+			});
+
+    	},
+    	eliminarProveedores: function(){
+    		console.log("eliminar");
+
+    		var pcs = [];
+    		var pss = [];
+    		var _this = this;
+
+
+			$('#myModal input:checked').each(function() {
+			    pss.push($(this).val());
+			});
+			//console.log(pss);
+			console.log(this.get('proveedores').toArray());
+			var aux =  $.extend(true, {}, this.get('proveedores').toArray())
+			$.each(aux, function(i,proveedor){
+				//dconsole.log(proveedor);
+				if ($.inArray(proveedor.rif, pss) !== -1){
+					_this.get('pss').pushObject(proveedor);
+				}
+			});
+
+			$.each(this.get('pcs').toArray(),function(i,pcs){
+				if($.inArray(pcs.rif, pss) !== -1){
+					_this.get('pcs').removeObject(pcs);
+				}
+			});
+
+			/*console.log(this.get('pcs').toArray());
+			console.log(this.get('pss').toArray());*/
     	}
 	}
 });
