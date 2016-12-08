@@ -73,7 +73,7 @@
 					<td class="col-tabla">{{material.marca}}</td>
 					<td class="col-tabla">{{material.cantidad}}</td>
 					<td class="col-tabla">{{material.precio_act}} <br> <small class="form-text text-muted"> act: {{material.f_act}} </small></td>
-          			<td class="col-tabla"><button {{action 'openModalDetail' 'true' material}} class="btn btn-default btn-xs">ver</button></td>
+          			<td class="col-tabla"><button {{action 'openModalDetail' material}} class="btn btn-default btn-xs">ver</button></td>
 					<td class="col-tabla"><button {{action 'openModal' 'true' material}} class="btn btn-default btn-xs">editar</button></td>
 				</tr>
 			{{/each}}
@@ -99,7 +99,7 @@
       <div class="modal-body">
        	<ul class="nav nav-tabs" role="tablist">
     		<li role="presentation" class="active"><a href="#material" aria-controls="material" role="tab" data-toggle="tab">Material</a></li>
-    		<li role="presentation"><a href="#proveedores" aria-controls="profile" role="tab" data-toggle="tab">Proveedores</a></li>
+    		<li role="presentation"><a href="#proveedores" aria-controls="proveedores" role="tab" data-toggle="tab">Proveedores</a></li>
     	</ul>
     	<div class="tab-content">
 	    	<div role="tabpanel" class="tab-pane active" id="material">
@@ -369,7 +369,24 @@
 					    <h3 class="panel-title">Proveedores</h3>
 					  </div>
 					  <div class="panel-body">
-					  
+					  		<table class="table table-bordered table-hover">	
+	        					<thead class="header-tabla">
+	        						<tr>
+							    		<th>Rif</th>
+							    		<th>Nombre</th>
+							    		<th>Tlfs</th>
+					    			</tr>
+					    		</thead>
+					   			<tbody>
+						        {{#each material.proveedores  as |proveedor|}}
+					  				<tr>
+										<td class="col-tabla">{{proveedor.rif}}</td>
+										<td class="col-tabla"><{{proveedor.nombre}}</td>
+										<td class="col-tabla"><{{proveedor.tlf1}} / {{proveedor.tlf2}}</td>
+									</tr>
+								{{/each}}
+								</tbody>
+							</table>
 					  </div>
 					</div>
 

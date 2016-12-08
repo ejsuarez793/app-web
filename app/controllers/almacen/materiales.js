@@ -10,8 +10,9 @@ export default Ember.Controller.extend({
 	select:{},
 	pcs: [],
 	pss: [],
-	material:{
+	/*material:{
 		codigo: '',
+		nombre: '',
 		serial: '',
 		desc: '',
 		presen: '',
@@ -23,21 +24,22 @@ export default Ember.Controller.extend({
 		alto: '',
 		largo: '',
 		ancho: '',
-	},
-	/*material:{
-		'codigo': 'codigo',
+	},*/
+	material:{
+		'codigo': 'MAT-001',
+		nombre: "Nombre material",
 		serial: 'Serial',
 		desc: 'Descripcion',
 		presen: 'Presentacion',
-		precio_act: 'Precio Actual',
-		cantidad: 'Cantidad',
+		precio_act: '105870',
+		cantidad: '100',
 		marca: 'Marca',
 		modelo: 'Modelo',
 		color: 'Color',
 		alto: 'Alto',
 		largo: 'Largo',
 		ancho: 'Ancho',
-	},*/
+	},
 	init(){
 		this._super();
 		if (!((Cookies.get('token')===undefined) || (Cookies.getJSON('current')===undefined))){
@@ -229,6 +231,7 @@ export default Ember.Controller.extend({
 			
 			material.precio_act = numeral(material.precio_act).format('0,0.00');
 			material.f_act = moment(material.f_act).format('l');
+
 		});
 		_this.set('materiales',materiales);
 	 	_this.paginationInitialize(10);	
@@ -350,14 +353,32 @@ export default Ember.Controller.extend({
 	prepararModal(editing,material){
 		if (editing==='false'){
 			this.set('editing',false);
-			//$("#codigo").prop('disabled', false);
-			this.set('material', {});
+			$("#codigo").prop('disabled', false);
+			//this.set('material', {});
+			this.set('pcs',[]);
 			this.set('pss',this.get('proveedores').toArray());
 		}else{
 			this.set('editing',true);
+			this.ordenarMaterialProveedores(material);
 			var aux =  $.extend(true, {}, material);
-			//$("#codigo").prop('disabled', true);
+			$("#codigo").prop('disabled', true);
 			this.set('material',aux);
+			aux =  $.extend(true, [], material.proveedores);
+			this.set('pcs',aux);
+			this.set('pss',[]);
+			var _this = this;
+			var flag = false;
+			$.each(this.get('proveedores').toArray(),function(i,proveedor){
+				flag=false;
+				$.each(aux,function(i,aux){
+					if (aux.rif === proveedor.rif){
+						flag = true;
+					}
+				});
+				if (flag===false){
+					_this.get('pss').pushObject(proveedor);
+				}
+			});
 		}
 		//se reinician los errores
 		$(".form-group").removeClass('has-success');
@@ -366,13 +387,30 @@ export default Ember.Controller.extend({
 
 		$("#myModal").modal('show');
 	},
+	ordenarMaterialProveedores(material){
+		if (material.flag !== true){
+			var proveedores = this.get('proveedores').toArray();
+			var aux =[];
+			$.each(material.proveedores, function(i,material_proveedor){
+				//console.log(material_proveedor);
+				$.each(proveedores , function(i, proveedor){
+					if (proveedor.rif === material_proveedor){
+						aux.push(proveedor);
+					}
+				});
+			});
+			material.proveedores = aux;
+			material.flag = true;
+		}
+	},
 
 	actions: {
 
 		openModal: function(editing,material){
 			this.prepararModal(editing,material);
 		},
-		openModalDetail: function(editing,material){
+		openModalDetail: function(material){
+			this.ordenarMaterialProveedores(material);
 			$("#myModalDetail").modal('show');
 			this.set('material',material);
 		},
@@ -387,8 +425,13 @@ export default Ember.Controller.extend({
 				method = "PATCH";
 				url = window.serverUrl +'/material/' + material.codigo +'/';
 			}
-			material.serial=null;
-			var data = material;
+			if (material.serial==null || material.serial==="" || material.serial===undefined){
+				this.set('material.serial',null);
+			}
+			var data = {};
+			data.material = material;
+			data.proveedores = this.get('pcs').toArray();
+			console.log(data);
 			this.validarCampos();
 			if ($("#formulario").valid()){
 				this.llamadaServidor(method,url,data);
@@ -409,24 +452,20 @@ export default Ember.Controller.extend({
 			}
 			var aux = this.ordenar(property,asc,this.get('materiales').toArray());
 			this.set('materiales',aux);
-			//this.get('servicios').sortBy('codigo');
 
     	},
     	openModalProveedores: function(){
     		$('#myModalProveedores').modal('show');
     	},
     	agregarProveedores: function(){
-    		console.log("agregar");
     		var pcs = [];
-    		var pss = [];
     		var _this = this;
 
 
 			$('#myModalProveedores input:checked').each(function() {
 			    pcs.push($(this).val());
 			});
-			//console.log(this.get('proveedores').toArray());
-			var aux =  $.extend(true, {}, this.get('proveedores').toArray())
+			var aux =  $.extend(true, {}, this.get('proveedores').toArray());
 			$.each(aux, function(i,proveedor){
 				if ($.inArray(proveedor.rif, pcs) !== -1){
 					_this.get('pcs').pushObject(proveedor);
@@ -438,12 +477,11 @@ export default Ember.Controller.extend({
 					_this.get('pss').removeObject(pss);
 				}
 			});
+			$("#myModalProveedores").modal('hide');
 
     	},
     	eliminarProveedores: function(){
     		console.log("eliminar");
-
-    		var pcs = [];
     		var pss = [];
     		var _this = this;
 
@@ -451,11 +489,8 @@ export default Ember.Controller.extend({
 			$('#myModal input:checked').each(function() {
 			    pss.push($(this).val());
 			});
-			//console.log(pss);
-			console.log(this.get('proveedores').toArray());
-			var aux =  $.extend(true, {}, this.get('proveedores').toArray())
+			var aux =  $.extend(true, {}, this.get('proveedores').toArray());
 			$.each(aux, function(i,proveedor){
-				//dconsole.log(proveedor);
 				if ($.inArray(proveedor.rif, pss) !== -1){
 					_this.get('pss').pushObject(proveedor);
 				}
@@ -466,9 +501,6 @@ export default Ember.Controller.extend({
 					_this.get('pcs').removeObject(pcs);
 				}
 			});
-
-			/*console.log(this.get('pcs').toArray());
-			console.log(this.get('pss').toArray());*/
     	}
 	}
 });
