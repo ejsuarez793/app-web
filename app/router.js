@@ -11,12 +11,14 @@ Router.map(function() {
   this.route('vendedor', function() {
     this.route('clientes');
     this.route('solicitud');
+    this.route('proyectos');
   });
 
   this.route('proyectos', function() {
     this.route('solicitudes');
     this.route('servicios');
     this.route('proyectos');
+    this.route('proyecto', { path: '/proyecto/:codigo' });
   });
 
   this.route('almacenista', function() {});

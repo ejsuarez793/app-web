@@ -1,0 +1,288 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Proyecto</h2>
+          </div>
+
+        </div>
+
+        <div class="row ">
+			    {{coordinador-sidebar-component}}
+          <div class="col-md-10">
+          <div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation"><a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a></li>
+              <li role="presentation"><a href="#etapas" aria-controls="etapas" role="tab" data-toggle="tab">Etapas</a></li>
+              <li role="presentation"><a href="#listado" aria-controls="listado" role="tab" data-toggle="tab">Listado Materiales</a></li>
+              <li role="presentation"><a href="#solicitudesmat" aria-controls="solicitudesmat" role="tab" data-toggle="tab">Solicitudes de Material</a></li>
+              <li role="presentation" class="active"><a href="#presupuesto" aria-controls="presupuesto" role="tab" data-toggle="tab">Presupuesto(s)</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane" id="general">general</div>
+              <div role="tabpanel" class="tab-pane" id="etapas">etapas</div>
+              <div role="tabpanel" class="tab-pane" id="listado">listado</div>
+              <div role="tabpanel" class="tab-pane" id="solicitudesmat">solicitudesmat</div>
+              <div role="tabpanel" class="tab-pane active" id="presupuesto">
+
+              <div class="row">
+
+                <div class="col-lg-9">
+                
+                </div>
+
+                <div class="col-lg-3">
+                  <h6>
+                    <button class="btn btn-primary" {{action 'openModalPresupuesto' 'false'}} type="submit">Solicitar Presupuesto</button>
+                  </h6>
+                </div>
+
+                <div class="col-md-12">
+                <table class="table table-bordered table-hover " id="tabla">  
+                  <thead class="header-tabla">
+                    <tr>
+                      <th {{action "ordenarPor" "codigo"}}>Codigo<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th {{action "ordenarPor" "nombre"}}>Vendedor<span id="th-nombre" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th{{action "ordenarPor" "nombre_c"}}>Fecha<span id="th-nombre_c" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th{{action "ordenarPor" "estatus"}}>Estado<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th>Detalles</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody" class="text-center">
+                    {{#each filter as |proyecto|}}
+                    <tr>
+                      <td class="col-tabla">{{proyecto.codigo}}</td>
+                      <td class="col-tabla"><{{proyecto.nombre}}</td>
+                      <td class="col-tabla">{{proyecto.nombre_c}}</td>
+                      <td class="col-tabla">{{proyecto.estatus}}</td>
+                      <td >{{#if proyecto.codigo_ri}} <button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Abrir</button> {{else}}No Disponible{{/if}}</td>
+                      <td >
+                      {{#link-to 'proyectos.proyecto' proyecto.codigo}}
+                      <button  class="btn btn-default btn-xs" {{bindAttr href="view.href"}}>Info</button> 
+                      {{/link-to}}
+                      </td>
+                    </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+                </div>
+
+              </div>
+
+              </div>
+
+          </div>
+
+
+
+          </div>
+          </div>
+		    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Modal Presupuesto-->
+<div class="modal fade " id="myModalPresupuesto" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalPresupuestoLabel">Presupuesto</h4>
+        <small class="form-text text-muted"></small>
+      </div>
+
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+
+            <div class="col-md-12 well">
+            <div class="col-md-8">
+              <ul class="ul-presupuesto">
+                <li><b>Sistelred, C.A</b></li>
+                <li><b>Rif J-30994445-2</b></li>
+                <li>Caracas, 27/Junio/2016</li>
+                <li><b>Cotización a:</b> {{proyecto.cliente.rif}}, {{proyecto.cliente.nombre}}, {{proyecto.cliente.tlf1}}</li>
+                <br>
+              </ul>
+            </div>
+            <div class="col-md-4">
+            <ul class="ul-presupuesto">
+                <li ><b>Cotización Nro:</b> {{np_cod}}</li>
+            </ul>
+            </div>
+            <div class="col-md-12">
+              <ul class="text-center ul-presupuesto">
+                <li ><b>Atención: </b> Ing Pedro Perez, <b>Email: </b>pperez@provincial.com</li>
+              </ul>
+            </div>
+            </div>
+            <div class="col-md-12 well">
+               <div class="col-md-12">
+               <table class="table table-bordered table-hover " id="tabla">  
+                  <thead class="header-tabla">
+                    <tr>
+                      <th {{action "ordenarPor" "codigo"}}>Codigo<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th>Descripción</th>
+                      <th>Cantidad</th>
+                      <th>Precio Unitario</th>
+                      <th {{action "ordenarPor" "estatus"}}>Precio Total</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody" class="text-center">
+                    {{#each filter as |proyecto|}}
+                    <tr>
+                      <td class="col-tabla">{{proyecto.codigo}}</td>
+                      <td class="col-tabla"><{{proyecto.nombre}}</td>
+                      <td class="col-tabla">{{proyecto.nombre_c}}</td>
+                      <td class="col-tabla">{{proyecto.estatus}}</td>
+                      <td >{{#if proyecto.codigo_ri}} <button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Abrir</button> {{else}}No Disponible{{/if}}</td>
+                      <td >
+                      {{#link-to 'proyectos.proyecto' proyecto.codigo}}
+                      <button  class="btn btn-default btn-xs" {{bindAttr href="view.href"}}>Info</button> 
+                      {{/link-to}}
+                      </td>
+                    </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+                </div>
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-3">
+                  <h2>
+                    <div class="input-group" aria-describedby="basic-addon2">
+                    <span class="input-group-addon" id="basic-addon2">Tipo</span>
+                      <select class="form-control" name="anadir" id="anadir">
+                        <option value="servicio" selected>Servicio</option>
+                        <option value="material">Material</option>
+                      </select>   
+                    </div>
+                  </h2>
+                </div>
+                <div class="col-lg-3 ">
+                  <h2>
+                    <button class="btn btn-primary" {{action 'openModalAgregarMS'}}>Añadir</button>
+                  </h2>
+                </div>
+
+            </div>
+
+            <div class="col-md-6 well">
+              <ul class="ul-presupuesto">
+                <li ><b>Observaciones </b></li>
+                <li>
+                  <p>
+                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-6 well text-center">
+               <dl class="dl-horizontal">
+                    <dt>Subtotal 1:</dt> <dd>Bs. 0.0</dd>
+                    <dt>Descuento (0%):</dt> <dd>Bs. 0.0</dd>
+                    <dt>Subtotal Final:</dt> <dd>Bs. 0.0</dd>
+                    <dt>I.V.A (12%):</dt> <dd>Bs. 0.0</dd>
+                    <dt>TOTAL:</dt> <dd>Bs. 0.0</dd>
+                </dl>
+            </div>
+             <div class="col-md-12 well">
+              <ul class="ul-presupuesto">
+
+                  <li ><b>Condiciones Generales </b></li>
+                  <li><p>Del fabricante.-</p></li>
+
+                  <li ><b>Validez de la oferta </b></li>
+                  <li><p>Siete (07) Días hábiles</p></li>
+
+                  <li ><b>Precios </b> </li>
+                  <li>
+                    <p>
+                      Precio sujeto a cambios sin previo aviso, dependerá de la alta rotación de inventario y disponibilidad.- <br>
+                      Estos precios no incluyen transporte fuera del área metropolitana de Caracas.-<br>
+                      Estos precios incluyen el Impuesto al Valor Agregado (IVA).-<br>
+                    </p>
+                  </li>
+
+                  <li ><b>Tiempo de Entrega </b> </li>
+                  <li><p>Previa planificación con el cliente final.-</p></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" id="submit-button" {{action 'save'}} class="btn btn-primary">Procesar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal MATERIALES-->
+<div class="modal fade " id="myModalMateriales" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Materiales</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">  
+              <thead class="header-tabla">
+                <tr>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Características</th>
+                  <th>Marca / Modelo</th>
+                  <th>Seleccionar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each mss as |material|}}
+                <tr>
+                  <td class="col-tabla">{{material.codigo}}</td>
+                  <td class="col-tabla">{{material.nombre}}</td>
+                  <td class="col-tabla">{{material.desc}}</td>
+                  <td class="col-tabla">
+
+                    <strong>Color:  </strong> {{material.color}} <br>
+                    <strong>Serial: </strong> {{material.serial}} <br>
+
+                  </td>
+                  <td class="col-tabla">{{material.marca}} / {{material.modelo}}</td>
+                  <td><input type="checkbox" value={{material.codigo}}></td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+        </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'agregarProveedores'}} class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

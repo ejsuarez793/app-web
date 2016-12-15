@@ -1,0 +1,80 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+   
+          <div class="col-lg-2  ">
+            <h2>Proyectos</h2>
+          </div>
+
+          <div class="col-lg-3 ">
+            <h2>
+              <div class="input-group">
+                 {{input name="filtro" id="filtro" type="text" class="form-control" placeholder="Filtrar proyecto" value=filtro}}
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                  </span>
+              </div>
+            </h2>
+          </div>
+
+          <div class="col-lg-2 ">
+            <h2>
+              <div class="input-group" aria-describedby="basic-addon2">
+                <select class="form-control" name="page" id="page">
+                  <option value="1">1</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>   
+                <span class="input-group-addon" id="basic-addon2">Tam. Pag.</span>
+              </div>
+            </h2>
+          </div>
+
+        </div>
+
+
+	<div class="row ">
+
+		{{vendedor-sidebar-component}}
+		<div class="col-md-10">
+		<table class="table table-bordered table-hover " id="tabla">	
+        	<thead class="header-tabla">
+        		<tr>
+				    <th {{action "ordenarPor" "codigo"}}>Codigo <span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th {{action "ordenarPor" "nombre"}}>Nombre <span id="th-nombre" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th{{action "ordenarPor" "nombre_c"}} >Cliente <span id="th-nombre_c" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th{{action "ordenarPor" "ubicacion"}} >Ubicación<span id="th-ubicacion" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th{{action "ordenarPor" "estatus"}} >Estado<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th>Presupuesto(s)</th>
+  				</tr>
+  			</thead>
+  			<tbody id="tbody" class="text-center">
+  			{{#each filter as |proyecto|}}
+  				<tr>
+					<td class="col-tabla">{{proyecto.codigo}}</td>
+					<td class="col-tabla"><{{proyecto.nombre}}</td>
+					<td class="col-tabla">{{proyecto.nombre_c}}</td>
+					<td class="col-tabla">{{proyecto.ubicacion}}</td>
+					<td class="col-tabla">{{proyecto.estatus}}</td>
+          			<td class="text-center">
+	          			{{#if proyecto.codigo_ri}} 
+	          			<button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Crear</button>
+	          			<button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Ver</button> 
+	          			{{else}}No Disponible{{/if}}
+          			</td>
+					
+				</tr>
+			{{/each}}
+ 			</tbody>
+		</table>
+    	<div class="text-center">
+     		<ul id="pagination" class="pagination-sm"></ul>
+    	</div>
+		</div>
+
+	</div>
+
+
+</div>

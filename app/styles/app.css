@@ -75,5 +75,9 @@ ul {
     padding-right: 1em;
 }
 
-.dataTables_filter, .dataTables_info { display: none; }
+.ul-presupuesto{
+  padding: 0px;
+}
+
+.modal { overflow: auto !important; }
 
