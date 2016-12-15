@@ -1,6 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
+	ecs: [],
+	sss: [],
+	mss: [],
 
 	init(){
 		this._super();
@@ -57,7 +60,6 @@ export default Ember.Controller.extend({
 		}	
 		_this.set('materiales',materiales);
 	},
-
 	prepararModalPresupuesto(){
 		var proyecto = this.get('proyecto');
 		var cont = 0;
@@ -72,29 +74,126 @@ export default Ember.Controller.extend({
 			console.log("El proyecto tiene mas de 26 presupuestos no se puede crear más");
 		}
 	},
-	prepararModalMateriales(){
-		$("#myModalMateriales").modal('show');
-		var materiales = this.get('materiales');
-		console.log(materiales);
-		this.set('mss',materiales);
+	prepararModalElementos(tipo_e){
+		var elementos = [];
+		var elementos_cs = this.get('ecs').toArray();
+		var aux = [];
+		var elementos_ss = [];
+		var modal = '';
+		var ss = '';
+		if (tipo_e==='servicio'){
+			elementos = this.get('servicios').toArray();
+			ss = 'sss';
+			modal = "#myModalServicios";
+		}else if(tipo_e==='material'){
+			elementos = this.get('materiales').toArray();
+			ss = 'mss';
+			modal = "#myModalMateriales";
+		}
+		this.set(ss,[]);
+		elementos_ss = this.get(ss);
+		aux =  $.extend(true, [], elementos);
+		this.prepararSinSeleccion(aux,elementos_cs,elementos_ss);
+		$(modal).modal('show');
+	},
+	prepararSinSeleccion(elementos,elementos_cs,elementos_ss){
+		var flag = false;
+		$.each(elementos,function(i, elemento){
+			flag=false;
+			$.each(elementos_cs, function(i,elemento_cs){
+				if (elemento.codigo === elemento_cs.codigo){
+					flag=true;
+				}
+
+			});
+			if (flag===false){
+				elementos_ss.pushObject(elemento);
+			}
+		});
+	},
+	eliminarElementos(){
+		var checkbox = '#myModalPresupuesto input:checked';
+		var elementos_cs = this.get('ecs');
+		var servicios = this.get('sss');
+		var materiales = this.get('mss');
+		var codigo = '';
+		//console.clear();
+		$(checkbox).each(function() {
+			codigo = $(this).val();
+			$.each(elementos_cs.toArray(), function(i,elemento_cs){
+				if (elemento_cs.codigo === codigo){
+					if (elemento_cs.tag === 'servicio'){
+						console.log(elemento_cs);
+						servicios.pushObject(elemento_cs);
+					}else if(elemento_cs.tag === 'material'){
+						materiales.pushObject(elemento_cs);
+					}
+					elementos_cs.removeObject(elemento_cs);
+				}
+			});
+
+		});
 	},
 	actions: {
 
 		openModalPresupuesto: function(){
 			this.prepararModalPresupuesto();
 			$("#myModalPresupuesto").modal('show');
-			/*console.log(this.get('servicios'));
-			console.log(this.get('materiales'));
-			console.log(this.get('proyecto'));*/
-			//console.log("abriendo");
 		},
 		openModalAgregarMS: function(){
 			var seleccion = $("#anadir").val();
-			if (seleccion === "servicio"){
-				console.log('s');
-			}else if (seleccion === "material"){
-				this.prepararModalMateriales();
+			this.prepararModalElementos(seleccion);
+		},
+		agregarElementos: function(tipo_e){
+			var checkbox='';
+			var elementos=[];
+			var elementos_cs =this.get('ecs');
+			var elementos_ss=[];
+			var modal = '';
+			var tag = '';
+
+			var cod_cs = [];
+			if (tipo_e === 'servicio'){
+				checkbox = '#myModalServicios input:checked';
+				elementos = this.get('servicios').toArray();
+				elementos_ss = this.get('sss');
+				modal = "#myModalServicios";
+				tag  = 'servicio';
+			}else if(tipo_e === 'material'){
+				checkbox = '#myModalMateriales input:checked';
+				elementos = this.get('materiales').toArray();
+				elementos_ss = this.get('mss');
+				modal = "#myModalMateriales";
+				tag  = 'material';
 			}
+
+    		//guardamos los codigos de los elementos seleccionados/checkeados en un arreglo
+			$(checkbox).each(function() {
+			    cod_cs.push($(this).val());
+			});
+
+			//verificamos el total de elementos, y si su codigo esta en el array de codigos lo
+			//agregamos al arreglo elementos con seleccion o ecs
+			var aux =  $.extend(true, {}, elementos);
+			$.each(aux, function(i,elemento){
+				if ($.inArray(elemento.codigo, cod_cs) !== -1){
+					elemento.tag = tag;
+					elementos_cs.pushObject(elemento);
+				}
+			});
+
+			//luego verificamos el arreglo de elementos sin seleccion (sss o mss)  y si el codigo de un
+			//elemento se encuentra en codigos con seleccion cod_cs lo retiramos
+			$.each(elementos_ss.toArray(),function(i,elemento_ss){
+				if($.inArray(elemento_ss.codigo, cod_cs) !== -1){
+					elementos_ss.removeObject(elemento_ss);
+				}
+			});
+			$(modal).modal('hide');
+		},
+		eliminarElementos: function(){
+			//console.log("eliminar");
+			this.eliminarElementos();
 		}
 	}
 });

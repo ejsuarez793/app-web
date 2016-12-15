@@ -133,32 +133,29 @@
                <table class="table table-bordered table-hover " id="tabla">  
                   <thead class="header-tabla">
                     <tr>
-                      <th {{action "ordenarPor" "codigo"}}>Codigo<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th {{action "ordenarPor" "codigo"}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
                       <th>Descripción</th>
                       <th>Cantidad</th>
                       <th>Precio Unitario</th>
                       <th {{action "ordenarPor" "estatus"}}>Precio Total</th>
+                      <th>Selección</th>
                     </tr>
                   </thead>
                   <tbody id="tbody" class="text-center">
-                    {{#each filter as |proyecto|}}
+                    {{#each ecs as |elemento|}}
                     <tr>
-                      <td class="col-tabla">{{proyecto.codigo}}</td>
-                      <td class="col-tabla"><{{proyecto.nombre}}</td>
-                      <td class="col-tabla">{{proyecto.nombre_c}}</td>
-                      <td class="col-tabla">{{proyecto.estatus}}</td>
-                      <td >{{#if proyecto.codigo_ri}} <button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Abrir</button> {{else}}No Disponible{{/if}}</td>
-                      <td >
-                      {{#link-to 'proyectos.proyecto' proyecto.codigo}}
-                      <button  class="btn btn-default btn-xs" {{bindAttr href="view.href"}}>Info</button> 
-                      {{/link-to}}
-                      </td>
+                      <td class="col-tabla">{{elemento.codigo}}</td>
+                      <td class="col-tabla"><{{elemento.desc}}</td>
+                      <td class="col-tabla">{{elemento.tag}}</td>
+                      <td class="col-tabla">{{elemento.precio_act}}</td>
+                      <td class="col-tabla"></td>
+                      <td><input type="checkbox" value={{elemento.codigo}}></td>
                     </tr>
                     {{/each}}
                   </tbody>
                 </table>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                 </div>
                 <div class="col-md-3">
                   <h2>
@@ -171,8 +168,9 @@
                     </div>
                   </h2>
                 </div>
-                <div class="col-lg-3 ">
+                <div class="col-lg-5 ">
                   <h2>
+                    <button class="btn btn-default" {{action 'eliminarElementos'}}>Eliminar Seleccionados</button>
                     <button class="btn btn-primary" {{action 'openModalAgregarMS'}}>Añadir</button>
                   </h2>
                 </div>
@@ -281,7 +279,55 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button  {{action 'agregarProveedores'}} class="btn btn-primary">Guardar</button>
+        <button  {{action 'agregarElementos' 'material'}} class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Modal SERVICIOS-->
+<div class="modal fade " id="myModalServicios" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Servicios</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">  
+              <thead class="header-tabla">
+                <tr>
+                  <th>Código</th>
+                  <th>Descripción</th>
+                  <th>Precio act</th>
+                  <th>Seleccionar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each sss as |servicio|}}
+                <tr>
+                  <td class="col-tabla">{{servicio.codigo}}</td>
+                  <td class="col-tabla">{{servicio.desc}}</td>
+                  <td class="col-tabla">{{servicio.precio_act}}</td>
+                  <td><input type="checkbox" value={{servicio.codigo}}></td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+        </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'agregarElementos' 'servicio'}} class="btn btn-primary">Guardar</button>
       </div>
     </div>
   </div>
