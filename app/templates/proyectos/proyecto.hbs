@@ -112,19 +112,24 @@
               <ul class="ul-presupuesto">
                 <li><b>Sistelred, C.A</b></li>
                 <li><b>Rif J-30994445-2</b></li>
-                <li>Caracas, 27/Junio/2016</li>
-                <li><b>Cotización a:</b> {{proyecto.cliente.rif}}, {{proyecto.cliente.nombre}}, {{proyecto.cliente.tlf1}}</li>
+                <li>Caracas, {{presupuesto.fecha_m}}</li>
+                <li><b>Cotización a:</b> {{proyecto.cliente.rif}}, {{proyecto.cliente.nombre}}, Tlf:{{proyecto.cliente.tlf1}}</li>
                 <br>
               </ul>
             </div>
             <div class="col-md-4">
             <ul class="ul-presupuesto">
-                <li ><b>Cotización Nro:</b> {{np_cod}}</li>
+                <li ><b>Cotización Nro:</b> {{presupuesto.codigo}}</li>
             </ul>
             </div>
             <div class="col-md-12">
               <ul class="text-center ul-presupuesto">
-                <li ><b>Atención: </b> Ing Pedro Perez, <b>Email: </b>pperez@provincial.com</li>
+                <li ><b>Atención: </b> {{presupuesto.atencion_n}}, <b>Email: </b>{{presupuesto.atencion_e}}</li>
+              </ul>
+            </div>
+            <div class="col-md-12">
+              <ul class=" ul-presupuesto">
+                <li >{{presupuesto.desc}}</li>
               </ul>
             </div>
             </div>
@@ -133,29 +138,33 @@
                <table class="table table-bordered table-hover " id="tabla">  
                   <thead class="header-tabla">
                     <tr>
-                      <th {{action "ordenarPor" "codigo"}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th class="col-md-1" {{action "ordenarPor" "codigo"}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
                       <th>Descripción</th>
-                      <th>Cantidad</th>
-                      <th>Precio Unitario</th>
-                      <th {{action "ordenarPor" "estatus"}}>Precio Total</th>
-                      <th>Selección</th>
+                      <th class="col-md-1">Cantidad</th>
+                      <th class="col-md-2">Precio Unitario</th>
+                      <th class="col-md-2" {{action "ordenarPor" "estatus"}}>Precio Total</th>
+                      <th class="col-md-1">Selección</th>
                     </tr>
                   </thead>
                   <tbody id="tbody" class="text-center">
                     {{#each ecs as |elemento|}}
-                    <tr>
+                    <tr >
                       <td class="col-tabla">{{elemento.codigo}}</td>
                       <td class="col-tabla"><{{elemento.desc}}</td>
-                      <td class="col-tabla">{{elemento.tag}}</td>
-                      <td class="col-tabla">{{elemento.precio_act}}</td>
-                      <td class="col-tabla"></td>
+                      <td class="col-tabla">
+                        <input type="number" class="form-control input-sm" id="cantidad_{{elemento.codigo}}" value="{{elemento.cantidad}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                      </td>
+                      <td class="col-tabla">
+                        <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                      </td>
+                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"></td>
                       <td><input type="checkbox" value={{elemento.codigo}}></td>
                     </tr>
                     {{/each}}
                   </tbody>
                 </table>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-2">
                 </div>
                 <div class="col-md-3">
                   <h2>
@@ -168,54 +177,53 @@
                     </div>
                   </h2>
                 </div>
-                <div class="col-lg-5 ">
+                <div class="col-lg-7 ">
                   <h2>
                     <button class="btn btn-default" {{action 'eliminarElementos'}}>Eliminar Seleccionados</button>
                     <button class="btn btn-primary" {{action 'openModalAgregarMS'}}>Añadir</button>
+                    <button class="btn btn-primary" {{action 'calcularMontoTotal'}}>Calcular Total</button>
                   </h2>
                 </div>
 
             </div>
 
-            <div class="col-md-6 well">
+            <div class="col-md-6 well col-pre-observ">
               <ul class="ul-presupuesto">
                 <li ><b>Observaciones </b></li>
                 <li>
                   <p>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.
+                  {{presupuesto.observ}}
                   </p>
                 </li>
               </ul>
             </div>
-            <div class="col-md-6 well text-center">
+            <div class="col-md-6 well col-pre-observ">
                <dl class="dl-horizontal">
-                    <dt>Subtotal 1:</dt> <dd>Bs. 0.0</dd>
-                    <dt>Descuento (0%):</dt> <dd>Bs. 0.0</dd>
-                    <dt>Subtotal Final:</dt> <dd>Bs. 0.0</dd>
-                    <dt>I.V.A (12%):</dt> <dd>Bs. 0.0</dd>
-                    <dt>TOTAL:</dt> <dd>Bs. 0.0</dd>
+                    <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
+                    <dt>Descuento ({{presupuesto.descuento}}%):</dt> <dd>Bs. <span id="descuento">0.0</span></dd>
+                    <dt>Subtotal Final:</dt> <dd>Bs. <span id="subtotalfinal">0.0</span></dd>
+                    <dt>I.V.A (12%):</dt> <dd>Bs. <span id="iva">0.0</span></dd>
+                    <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
                 </dl>
             </div>
              <div class="col-md-12 well">
               <ul class="ul-presupuesto">
 
                   <li ><b>Condiciones Generales </b></li>
-                  <li><p>Del fabricante.-</p></li>
+                  <li><p>{{presupuesto.cond_g}}</p></li>
 
                   <li ><b>Validez de la oferta </b></li>
-                  <li><p>Siete (07) Días hábiles</p></li>
+                  <li><p> {{presupuesto.validez_o}} Días hábiles</p></li>
 
                   <li ><b>Precios </b> </li>
                   <li>
                     <p>
-                      Precio sujeto a cambios sin previo aviso, dependerá de la alta rotación de inventario y disponibilidad.- <br>
-                      Estos precios no incluyen transporte fuera del área metropolitana de Caracas.-<br>
-                      Estos precios incluyen el Impuesto al Valor Agregado (IVA).-<br>
+                      {{presupuesto.cond_p}}
                     </p>
                   </li>
 
                   <li ><b>Tiempo de Entrega </b> </li>
-                  <li><p>Previa planificación con el cliente final.-</p></li>
+                  <li><p>{{presupuesto.t_ent}}</p></li>
               </ul>
             </div>
           </div>
@@ -224,7 +232,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button type="submit" id="submit-button" {{action 'save'}} class="btn btn-primary">Procesar</button>
+        <button type="submit" id="submit-button" {{action 'procesar'}} class="btn btn-primary">Procesar</button>
       </div>
     </div>
   </div>
