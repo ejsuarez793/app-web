@@ -38,7 +38,7 @@
 
                 <div class="col-lg-3">
                   <h6>
-                    <button class="btn btn-primary" {{action 'openModalPresupuesto' 'false'}} type="submit">Solicitar Presupuesto</button>
+                    <button class="btn btn-primary" {{action 'openModalPresupuesto' false}} type="submit">Solicitar Presupuesto</button>
                   </h6>
                 </div>
 
@@ -46,26 +46,21 @@
                 <table class="table table-bordered table-hover " id="tabla">  
                   <thead class="header-tabla">
                     <tr>
-                      <th {{action "ordenarPor" "codigo"}}>Codigo<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th {{action "ordenarPor" "nombre"}}>Vendedor<span id="th-nombre" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th{{action "ordenarPor" "nombre_c"}}>Fecha<span id="th-nombre_c" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th{{action "ordenarPor" "estatus"}}>Estado<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th>Detalles</th>
+                      <th class="col-md-2" {{action "ordenarPor" "codigo" true}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th {{action "ordenarPor" "desc" true}}>Descripción<span id="th-desc" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th class="col-md-1"{{action "ordenarPor" "fecha" true}}>Fecha<span id="th-fecha" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th class="col-md-1"{{action "ordenarPor" "estatus" true}}>Estado<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th class="col-md-1">Detalles</th>
                     </tr>
                   </thead>
                   <tbody id="tbody" class="text-center">
-                    {{#each filter as |proyecto|}}
+                    {{#each proyecto.presupuestos as |presupuesto|}}
                     <tr>
-                      <td class="col-tabla">{{proyecto.codigo}}</td>
-                      <td class="col-tabla"><{{proyecto.nombre}}</td>
-                      <td class="col-tabla">{{proyecto.nombre_c}}</td>
-                      <td class="col-tabla">{{proyecto.estatus}}</td>
-                      <td >{{#if proyecto.codigo_ri}} <button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Abrir</button> {{else}}No Disponible{{/if}}</td>
-                      <td >
-                      {{#link-to 'proyectos.proyecto' proyecto.codigo}}
-                      <button  class="btn btn-default btn-xs" {{bindAttr href="view.href"}}>Info</button> 
-                      {{/link-to}}
-                      </td>
+                      <td class="col-tabla">{{presupuesto.codigo}}</td>
+                      <td class="col-tabla"><{{presupuesto.desc}}</td>
+                      <td class="col-tabla">{{presupuesto.fecha}}</td>
+                      <td class="col-tabla">{{presupuesto.estatus}}</td>
+                      <td ><button {{action 'openModalPresupuesto' true presupuesto}} class="btn btn-default btn-xs">Abrir</button></td>
                     </tr>
                     {{/each}}
                   </tbody>
@@ -138,11 +133,11 @@
                <table class="table table-bordered table-hover " id="tabla">  
                   <thead class="header-tabla">
                     <tr>
-                      <th class="col-md-1" {{action "ordenarPor" "codigo"}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th class="col-md-1" {{action "ordenarPor" "codigo" false}}>Código<span id="th-codigo1" class="glyphicon glyphicon-chevron-down"></span></th>
                       <th>Descripción</th>
                       <th class="col-md-1">Cantidad</th>
                       <th class="col-md-2">Precio Unitario</th>
-                      <th class="col-md-2" {{action "ordenarPor" "estatus"}}>Precio Total</th>
+                      <th class="col-md-2" {{action "ordenarPor" "precio_total"}}>Precio Total</th>
                       <th class="col-md-1">Selección</th>
                     </tr>
                   </thead>
@@ -157,7 +152,7 @@
                       <td class="col-tabla">
                         <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
                       </td>
-                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"></td>
+                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total}}</td>
                       <td><input type="checkbox" value={{elemento.codigo}}></td>
                     </tr>
                     {{/each}}

@@ -168,7 +168,7 @@ export default Ember.Controller.extend({
 			this.prepararModal(proyecto);
 
 		},
-		openModalDetalle: function(proyecto){
+		openModalDetalle: function(/*proyecto*/){
 			//this.prepararModal(proyecto);
 			$("#myModalDetalle").modal('show');
 
