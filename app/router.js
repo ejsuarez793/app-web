@@ -12,6 +12,7 @@ Router.map(function() {
     this.route('clientes');
     this.route('solicitud');
     this.route('proyectos');
+    this.route('proyecto', { path: '/proyecto/:codigo' });
   });
 
   this.route('proyectos', function() {

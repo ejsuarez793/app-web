@@ -82,3 +82,7 @@ ul {
 .modal { overflow: auto !important; }
 
 .col-pre-observ{ height: 170px; }
+
+.jumbo-color{
+  background-color: #B0C4DE;
+}

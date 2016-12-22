@@ -47,7 +47,7 @@
 				    <th{{action "ordenarPor" "nombre_c"}} >Cliente <span id="th-nombre_c" class="glyphicon glyphicon-chevron-down"></span></th>
 				    <th{{action "ordenarPor" "ubicacion"}} >Ubicación<span id="th-ubicacion" class="glyphicon glyphicon-chevron-down"></span></th>
 				    <th{{action "ordenarPor" "estatus"}} >Estado<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
-				    <th>Presupuesto(s)</th>
+				    <th>Detalles</th>
   				</tr>
   			</thead>
   			<tbody id="tbody" class="text-center">
@@ -59,10 +59,9 @@
 					<td class="col-tabla">{{proyecto.ubicacion}}</td>
 					<td class="col-tabla">{{proyecto.estatus}}</td>
           			<td class="text-center">
-	          			{{#if proyecto.codigo_ri}} 
-	          			<button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Crear</button>
-	          			<button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Ver</button> 
-	          			{{else}}No Disponible{{/if}}
+	          			
+	          			{{#link-to 'vendedor.proyecto' proyecto.codigo}}<button  class="btn btn-default btn-xs" {{bindAttr href="view.href"}}>Ver</button> {{/link-to}}
+	          			
           			</td>
 					
 				</tr>
