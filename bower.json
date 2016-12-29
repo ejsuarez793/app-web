@@ -11,6 +11,9 @@
     "twbs-pagination": "^1.4.1",
     "moment": "^2.17.0",
     "numeral-js": "^0.1.2",
-    "lodash": "^4.17.2"
+    "lodash": "^4.17.2",
+    "jspdf-plugins": "jsPDF-plugins#*",
+    "jspdf": "1.2.61",
+    "html2canvas": "^0.4.1"
   }
 }

@@ -86,3 +86,7 @@ ul {
 .jumbo-color{
   background-color: #B0C4DE;
 }
+
+textarea.form-control {
+  height: 120px;
+}

@@ -1,3 +1,5 @@
+
+
 {{logged-header-component currentName=currentName }}
  <div class="container-fluid">
         <div class="row">
@@ -11,32 +13,6 @@
         <div class="row ">
 			{{vendedor-sidebar-component}}
           	<div class="col-md-10">
-
-          	<!--
-          	<div class="panel panel-default">
-	  			<div class="panel-body">
-	    			<div class="row">
-	    				<div class="col-md-12">
-
-	    					<div class="well">
-		    					<div class="page-header">
-								  <h4>Example page header <small>Subtext for header</small></h4>
-								</div>
-								<p>apdasdasdadasdasds</p>
-	    					</div>
-	    				</div>
-	    				<div class="col-md-6">
-	    					<div class="well">
-	    					</div>
-	    				</div>
-	    				<div class="col-md-6">
-	    					<div class="well">
-	    					</div>
-	    				</div>
-	    			</div>
-	  			</div>
-			</div>
-			-->
 
 	    			<div class="well jumbo-color">
   						<div class="row">
@@ -68,83 +44,128 @@
 
 	    					</div>
 
-	    					<div class="col-md-6">
 
-	    						<div class="panel panel-default">
-									<div class="panel-heading">
-										<h3 class="panel-title">Presupuesto(s)</h3>
-									</div>
-						  			<div class="panel-body">
-						  				<ul class="list-group">
-						  				{{#each proyecto.presupuestos as |presupuesto|}}
-						  					 <li class="list-group-item" {{action 'openModalPresupuesto' presupuesto false}}>
 
-	    										{{fa-icon "file-text"}} 
-	    										<strong>Presupuesto:</strong> {{presupuesto.codigo}} 
-	    										{{#if presupuesto}}
-	    											<button  class="btn btn-success btn-xs" {{action 'openModalPresupuesto' presupuesto true bubbles=false}}> 
-	    											{{fa-icon "pencil-square-o"}} editar
-	    											</button> 
-	    										{{/if}}
+                {{#if proyecto.preventa}}
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                       <h3 class="panel-title">Presupuesto(s)</h3>
+                      </div>
+                      <div class="panel-body">
+                        <ul class="list-group">
+                        {{#each proyecto.presupuestos as |presupuesto|}}
+                          <li class="list-group-item" {{action 'openModalPresupuesto' presupuesto false}}>
+                            {{fa-icon "file-text"}} 
+                            <strong>Presupuesto:</strong> {{presupuesto.codigo}} 
+                            {{#if presupuesto.noAprobado}}
+                              <button  class="btn btn-success btn-xs" {{action 'openModalPresupuesto' presupuesto true bubbles=false}}> 
+                              {{fa-icon "pencil-square-o"}} editar
+                              </button> 
+                            {{/if}}
+                            <span class="badge">{{presupuesto.estatus}}</span>
+                        </li>
+                        {{/each}}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-9">
+                  </div>
+                   <div class="col-lg-3">
+                      <button  {{action 'procesarProyecto' proyecto 'Rechazado'}} class="btn btn-default">Rechazar</button>
+                      <button  {{action 'procesarProyecto' proyecto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
+                   </div>
+                {{/if}}
 
-	    										
-	    										<span class="badge">{{presupuesto.estatus}}</span>
-											
-											</li>
-										{{/each}}
-										</ul>
-						  			</div>
-						  		</div>
 
+
+
+                {{#if proyecto.rechazado}}
+	    					  <div class="col-md-6">
+	    						  <div class="panel panel-default">
+    									<div class="panel-heading">
+    									 <h3 class="panel-title">Presupuesto(s)</h3>
+    									</div>
+  						  		  <div class="panel-body">
+  						  			  <ul class="list-group">
+  						  				{{#each proyecto.presupuestos as |presupuesto|}}
+  						  					<li class="list-group-item" {{action 'openModalPresupuesto' presupuesto false}}>
+  	    										{{fa-icon "file-text"}} 
+  	    										<strong>Presupuesto:</strong> {{presupuesto.codigo}} 
+  	    										{{#if presupuesto.noAprobado}}
+  	    											<button  class="btn btn-success btn-xs" {{action 'openModalPresupuesto' presupuesto true bubbles=false}}> 
+  	    											{{fa-icon "pencil-square-o"}} editar
+  	    											</button> 
+  	    										{{/if}}
+  	    										<span class="badge">{{presupuesto.estatus}}</span>
+  											</li>
+  										  {{/each}}
+  										  </ul>
+  						  			</div>
+						  		  </div>
 	    					</div>
 
 	    					<div class="col-md-6">
-
-	    						<div class="panel panel-default">
-									<div class="panel-heading">
-										<h3 class="panel-title">Causa Rechazo</h3>
-									</div>
+	    					  <div class="panel panel-default">
+  									<div class="panel-heading">
+  										<h3 class="panel-title">Causa Rechazo</h3>
+  									</div>
 						  			<div class="panel-body">
-										<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+                      {{#if proyecto.causa_rechazo}}
+										  <p>{{proyecto.causa_rechazo.desc}}</p>
+                      {{else}}
+                          <div class="form-group">
+                          {{textarea name="causa_rechazo" id="causa_rechazo" type="text" class="form-control" placeholder="Causas del rechazo del proyecto" value=causa_rechazo}}
+                          </div>
+                          <button  class="btn btn-primary pull-right" {{action 'guardarCausaRechazo'}}> Guardar</button>
+                      {{/if}}
 						  			</div>
 						  		</div>
-
 	    					</div>
+                {{/if}}
+
+
+                {{#if proyecto.aprobado}}
+                  <div class="col-md-6">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                       <h3 class="panel-title">Presupuesto(s)</h3>
+                      </div>
+                      <div class="panel-body">
+                        <ul class="list-group">
+                        {{#each proyecto.presupuestos as |presupuesto|}}
+                          <li class="list-group-item" {{action 'openModalPresupuesto' presupuesto false}}>
+                            {{fa-icon "file-text"}} 
+                            <strong>Presupuesto:</strong> {{presupuesto.codigo}} 
+                            {{#if presupuesto.noAprobado}}
+                              <button  class="btn btn-success btn-xs" {{action 'openModalPresupuesto' presupuesto true bubbles=false}}> 
+                              {{fa-icon "pencil-square-o"}} editar
+                              </button> 
+                            {{/if}}
+                            <span class="badge">{{presupuesto.estatus}}</span>
+                        </li>
+                        {{/each}}
+                        </ul>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Facturar</h3>
+                    </div>
+                    <div class="panel-body">
+                      
+                    </div>
+                  </div>
+                </div>
+                {{/if}}
 	    			</div>
 
 	</div>
 				
-
-
-				<!--
-
-  					<div class="row jumbo-color">
-	    				<div class="col-md-12 ">
-
-							<div class="panel panel-default">
-					  			<div class="panel-body">
-					  				<div class="page-header">
-								  		<h4>Example page header <small>Subtext for header</small></h4>
-									</div>
-									<p>apdasdasdadasdasds</p>
-					  			</div>
-					  		</div>
-	    				</div>
-	    				<div class="col-md-6">
-	    					<div class="panel panel-default">
-					  			<div class="panel-body">
-					  			</div>
-					  		</div>
-	    				</div>
-	    				<div class="col-md-6">
-	    					<div class="panel panel-default">
-					  			<div class="panel-body">
-					  			</div>
-					  		</div>
-	    				</div>
-	    			</div>
-				-->
-
 
           </div>
         </div>
@@ -163,7 +184,7 @@
         <small class="form-text text-muted"></small>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" id="modalBody">
       	<form  id="formulario">
         <div class="container-fluid">
           <div class="row">
@@ -312,7 +333,7 @@
 	                  	{{#if editing}}
 	                  		<div class="col-sm-12">
 		                	<div class="form-group">
-		                	{{input name="validez_o" id="validez_o" type="text" class="form-control" placeholder="Validez Oferta" value=pe.validez_o}}
+		                	{{input name="validez_o" id="validez_o" type="number" class="form-control" placeholder="Validez Oferta en Días Hábiles" value=pe.validez_o}}
 		                	</div>
 		                	</div>
 		                {{else}}
@@ -335,6 +356,17 @@
 		                {{/if}}
 
                 	</li>
+
+                  {{#if editing}}
+                  <li ><b>Descuento (%): </b> </li>
+                    <li>
+                        <div class="col-sm-12">
+                      <div class="form-group">
+                      {{input name="descuento" id="descuento" type="number" class="form-control" placeholder="Descuento del Presupuesto" value=pe.descuento}}
+                      </div>
+                      </div>
+                    </li>                    
+                  {{/if}}
                 </div>
               </ul>
             </div>
@@ -349,9 +381,12 @@
       <div class="modal-footer">
       {{#if editing}}
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button type="submit" id="submit-button" {{action 'guardar' presupuesto}} class="btn btn-primary">Guadar</button>
+        <button  {{action 'guardar' presupuesto presupuesto.estatus}} class="btn btn-primary">Guadar</button>
       {{else}}
-      	procesar pdf
+      	
+        <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
+        <button  {{action 'guardar' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
+        <button  {{action 'guardar' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
       {{/if}}
       </div>
     </div>

@@ -27,6 +27,98 @@ export default Ember.Controller.extend({
 		    console.log(this.get('codigo'));
 		}
 	},
+	validarCampos: function(){
+		$.validator.addMethod("maxlength", function (value, element, len) {
+				return value === "" || value.length <= len;
+		});
+
+		$.validator.addMethod("customemail", 
+          function(value/*, element*/) {
+            return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value);
+        }, "Por favor ingrese un correo válido");
+
+		$("#formulario").validate({
+			rules:{
+				atencion_n:{
+					required:true,
+					maxlength: 75,
+				},
+				atencion_e:{
+					required:true,
+					customemail: true,
+				},
+				desc:{
+					required:true,
+					maxlength: 200,
+				},
+				observ:{
+					maxlength: 300,
+				},
+				cond_g:{
+					maxlength: 500,
+				},
+				validez_o:{
+					required:true,
+					number:true,
+					min: 1,
+				},
+				cond_p:{
+					maxlength: 500,
+				},
+				descuento:{
+					required:true,
+					number:true,
+					range: [0, 100],
+				}
+			},
+			messages:{
+				atencion_n:{
+					required:'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 75 caracteres',
+				},
+				atencion_e:{
+					required:'Este campo es requerido.',
+				},
+				desc:{
+					required:'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 200 caracteres',
+				},
+				observ:{	
+					maxlength: 'Longitud máxima de 300 caracteres',
+				},
+				cond_g:{
+					maxlength: 'Longitud máxima de 500 caracteres',
+				},
+				validez_o:{
+					required:'Este campo es requerido.',
+					number:'Por favor solo números',
+					min: 'Al menos 1 día hábil de validez.',
+				},
+				cond_p:{
+					maxlength: 'Longitud máxima de 500 caracteres',
+				},
+				descuento:{
+					required:'Este campo es requerido.',
+					number:'Por favor solo números',
+					range: 'Rango no válido, rango válido del 0 - 100%',
+				}
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element);
+				//element.parent().parent().find("small").css('display', 'inline');	 
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element)
+				.addClass('valid')
+				.closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+	},
 	getElements(method,url,callback,context){
 		$.ajax({
 			type: method,
@@ -41,7 +133,7 @@ export default Ember.Controller.extend({
 		.done(function(response){ callback(response, context); })    
 		.fail(function(response) { console.log(response); }); 
 	},
-	llamadaServidor(method,url,data){
+	llamadaServidor(method,url,data,callback,context){
 		$.ajax({
 			type: method,
 			url: url,
@@ -54,7 +146,7 @@ export default Ember.Controller.extend({
 				data: JSON.stringify(data),
 		})    
 		.done(function(response) { 
-			console.log(response);
+			 callback(response, context);
 		})    
 		.fail(function(response) { 
 			console.log(response);
@@ -63,7 +155,34 @@ export default Ember.Controller.extend({
 	setProyecto(proyecto,context){
 		var _this = context;
 		_this.set('proyecto',proyecto);
-		console.log(proyecto.presupuestos);
+		$.each(proyecto.presupuestos,function(i,presupuesto){
+			if (presupuesto.estatus ==="Aprobado"){
+				presupuesto.noAprobado = false;
+			}else{
+				presupuesto.noAprobado = true;
+			}
+		});
+		if (proyecto.estatus==="Preventa"){
+			proyecto.preventa=true;
+		}else if (proyecto.estatus==="Aprobado"){
+			proyecto.aprobado=true;
+		}else if(proyecto.estatus==="Ejecucion"){
+			proyecto.ejecucion=true;
+		}else if(proyecto.estatus==="Rechazado"){
+			proyecto.rechazado=true;
+		}
+		console.log(proyecto);
+	},
+	setPresupuesto(pre,context){
+		var _this = context;
+
+		/*$.each(_this.get('proyecto.presupuestos'),function(i,presupuesto){
+			if (presupuesto.codigo === pre.codigo){
+				presupuesto = pre;
+				console.log(presupuesto);
+			}
+		});*/
+		_this.init();
 	},
 	calcularMontoTotal(){
 		var subtotal1; //= parseFloat($("#subtotal1").text())*/;
@@ -109,13 +228,17 @@ export default Ember.Controller.extend({
 		var servicios;
 		var aux = {};
 		var _this = this;
+		var pe = {};
 		if (!editing){
 			this.set('editing',false);
 		}else{
 			this.set('editing', true);
 		}
 	//	if (!editing){
-			this.set('presupuesto',presupuesto);
+		pe = $.extend(true,pe,presupuesto)
+			this.set('presupuesto',pe);
+			this.set('pe',pe);
+			//this.set('pe',presupuesto);
 			materiales = presupuesto.materiales;
 			servicios = presupuesto.servicios;
 			$.each(materiales, function(i,material){
@@ -148,22 +271,95 @@ export default Ember.Controller.extend({
 			//console.log("editando");
 		//}
 	},
-	guardar(presupuesto){
-		//console.log(this.get('pe'));
+	guardar(presupuesto, estatus){
+		//console.log(estatus);
 		var method;
 		var url;
-		var data;
+		var data = {};
 		method = "PUT";
 		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') + '/presupuesto/' +presupuesto.codigo+'/';
-		this.llamadaServidor(method,url,data);
+		$.extend(true,data,this.get('pe'));
+		data.estatus = estatus;
+		this.validarCampos();
+        if ($("#formulario").valid()){
+        	this.llamadaServidor(method,url,data,this.setPresupuesto,this);
+        }
+        //console.log(data);
+	},
+	/*aprobar(presupuesto){
+		console.log(presupuesto);
+	},
+	rechazar(presupuesto){
+		console.log(presupuesto);
+	},*/
+	generarPDF(codigo){
+		$("#modalBody").css('background', '#fff')
+
+		function canvasSc(element){
+		  var clone = element.cloneNode(true);
+		  var style = clone.style;
+		  style.position = 'relative';
+		  style.top = window.innerHeight + 'px';
+		  style.left = 0;
+		  document.body.appendChild(clone);
+		  return clone;
+		}
+
+		var modalBody = document.getElementById('modalBody');
+		var clone = canvasSc(modalBody);
+		var nombrepdf = "presupesto-"+codigo+".pdf";
+
+		html2canvas(clone, {
+		    onrendered: function(canvas) {
+		     document.body.removeChild(clone);
+		      var imgData = canvas.toDataURL(
+                    'image/jpeg');             
+                var doc = new jsPDF('1', 'pt',"letter");
+                var width = doc.internal.pageSize.width;    
+				var height = doc.internal.pageSize.height;
+                doc.addImage(imgData, 'jpeg', 0, 0,width,width);
+                doc.save(nombrepdf);
+		    },
+		});
+	},
+	procesarProyecto(proyecto,estatus){
+		var method;
+		var url;
+		var data = {};
+		method = "PATCH";
+		url = window.serverUrl + /proyecto/ + proyecto.codigo + '/estatus/';
+		data.codigo=proyecto.codigo;
+		data.estatus=estatus;
+        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+	},
+	msgRespuesta(response,context){
+		console.log("epale");
+	},
+	guardarCausaRechazo(){
+		var method;
+		var url;
+		var data = {};
+		method = "POST";
+		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') + '/causaRechazo/';
+		data.codigo_pro=this.get('proyecto.codigo');
+		data.desc = this.get('causa_rechazo');
+        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 	},
 	actions:{
 		openModalPresupuesto: function(presupuesto, editing){
 			this.openModalPresupuesto(presupuesto, editing);
 		},
-		guardar: function(presupuesto){
-			this.guardar(presupuesto);
-
+		guardar: function(presupuesto, estatus){
+			this.guardar(presupuesto,estatus);
+		},
+		generarPDF: function(codigo){
+       		this.generarPDF(codigo);
+		},
+		procesarProyecto:function(proyecto,estatus){
+			this.procesarProyecto(proyecto,estatus);
+		},
+		guardarCausaRechazo: function(){
+			this.guardarCausaRechazo();
 		}
 	}
 });
