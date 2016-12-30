@@ -5,6 +5,44 @@ export default Ember.Controller.extend({
 	presupuesto: {},
 	ecs: [],
 	pe: {},
+	preguntas: [
+		{
+			nro:"1",
+			pregunta:"En general, ¿Cómo calificaría la calidad del servicio brindado?",
+			resp:"",
+		},
+		{
+			nro:"2",
+			pregunta:"¿Cómo calificaría el trabajo realizado por nuestros técnicos?",
+			resp:"",
+		},
+		{
+			nro:"3",
+			pregunta:"¿El personal técnico demuestra flexibilidad y capacidad para hacer frente a imprevistos y dificultades?",
+			resp:"",
+		},
+		{
+			nro:"4",
+			pregunta:"¿El tiempo de ejecución del proyecto fue el más óptimo?",
+			resp:"",
+		},
+		{
+			nro:"5",
+			pregunta:"¿Cómo calificarías la relación precio/valor de nuestros servicios?",
+			resp:"",
+		},
+		{
+			nro:"6",
+			pregunta:"¿Qué tan probable es que soliciten nuestros servicios en el futuro?",
+			resp:"",
+		},
+		{
+			nro:"7",
+			pregunta:"¿Qué tan probable es que recomienden la compañia?",
+			resp:"",
+		},
+	],
+
 
 	init(){
 		this._super();
@@ -235,7 +273,7 @@ export default Ember.Controller.extend({
 			this.set('editing', true);
 		}
 	//	if (!editing){
-		pe = $.extend(true,pe,presupuesto)
+		pe = $.extend(true,pe,presupuesto);
 			this.set('presupuesto',pe);
 			this.set('pe',pe);
 			//this.set('pe',presupuesto);
@@ -293,7 +331,7 @@ export default Ember.Controller.extend({
 		console.log(presupuesto);
 	},*/
 	generarPDF(codigo){
-		$("#modalBody").css('background', '#fff')
+		$("#modalBody").css('background', '#fff');
 
 		function canvasSc(element){
 		  var clone = element.cloneNode(true);
@@ -316,7 +354,7 @@ export default Ember.Controller.extend({
                     'image/jpeg');             
                 var doc = new jsPDF('1', 'pt',"letter");
                 var width = doc.internal.pageSize.width;    
-				var height = doc.internal.pageSize.height;
+				//var height = doc.internal.pageSize.height;
                 doc.addImage(imgData, 'jpeg', 0, 0,width,width);
                 doc.save(nombrepdf);
 		    },
@@ -333,7 +371,7 @@ export default Ember.Controller.extend({
         this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 	},
 	msgRespuesta(response,context){
-		console.log("epale");
+		console.log(response);
 	},
 	guardarCausaRechazo(){
 		var method;
@@ -343,6 +381,39 @@ export default Ember.Controller.extend({
 		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') + '/causaRechazo/';
 		data.codigo_pro=this.get('proyecto.codigo');
 		data.desc = this.get('causa_rechazo');
+        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+	},
+	llenarEncuesta(){
+		$("#myModalEncuesta").modal('show');
+	},
+	guardarRespuestasEncuentas(){
+		var encuesta = {
+			nombre: "Encuesta de satisfación Proyecto"+this.get('proyecto.nombre'),
+			codigo_pro:this.get('proyecto.codigo'),
+			completado:true,
+		};
+		var pregunta = {
+			pregunta:'',
+			respuesta:'',
+		};
+		var preguntas =[];
+		var aux_n;
+		$.each(this.get('preguntas').toArray(), function(i,pregunta){
+			aux_n = 'resp' + pregunta.nro;
+			preguntas.push({
+				'pregunta': pregunta.pregunta,
+				'respuesta': $('input[name='+ aux_n +']:checked').val(),
+			})
+		});
+		
+
+		var method;
+		var url;
+		var data = {};
+		method = "POST";
+		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') + '/encuesta/';
+		data.encuesta = encuesta;
+		data.preguntas = preguntas;
         this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 	},
 	actions:{
@@ -360,6 +431,12 @@ export default Ember.Controller.extend({
 		},
 		guardarCausaRechazo: function(){
 			this.guardarCausaRechazo();
+		},
+		llenarEncuesta: function(){
+			this.llenarEncuesta();
+		},
+		guardarRespuestasEncuentas: function(){
+			this.guardarRespuestasEncuentas();
 		}
 	}
 });

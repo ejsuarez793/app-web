@@ -2,7 +2,7 @@
 
 {{logged-header-component currentName=currentName }}
  <div class="container-fluid">
-        <div class="row">
+        <div class="row ">
         
           <div class="col-lg-2  ">
             <h2>Proyecto</h2>
@@ -43,10 +43,12 @@
 						  		</div>
 
 	    					</div>
+                </div>
 
 
 
                 {{#if proyecto.preventa}}
+                <div class="row">
                   <div class="col-md-12">
                     <div class="panel panel-default">
                       <div class="panel-heading">
@@ -76,14 +78,16 @@
                       <button  {{action 'procesarProyecto' proyecto 'Rechazado'}} class="btn btn-default">Rechazar</button>
                       <button  {{action 'procesarProyecto' proyecto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
                    </div>
+                </div>
                 {{/if}}
 
 
 
 
                 {{#if proyecto.rechazado}}
+                <div class="row">
 	    					  <div class="col-md-6">
-	    						  <div class="panel panel-default">
+	    						  <div class="panel panel-default height-300">
     									<div class="panel-heading">
     									 <h3 class="panel-title">Presupuesto(s)</h3>
     									</div>
@@ -107,7 +111,7 @@
 	    					</div>
 
 	    					<div class="col-md-6">
-	    					  <div class="panel panel-default">
+	    					  <div class="panel panel-default height-300">
   									<div class="panel-heading">
   										<h3 class="panel-title">Causa Rechazo</h3>
   									</div>
@@ -123,11 +127,13 @@
 						  			</div>
 						  		</div>
 	    					</div>
+                </div>
                 {{/if}}
 
 
                 {{#if proyecto.aprobado}}
-                  <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-12">
                     <div class="panel panel-default">
                       <div class="panel-heading">
                        <h3 class="panel-title">Presupuesto(s)</h3>
@@ -152,14 +158,28 @@
                 </div>
 
                 <div class="col-md-6">
-                  <div class="panel panel-default">
+                  <div class="panel panel-default height-150">
                     <div class="panel-heading">
-                      <h3 class="panel-title">Facturar</h3>
+                      <h3 class="panel-title">Facturar Etapa</h3>
                     </div>
                     <div class="panel-body">
                       
                     </div>
                   </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="panel panel-default height-150">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Llenar Encuesta</h3>
+                    </div>
+                    <div class="panel-body text-center ">
+                       <button  class="btn btn-primary width-80 " {{action "llenarEncuesta"}}> 
+                      {{fa-icon "file-text-o"}} Llenar Encuesta
+                      </button> 
+                    </div>
+                  </div>
+                </div>
                 </div>
                 {{/if}}
 	    			</div>
@@ -169,7 +189,62 @@
 
           </div>
         </div>
+
+
+
+
+<!-- Modal ENCUESTA-->
+<div class="modal fade " id="myModalEncuesta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalPresupuestoLabel">Encuesta de Satisfacción <small>1 menor valor, 5 mayor valor</small></h4>
+        <small class="form-text text-muted"></small>
+      </div>
+
+      <div class="modal-body" id="modalBody">
+      <div class="row">
+        <form  id="formulario">
+          <ul>
+            <li>
+              <div class="col-md-12">
+              {{#each preguntas as |pregunta|}}
+                <div class="page-header">
+                  <h5>{{pregunta.nro}}) {{pregunta.pregunta}}</h5>
+                  <input type="radio" name="resp{{pregunta.nro}}" value="1"> 1<br>
+                  <input type="radio" name="resp{{pregunta.nro}}" value="2"> 2<br>
+                  <input type="radio" name="resp{{pregunta.nro}}" value="3"> 3<br>
+                  <input type="radio" name="resp{{pregunta.nro}}" value="4"> 4<br>
+                  <input type="radio" name="resp{{pregunta.nro}}" value="5"> 5<br>
+                </div>
+              {{/each}}
+              </div>
+            </li>
+          </ul>
+        </form>
+      </div>
+      </div>
+
+
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'guardarRespuestasEncuentas' }} class="btn btn-primary">Guadar</button>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -185,7 +260,7 @@
       </div>
 
       <div class="modal-body" id="modalBody">
-      	<form  id="formulario">
+        <form  id="formulario">
         <div class="container-fluid">
           <div class="row">
 
@@ -207,29 +282,29 @@
             <div class="col-md-12">
               <ul class="text-center ul-presupuesto">
                 <li >
-                	<div class="row">
+                  <div class="row">
                 {{#if editing}}
-                	
-                	<div class="col-sm-6">
-                	 <b>Atención: </b>
-                	<div class="form-group">
-                	 {{input name="atencion_n" id="atencion_n" type="text" class="form-control" placeholder="Atención Nombre" value=pe.atencion_n}}
-                	 </div>
-                	 </div>
+                  
+                  <div class="col-sm-6">
+                   <b>Atención: </b>
+                  <div class="form-group">
+                   {{input name="atencion_n" id="atencion_n" type="text" class="form-control" placeholder="Atención Nombre" value=pe.atencion_n}}
+                   </div>
+                   </div>
                 {{else}}
-                	<b>Atención: </b>  {{presupuesto.atencion_n}}
+                  <b>Atención: </b>  {{presupuesto.atencion_n}}
                 {{/if}}
                
                 {{#if editing}}
-                	<div class="col-sm-6">
-                	 <b>Email: </b>
-                	<div class="form-group">
-                	{{input name="atencion_e" id="atencion_e" type="text" class="form-control" placeholder="Atención Correo" value=pe.atencion_e}}
-                	</div>
-                	</div>
-                	
+                  <div class="col-sm-6">
+                   <b>Email: </b>
+                  <div class="form-group">
+                  {{input name="atencion_e" id="atencion_e" type="text" class="form-control" placeholder="Atención Correo" value=pe.atencion_e}}
+                  </div>
+                  </div>
+                  
                 {{else}}
-                	 <b>Email: </b>   {{presupuesto.atencion_e}}
+                   <b>Email: </b>   {{presupuesto.atencion_e}}
                 {{/if}}
                 </div>
                 </li>
@@ -240,12 +315,12 @@
                 <li>
 
                 {{#if editing}}
-                	<b>Descripción: </b> 
-                	<div class="form-group">
-                	{{textarea name="desc" id="desc" type="text" class="form-control" placeholder="Descripción Presupuesto" value=pe.desc}}
-                	</div>
+                  <b>Descripción: </b> 
+                  <div class="form-group">
+                  {{textarea name="desc" id="desc" type="text" class="form-control" placeholder="Descripción Presupuesto" value=pe.desc}}
+                  </div>
                 {{else}}
-                	{{presupuesto.desc}}
+                  {{presupuesto.desc}}
                 {{/if}}
 
 
@@ -287,13 +362,13 @@
                 <li>
                   <p>
                   
-	                {{#if editing}}
-	                	<div class="form-group">
-	                	{{textarea name="observ" id="observ" type="text" class="form-control" placeholder="Observaciones Presupuesto" value=pe.observ}}
-	                	</div>
-	                {{else}}
-	                	{{presupuesto.observ}}
-	                {{/if}}
+                  {{#if editing}}
+                    <div class="form-group">
+                    {{textarea name="observ" id="observ" type="text" class="form-control" placeholder="Observaciones Presupuesto" value=pe.observ}}
+                    </div>
+                  {{else}}
+                    {{presupuesto.observ}}
+                  {{/if}}
                   </p>
                 </li>
               </ul>
@@ -310,52 +385,52 @@
              <div class="col-md-12 well">
               <ul class="ul-presupuesto">
               <div class="row">
-                  	<li ><b>Condiciones Generales </b></li>
-                  	<li><p>
+                    <li ><b>Condiciones Generales </b></li>
+                    <li><p>
 
-		                {{#if editing}}
-		                
-		                	<div class="col-sm-12">
-		                	<div class="form-group">
-		                	{{input name="cond_g" id="cond_g" type="text" class="form-control" placeholder="Condiciones Generales" value=pe.cond_g}}
-		                	</div>
-		                	</div>
-		                	
-		                {{else}}
-		                	{{presupuesto.cond_g}}
-		                {{/if}}
+                    {{#if editing}}
+                    
+                      <div class="col-sm-12">
+                      <div class="form-group">
+                      {{input name="cond_g" id="cond_g" type="text" class="form-control" placeholder="Condiciones Generales" value=pe.cond_g}}
+                      </div>
+                      </div>
+                      
+                    {{else}}
+                      {{presupuesto.cond_g}}
+                    {{/if}}
 
-                  	</p></li>
+                    </p></li>
 
-                  	<li ><b>Validez de la oferta </b></li>
-                  	<li><p>
+                    <li ><b>Validez de la oferta </b></li>
+                    <li><p>
 
-	                  	{{#if editing}}
-	                  		<div class="col-sm-12">
-		                	<div class="form-group">
-		                	{{input name="validez_o" id="validez_o" type="number" class="form-control" placeholder="Validez Oferta en Días Hábiles" value=pe.validez_o}}
-		                	</div>
-		                	</div>
-		                {{else}}
-		                	{{presupuesto.validez_o}} Días hábiles
-		                {{/if}}
+                      {{#if editing}}
+                        <div class="col-sm-12">
+                      <div class="form-group">
+                      {{input name="validez_o" id="validez_o" type="number" class="form-control" placeholder="Validez Oferta en Días Hábiles" value=pe.validez_o}}
+                      </div>
+                      </div>
+                    {{else}}
+                      {{presupuesto.validez_o}} Días hábiles
+                    {{/if}}
 
-                  	</p></li>
+                    </p></li>
 
-                  	<li ><b>Precios </b> </li>
-                  	<li>
+                    <li ><b>Precios </b> </li>
+                    <li>
 
-	                    {{#if editing}}
-	                    	<div class="col-sm-12">
-		                	<div class="form-group">
-		                	{{input name="cond_p" id="cond_p" type="text" class="form-control" placeholder="Condiones de Precios" value=pe.cond_p}}
-		                	</div>
-		                	</div>
-		                {{else}}
-		                	{{presupuesto.cond_p}}
-		                {{/if}}
+                      {{#if editing}}
+                        <div class="col-sm-12">
+                      <div class="form-group">
+                      {{input name="cond_p" id="cond_p" type="text" class="form-control" placeholder="Condiones de Precios" value=pe.cond_p}}
+                      </div>
+                      </div>
+                    {{else}}
+                      {{presupuesto.cond_p}}
+                    {{/if}}
 
-                	</li>
+                  </li>
 
                   {{#if editing}}
                   <li ><b>Descuento (%): </b> </li>
@@ -383,7 +458,7 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
         <button  {{action 'guardar' presupuesto presupuesto.estatus}} class="btn btn-primary">Guadar</button>
       {{else}}
-      	
+        
         <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
         <button  {{action 'guardar' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
         <button  {{action 'guardar' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>

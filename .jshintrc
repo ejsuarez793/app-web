@@ -7,7 +7,9 @@
     "Cookies",
     "moment",
     "numeral",
-    "_"
+    "_",
+    "html2canvas",
+    "jsPDF"
   ],
   "browser": true,
   "boss": true,

@@ -90,3 +90,13 @@ ul {
 textarea.form-control {
   height: 120px;
 }
+
+.height-300{
+  height: 300px;
+}
+
+.height-150{
+  height: 150px;
+}
+
+.width-80 { width: 80% !important; }
