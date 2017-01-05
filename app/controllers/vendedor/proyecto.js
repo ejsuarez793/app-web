@@ -5,6 +5,8 @@ export default Ember.Controller.extend({
 	presupuesto: {},
 	ecs: [],
 	pe: {},
+	msg: {
+	},
 	preguntas: [
 		{
 			nro:"1",
@@ -53,16 +55,6 @@ export default Ember.Controller.extend({
 			var method = "GET";
 			var url = window.serverUrl + '/proyecto/' + this.get('codigo') + '/';
 		    this.getElements(method,url,this.setProyecto,this);
-
-		    /*url = window.serverUrl + '/material/';
-		    this.getElements(method,url,this.setMateriales,this);
-
-		    url = window.serverUrl + '/servicio/';
-		    this.getElements(method,url,this.setServicios,this);*/
-
-		    /*this.set('presupuesto.fecha',moment().format("DD/MM/YYYY"));//esta no es tan necesaria, ya que para mostrar esta fecha_f
-		    this.set('presupuesto.fecha_m',moment().format("LL"));*/
-		    console.log(this.get('codigo'));
 		}
 	},
 	validarCampos: function(){
@@ -157,6 +149,104 @@ export default Ember.Controller.extend({
 			}
 		});
 	},
+	validarCausaRechazo(){
+		$.validator.addMethod("maxlength", function (value, element, len) {
+				return value === "" || value.length <= len;
+		});
+
+		$("#formulario_cr").validate({
+			rules:{
+				causa_rechazo:{
+					required:true,
+					maxlength: 200,
+				}
+			},
+			messages:{
+				causa_rechazo:{
+					required:'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 200 caracteres',
+				},
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element);
+				//element.parent().parent().find("small").css('display', 'inline');	 
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element)
+				.addClass('valid')
+				.closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+	},
+	validarEncuesta(){
+		$("#formulario_enc").validate({
+			rules:{
+				resp1:{
+					required:true,
+				},
+				resp2:{
+					required:true,
+				},
+				resp3:{
+					required:true,
+				},
+				resp4:{
+					required:true,
+				},
+				resp5:{
+					required:true,
+				},
+				resp6:{
+					required:true,
+				},
+				resp7:{
+					required:true,
+				},
+			},
+			messages:{
+				resp1:{
+					required:'Por favor responder pregunta.',
+				},
+				resp2:{
+					required:'Por favor responder pregunta.',
+				},
+				resp3:{
+					required:'Por favor responder pregunta.',
+				},
+				resp4:{
+					required:'Por favor responder pregunta.',
+				},
+				resp5:{
+					required:'Por favor responder pregunta.',
+				},
+				resp6:{
+					required:'Por favor responder pregunta.',
+				},
+				resp7:{
+					required:'Por favor responder pregunta.',
+				},
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.closest('.form-group'));
+				error.css('color', '#a94442');	
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element)
+				.addClass('valid')
+				.closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+	},
 	getElements(method,url,callback,context){
 		$.ajax({
 			type: method,
@@ -183,14 +273,18 @@ export default Ember.Controller.extend({
 				dataType: "json",
 				data: JSON.stringify(data),
 		})    
-		.done(function(response) { 
-			 callback(response, context);
+		.done(function(response) {
+			console.log(response);
+			context.init();
+			callback('Exito: ',response.msg,1,context);
 		})    
 		.fail(function(response) { 
 			console.log(response);
+			callback('Error: ',response.responseText,-1,context);
 		});
 	},
 	setProyecto(proyecto,context){
+		console.log(proyecto);
 		var _this = context;
 		_this.set('proyecto',proyecto);
 		$.each(proyecto.presupuestos,function(i,presupuesto){
@@ -209,18 +303,6 @@ export default Ember.Controller.extend({
 		}else if(proyecto.estatus==="Rechazado"){
 			proyecto.rechazado=true;
 		}
-		console.log(proyecto);
-	},
-	setPresupuesto(pre,context){
-		var _this = context;
-
-		/*$.each(_this.get('proyecto.presupuestos'),function(i,presupuesto){
-			if (presupuesto.codigo === pre.codigo){
-				presupuesto = pre;
-				console.log(presupuesto);
-			}
-		});*/
-		_this.init();
 	},
 	calcularMontoTotal(){
 		var subtotal1; //= parseFloat($("#subtotal1").text())*/;
@@ -310,7 +392,6 @@ export default Ember.Controller.extend({
 		//}
 	},
 	guardar(presupuesto, estatus){
-		//console.log(estatus);
 		var method;
 		var url;
 		var data = {};
@@ -320,16 +401,10 @@ export default Ember.Controller.extend({
 		data.estatus = estatus;
 		this.validarCampos();
         if ($("#formulario").valid()){
-        	this.llamadaServidor(method,url,data,this.setPresupuesto,this);
+        	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
         }
-        //console.log(data);
+        $("#myModalPresupuesto").modal('hide');
 	},
-	/*aprobar(presupuesto){
-		console.log(presupuesto);
-	},
-	rechazar(presupuesto){
-		console.log(presupuesto);
-	},*/
 	generarPDF(codigo){
 		$("#modalBody").css('background', '#fff');
 
@@ -370,8 +445,28 @@ export default Ember.Controller.extend({
 		data.estatus=estatus;
         this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 	},
-	msgRespuesta(response,context){
-		console.log(response);
+	msgRespuesta(tipo,desc,estatus,context){
+		var clases = ['alert-danger','alert-warning','alert-success'];
+		var _this = context;
+		/*if (estatus==-1){
+			console.log(estatus);
+		}else if (estatus==0){
+			console.log(estatus);
+		}else if(estatus==1){
+			console.log(estatus);
+		}*/
+		_this.set('msg.tipo',tipo);
+		_this.set('msg.desc',desc);
+		$.each(clases,function(i,clase){
+			if (i == (estatus+1)){
+				$("#alertMsg").addClass(clases[i]);
+			}else{
+				$("#alertMsg").removeClass(clases[i]);
+			}
+
+		});
+		$("#alertMsg").show();
+
 	},
 	guardarCausaRechazo(){
 		var method;
@@ -381,10 +476,22 @@ export default Ember.Controller.extend({
 		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') + '/causaRechazo/';
 		data.codigo_pro=this.get('proyecto.codigo');
 		data.desc = this.get('causa_rechazo');
-        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		this.validarCausaRechazo()
+		if ($("#formulario_cr").valid()){
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		}
 	},
-	llenarEncuesta(){
-		$("#myModalEncuesta").modal('show');
+	verEncuesta(){
+		var respuestas = this.get('proyecto.encuesta.preguntas').toArray();
+		var radio_id;
+		console.log(respuestas);
+		$.each(respuestas,function(i,respuesta){
+			radio_id = "#resp" +(i+1)+"_"+respuesta.respuesta;
+			$(radio_id).prop("checked",true);
+			for (var j = 1 ; j <= 5 ;j++ ){
+				$("#resp"+(i+1)+"_"+j).prop("disabled",true);
+			}
+		});
 	},
 	guardarRespuestasEncuentas(){
 		var encuesta = {
@@ -414,7 +521,13 @@ export default Ember.Controller.extend({
 		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') + '/encuesta/';
 		data.encuesta = encuesta;
 		data.preguntas = preguntas;
-        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		this.validarEncuesta();
+		if($("#formulario_enc").valid()){
+			//console.log("valido");
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+			$("#myModalEncuesta").modal('hide');	
+		}
+
 	},
 	actions:{
 		openModalPresupuesto: function(presupuesto, editing){
@@ -432,11 +545,17 @@ export default Ember.Controller.extend({
 		guardarCausaRechazo: function(){
 			this.guardarCausaRechazo();
 		},
-		llenarEncuesta: function(){
-			this.llenarEncuesta();
+		openModalEncuesta: function(llenando){
+			if (!llenando){
+				this.verEncuesta();
+			}
+			$("#myModalEncuesta").modal('show');
 		},
 		guardarRespuestasEncuentas: function(){
 			this.guardarRespuestasEncuentas();
-		}
+		},
+		cerrarMsg:function(){
+			$("#alertMsg").hide();
+		},
 	}
 });

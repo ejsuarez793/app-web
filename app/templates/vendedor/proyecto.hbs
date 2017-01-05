@@ -7,7 +7,12 @@
           <div class="col-lg-2  ">
             <h2>Proyecto</h2>
           </div>
-
+          <div class="col-lg-10">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden>
+              <button type="button" class="close" {{action "cerrarMsg"}} aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
         </div>
 
         <div class="row ">
@@ -20,7 +25,7 @@
 
 								<div class="panel panel-default">
 									<div class="panel-heading">
-										<h3 class="panel-title">Detalles</h3>
+										<h3 class="panel-title">Detalles Proyecto {{proyecto.estatus}}</h3>
 									</div>
 						  			<div class="panel-body">
 										
@@ -116,13 +121,16 @@
   										<h3 class="panel-title">Causa Rechazo</h3>
   									</div>
 						  			<div class="panel-body">
+
                       {{#if proyecto.causa_rechazo}}
 										  <p>{{proyecto.causa_rechazo.desc}}</p>
                       {{else}}
+                        <form id="formulario_cr">
                           <div class="form-group">
                           {{textarea name="causa_rechazo" id="causa_rechazo" type="text" class="form-control" placeholder="Causas del rechazo del proyecto" value=causa_rechazo}}
                           </div>
                           <button  class="btn btn-primary pull-right" {{action 'guardarCausaRechazo'}}> Guardar</button>
+                        </form>
                       {{/if}}
 						  			</div>
 						  		</div>
@@ -168,19 +176,35 @@
                   </div>
                 </div>
 
-                <div class="col-md-6">
-                  <div class="panel panel-default height-150">
-                    <div class="panel-heading">
-                      <h3 class="panel-title">Llenar Encuesta</h3>
-                    </div>
-                    <div class="panel-body text-center ">
-                       <button  class="btn btn-primary width-80 " {{action "llenarEncuesta"}}> 
-                      {{fa-icon "file-text-o"}} Llenar Encuesta
-                      </button> 
+                {{#if proyecto.encuesta}}
+                   <div class="col-md-6">
+                    <div class="panel panel-default height-150">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Encuesta Completada</h3>
+                      </div>
+                      <div class="panel-body text-center ">
+                         <button  class="btn btn-primary width-80 " {{action "openModalEncuesta" false}}> 
+                        {{fa-icon "file-text-o"}} Ver Encuesta
+                        </button> 
+                      </div>
                     </div>
                   </div>
+                {{else}}
+                  <div class="col-md-6">
+                    <div class="panel panel-default height-150">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Llenar Encuesta</h3>
+                      </div>
+                      <div class="panel-body text-center ">
+                         <button  class="btn btn-primary width-80 " {{action "openModalEncuesta" true}}> 
+                        {{fa-icon "file-text-o"}} Llenar Encuesta
+                        </button> 
+                      </div>
+                    </div>
+                  </div>
+                {{/if}}
                 </div>
-                </div>
+
                 {{/if}}
 	    			</div>
 
@@ -203,22 +227,26 @@
         <small class="form-text text-muted"></small>
       </div>
 
-      <div class="modal-body" id="modalBody">
+      <div class="modal-body">
       <div class="row">
         <form  id="formulario">
           <ul>
             <li>
               <div class="col-md-12">
+              <form id="formulario_enc">
               {{#each preguntas as |pregunta|}}
                 <div class="page-header">
                   <h5>{{pregunta.nro}}) {{pregunta.pregunta}}</h5>
-                  <input type="radio" name="resp{{pregunta.nro}}" value="1"> 1<br>
-                  <input type="radio" name="resp{{pregunta.nro}}" value="2"> 2<br>
-                  <input type="radio" name="resp{{pregunta.nro}}" value="3"> 3<br>
-                  <input type="radio" name="resp{{pregunta.nro}}" value="4"> 4<br>
-                  <input type="radio" name="resp{{pregunta.nro}}" value="5"> 5<br>
+                  <div class="form-group" disabled>
+                    <input type="radio" name="resp{{pregunta.nro}}" id="resp{{pregunta.nro}}_1" value="1"> 1<br>
+                    <input type="radio" name="resp{{pregunta.nro}}" id="resp{{pregunta.nro}}_2" value="2"> 2<br>
+                    <input type="radio" name="resp{{pregunta.nro}}" id="resp{{pregunta.nro}}_3" value="3"> 3<br>
+                    <input type="radio" name="resp{{pregunta.nro}}" id="resp{{pregunta.nro}}_4" value="4"> 4<br>
+                    <input type="radio" name="resp{{pregunta.nro}}" id="resp{{pregunta.nro}}_5" value="5"> 5<br>
+                  </div>
                 </div>
               {{/each}}
+              </form>
               </div>
             </li>
           </ul>
@@ -458,7 +486,6 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
         <button  {{action 'guardar' presupuesto presupuesto.estatus}} class="btn btn-primary">Guadar</button>
       {{else}}
-        
         <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
         <button  {{action 'guardar' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
         <button  {{action 'guardar' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
