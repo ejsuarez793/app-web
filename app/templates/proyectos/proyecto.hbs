@@ -15,20 +15,101 @@
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-              <li role="presentation"><a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a></li>
+              <li role="presentation" class="active"><a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a></li>
               <li role="presentation"><a href="#etapas" aria-controls="etapas" role="tab" data-toggle="tab">Etapas</a></li>
               <li role="presentation"><a href="#listado" aria-controls="listado" role="tab" data-toggle="tab">Listado Materiales</a></li>
               <li role="presentation"><a href="#solicitudesmat" aria-controls="solicitudesmat" role="tab" data-toggle="tab">Solicitudes de Material</a></li>
-              <li role="presentation" class="active"><a href="#presupuesto" aria-controls="presupuesto" role="tab" data-toggle="tab">Presupuesto(s)</a></li>
+              <li role="presentation"><a href="#presupuesto" aria-controls="presupuesto" role="tab" data-toggle="tab">Presupuesto(s)</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
-              <div role="tabpanel" class="tab-pane" id="general">general</div>
-              <div role="tabpanel" class="tab-pane" id="etapas">etapas</div>
+
+              <!-- GENERAL-->
+              <div role="tabpanel" class="tab-pane active" id="general">
+                
+
+              <div class="well jumbo-color">
+                <div class="row">
+                  <div class="col-md-12 ">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Detalles Proyecto {{proyecto.estatus}} 
+                          
+                            <small class="bg-info">{{proyecto.f_est}}</small>  
+                            <small class="bg-success">{{proyecto.f_ini}}</small>
+                            <small class="bg-warning">{{proyecto.f_fin}}</small> 
+
+                          </h3>
+                        </div>
+                        <div class="panel-body">
+                        
+                          <div class="row">
+                            <div class="col-sm-6">
+                              <h4>{{proyecto.nombre}}</h4>
+                              <h4><small>{{proyecto.codigo}}</small></h4>
+                              <h4><small>{{proyecto.ubicacion}}</small></h4>
+                              <p class="text-justify">{{proyecto.desc}}</p>
+                            </div>
+                            <div class="col-sm-6">
+                            </div>
+
+                          </div>
+
+                        </div>
+                        <div class="panel-footer">
+                          <div class="row">
+                          <div class="col-sm-9"></div>
+                            <div class="col-sm-3">
+                              <button class="btn btn-primary" {{action 'openModalGeneral'}} type="submit">Editar</button>
+                              <button class="btn btn-primary" {{action 'openModalPresupuesto' false}} type="submit">{{accion}}</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+
+              <!--ETAPAS-->
+              <div role="tabpanel" class="tab-pane" id="etapas">
+                <div class="well jumbo-color">
+                <div class="row">
+                  <div class="col-md-12 ">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Etapas Proyecto</h3>
+                        </div>
+                        <div class="panel-body">
+                        
+                          <div class="row">
+                            <div class="col-sm-12">
+                            
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="panel-footer">
+                          <div class="row">
+                            <div class="col-sm-9"></div>
+                            <div class="col-sm-3">
+                              <button class="btn btn-primary" {{action 'openModalEtapa' null false}} type="submit">Crear Etapa</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div role="tabpanel" class="tab-pane" id="listado">listado</div>
               <div role="tabpanel" class="tab-pane" id="solicitudesmat">solicitudesmat</div>
-              <div role="tabpanel" class="tab-pane active" id="presupuesto">
+
+              <!--PRESUPUESTOS-->
+              <div role="tabpanel" class="tab-pane" id="presupuesto">
 
               <div class="row">
 
@@ -79,6 +160,171 @@
           </div>
 		    </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+<!-- Modal GENERAL-->
+<div class="modal fade " id="myModalGeneral" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Edicion Detalles Generales</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+          <form  id="formulario_pg">
+            <div class="row">
+              <div class="col-md-12">
+            <div class="form-group">
+              <label>Nombre </label><small class="form-text text-muted">* </small>
+              <div class="input-group">
+                {{input name="nombre" id="nombre_pg" type="text" class="form-control" placeholder="Nombre del Proyecto" value=pg.nombre}}
+                <span class="input-group-addon">{{fa-icon "user"}}</span>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="form-group">
+              <label>Descripción </label><small class="form-text text-muted">* </small>
+              <div class="input-group">
+                {{textarea name="desc" id="desc_pg" type="text" class="form-control" placeholder="Descripción general del proyecto" value=pg.desc}}
+                <span class="input-group-addon">{{fa-icon "user"}}</span>
+              </div>
+
+            </div>
+          </div>
+
+          
+          <div class="col-md-6">
+          <div class="form-group">
+            <label>Ubicación</label><small class="form-text text-muted"> </small>
+            <div class="input-group">
+              {{input name="ubicacion" type="text" class="form-control" placeholder="Ubicación del Proyecto" value=pg.ubicacion}}
+              <span class="input-group-addon">{{fa-icon "map-marker"}}</span>
+            </div>
+          </div>
+          </div>
+
+          <div class="col-md-6">
+          <div class="form-group">
+            <label>Fecha estimada </label><small class="form-text text-muted">*</small>
+            <div class="input-group">
+              {{input name="f_est" type="date" class="form-control" placeholder="Fecha estimada de finalización" value=pg.f_est}}
+              <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+            </div>
+          </div>
+          </div>
+
+        
+
+
+
+        </div>
+      </form>
+        </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" {{action 'guardarProyectoGeneral'}}>Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- Modal Etapas-->
+<div class="modal fade " id="myModalEtapa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Etapa</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+          <form  id="formulario_pe">
+            <div class="row">
+
+            <div class="col-md-6">
+            <div class="form-group">
+              <label>Letra </label><small class="form-text text-muted">* </small>
+              <div class="input-group">
+                {{input name="nombre" type="text" class="form-control" value=pe.letra disabled="true"}}
+                <span class="input-group-addon">{{fa-icon "user"}}</span>
+              </div>
+
+            </div>
+            </div>
+
+            <div class="col-md-6">
+            <div class="form-group">
+              <label>Fecha Estimada </label><small class="form-text text-muted">*</small>
+              <div class="input-group">
+                {{input name="f_est" type="date" class="form-control" value=pe.f_est}}
+                <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+              </div>
+            </div>
+            </div>
+
+            <div class="col-md-12">
+            <div class="form-group">
+              <label>Nombre </label><small class="form-text text-muted">* </small>
+              <div class="input-group">
+                {{input name="nombre" type="text" class="form-control" placeholder="Nombre de la etapa" value=pe.nombre}}
+                <span class="input-group-addon">{{fa-icon "user"}}</span>
+              </div>
+
+            </div>
+            </div>
+
+
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" {{action 'guardarPE'}}>Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
 
 
 

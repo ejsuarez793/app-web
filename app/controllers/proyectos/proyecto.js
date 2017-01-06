@@ -8,6 +8,10 @@ export default Ember.Controller.extend({
 
 	},
 	editing:false,
+	accion:'Iniciar Proyecto',
+	pg:{},
+	pe:{},
+	msg: {},
 
 	init(){
 		this._super();
@@ -29,6 +33,98 @@ export default Ember.Controller.extend({
 		    this.set('presupuesto.fecha_m',moment().format("LL"));
 		}
 	},
+	validarPG(){
+		$.validator.addMethod("maxlength", function (value, element, len) {
+				return value === "" || value.length <= len;
+		});
+
+		$("#formulario_pg").validate({
+			rules:{
+				nombre:{
+					required:true,
+					maxlength:100,
+				},
+				desc:{
+					required:true,
+					maxlength:500,
+				},
+				ubicacion:{
+					maxlength:150,
+				},
+				f_est:{
+					required:true,
+					date:true,
+				},
+			},
+			messages:{
+				nombre:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 100 caracteres.',
+				},
+				desc:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 500 caracteres.',
+				},
+				ubicacion:{
+					maxlength:'Longitud máxima de 150 caracteres.',
+				},
+				f_est:{
+					required:'Este campo es requerido.',
+					date:'Ingrese una fecha válida.',
+				},
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.parent());
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element).addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+	},
+	validarPE(){
+		$.validator.addMethod("maxlength", function (value, element, len) {
+				return value === "" || value.length <= len;
+		});
+
+		$("#formulario_pe").validate({
+			rules:{
+				nombre:{
+					required:true,
+					maxlength:100,
+				},
+				f_est:{
+					required:true,
+					date:true,
+				},
+			},
+			messages:{
+				nombre:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 100 caracteres.',
+				},
+				f_est:{
+					required:'Este campo es requerido.',
+					date:'Ingrese una fecha válida.',
+				},
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.parent());
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element).addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+	},
 	getElements(method,url,callback,context){
 		$.ajax({
 			type: method,
@@ -43,7 +139,7 @@ export default Ember.Controller.extend({
 		.done(function(response){ callback(response, context); })    
 		.fail(function(response) { console.log(response); }); 
 	},
-	llamadaServidor(method,url,data){
+	llamadaServidor(method,url,data,callback,context){
 		$.ajax({
 			type: method,
 			url: url,
@@ -55,17 +151,36 @@ export default Ember.Controller.extend({
 				dataType: "json",
 				data: JSON.stringify(data),
 		})    
-		.done(function(response) { 
-			console.log(response);
+		.done(function(response) {
+			//console.log(response);
+			context.init();
+			callback('Exito: ',response.msg,1,context);
 		})    
 		.fail(function(response) { 
 			console.log(response);
+			callback('Error: ',response.responseText,-1,context);
 		});
+	},
+	msgRespuesta(tipo,desc,estatus,context){
+		var clases = ['alert-danger','alert-warning','alert-success'];
+		var _this = context;
+		_this.set('msg.tipo',tipo);
+		_this.set('msg.desc',desc);
+		$.each(clases,function(i/*,clase*/){
+			if (i === (estatus+1)){
+				$("#alertMsg").addClass(clases[i]);
+			}else{
+				$("#alertMsg").removeClass(clases[i]);
+			}
+
+		});
+		$("#alertMsg").show();
+
 	},
 	setProyecto(proyecto,context){
 		var _this = context;
 		_this.set('proyecto',proyecto);
-		//console.log(proyecto.presupuestos);
+		console.log(proyecto);
 	},
 	setServicios(servicios,context){
 		var _this = context;
@@ -475,12 +590,61 @@ export default Ember.Controller.extend({
 		this.llamadaServidor(method,url,data);
 		this.init();
 	},
+	openModalGeneral(){
+		this.set('pg.nombre',this.get('proyecto.nombre'));
+		this.set('pg.desc',this.get('proyecto.desc'));
+		this.set('pg.ubicacion',this.get('proyecto.ubicacion'));
+		this.set('pg.f_est',this.get('proyecto.f_est'));
+
+		$("#myModalGeneral").modal('show');
+	},
+	openModalEtapa(etapa,editing){
+		var arrayLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']; //array de letras para identificar la nueva etapa
+		var cont = 0;
+		$("#myModalEtapa").modal('show');
+		$.each(this.get('proyecto.etapas').toArray(),function(i,etapa){
+			cont++;
+		});
+		this.set('pe',{});
+		this.set('pe.letra',arrayLetras[cont]);
+		this.set('pe.codigo_pro',this.get('proyecto.codigo'));
+	},
+	guardarProyectoGeneral(){
+		var method;
+		var url;
+		var data = {};
+		method = "PATCH";
+		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/';
+		$.extend(true,data,this.get('pg'));
+		this.validarPG();
+        if ($("#formulario_pg").valid()){
+        	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+        }
+	},
+	guardarPE(){
+		var method;
+		var url;
+		var data = {};
+		method = "POST";
+		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/';
+		$.extend(true,data,this.get('pe'));
+		this.validarPE();
+        if ($("#formulario_pe").valid()){
+        	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+        }
+	},
 	actions: {
 		procesar:function(){
 			this.procesar();
 		},
 		ordenarPor: function(property,presupuestos) {
 			this.ordenarPor(property,presupuestos);
+    	},
+    	openModalGeneral:function(){
+    		this.openModalGeneral();
+    	},
+    	openModalEtapa:function(etapa,editing){
+    		this.openModalEtapa(etapa,editing);
     	},
 		openModalPresupuesto: function(editing,presupuesto){
 			this.prepararModalPresupuesto(editing,presupuesto);
@@ -493,7 +657,6 @@ export default Ember.Controller.extend({
 			this.agregarElementos(tipo_e);
 		},
 		eliminarElementos: function(){
-			//console.log("eliminar");
 			this.eliminarElementos();
 		},
 		calcularPrecioTotal: function(codigo){
@@ -502,5 +665,11 @@ export default Ember.Controller.extend({
 		calcularMontoTotal: function(){
 			this.calcularMontoTotal();
 		},
+		guardarProyectoGeneral:function(){
+			this.guardarProyectoGeneral();
+		},
+		guardarPE: function(){
+			this.guardarPE();
+		}
 	}
 });

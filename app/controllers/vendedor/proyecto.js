@@ -457,8 +457,8 @@ export default Ember.Controller.extend({
 		}*/
 		_this.set('msg.tipo',tipo);
 		_this.set('msg.desc',desc);
-		$.each(clases,function(i,clase){
-			if (i == (estatus+1)){
+		$.each(clases,function(i/*,clase*/){
+			if (i === (estatus+1)){
 				$("#alertMsg").addClass(clases[i]);
 			}else{
 				$("#alertMsg").removeClass(clases[i]);
@@ -476,7 +476,7 @@ export default Ember.Controller.extend({
 		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') + '/causaRechazo/';
 		data.codigo_pro=this.get('proyecto.codigo');
 		data.desc = this.get('causa_rechazo');
-		this.validarCausaRechazo()
+		this.validarCausaRechazo();
 		if ($("#formulario_cr").valid()){
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		}
@@ -499,10 +499,10 @@ export default Ember.Controller.extend({
 			codigo_pro:this.get('proyecto.codigo'),
 			completado:true,
 		};
-		var pregunta = {
+		/*var pregunta = {
 			pregunta:'',
 			respuesta:'',
-		};
+		};*/
 		var preguntas =[];
 		var aux_n;
 		$.each(this.get('preguntas').toArray(), function(i,pregunta){
@@ -510,7 +510,7 @@ export default Ember.Controller.extend({
 			preguntas.push({
 				'pregunta': pregunta.pregunta,
 				'respuesta': $('input[name='+ aux_n +']:checked').val(),
-			})
+			});
 		});
 		
 
