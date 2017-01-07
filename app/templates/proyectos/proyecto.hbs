@@ -5,7 +5,12 @@
           <div class="col-lg-2  ">
             <h2>Proyecto</h2>
           </div>
-
+          <div class="col-lg-10">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden>
+              <button type="button" class="close" {{action "cerrarMsg"}} aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
         </div>
 
         <div class="row ">
@@ -87,7 +92,40 @@
                         
                           <div class="row">
                             <div class="col-sm-12">
-                            
+                               <table class="table table-bordered table-hover " id="tabla">  
+                                <thead class="header-tabla">
+                                  <tr>
+                                    <th class="col-md-2">Código</th>
+                                    <th >Nombre</th>
+                                    <th >Estado</th>
+                                    <th class="col-md-1">Reporte Detalle</th>
+                                    <th class="col-md-1">Reportes</th>
+                                    <th class="col-md-1">Actividades</th>
+                                    <th class="col-md-1">Editar</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="tbody" class="text-center">
+                                  {{#each proyecto.etapas as |etapa|}}
+                                  <tr>
+                                    <td class="col-tabla">{{etapa.letra}}</td>
+                                    <td class="col-tabla"><{{etapa.nombre}}</td>
+                                    <td class="col-tabla">{{etapa.estatus}}</td>
+                                    <td >
+                                      <button {{action 'openModalReporteDetalle' etapa}} class="btn btn-default btn-xs">ver</button>
+                                    </td>
+                                    <td >
+                                      <button {{action 'openModalReportes' etapa}} class="btn btn-default btn-xs">ver</button>
+                                    </td>
+                                    <td >
+                                      <button {{action 'openModalActividades' etapa}} class="btn btn-default btn-xs">ver</button>
+                                    </td>
+                                    <td >
+                                      <button {{action 'openModalEtapa' etapa true}} class="btn btn-default btn-xs">editar</button>
+                                    </td>
+                                  </tr>
+                                  {{/each}}
+                                </tbody>
+                                </table>
                             </div>
                           </div>
 
@@ -96,6 +134,7 @@
                           <div class="row">
                             <div class="col-sm-9"></div>
                             <div class="col-sm-3">
+                              <button class="btn btn-primary" {{action 'llenarReporteDetalle'}} type="submit">Llenar reporte detalle</button>
                               <button class="btn btn-primary" {{action 'openModalEtapa' null false}} type="submit">Crear Etapa</button>
                             </div>
                           </div>
@@ -318,6 +357,155 @@
 
 
 
+
+
+
+<!-- Modal REPORTE DETALLE-->
+<div class="modal fade " id="myModalReporteDetalle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Reporte Detalle</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+          
+
+            <div class="col-md-6 ">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Persona que atendió visita</h3>
+                </div>
+                <div class="panel-body">
+                  <dl class="dl-horizontal">
+                    <dt>Nombre - Cargo</dt> <dd>{{reporte_detalle.persona_a}} - {{reporte_detalle.cargo_a}}</dd>
+                  </dl> 
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 "> 
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Técnico</h3>
+                </div>
+                <div class="panel-body">
+                  <dl class="dl-horizontal">
+                    <dt>Nombre</dt> <dd>{{reporte_detalle.nombre_t}}</dd>   
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12 ">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Observaciones</h3>
+                </div>
+                <div class="panel-body"> 
+                  <p>{{reporte_detalle.observ}}</p>
+                </div>
+              </div>
+            </div>
+
+              <div class="col-md-12 ">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Vicios Ocultos</h3>
+                </div>
+                <div class="panel-body">
+                  <p>{{reporte_detalle.vicios_ocu}}</p>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal REPORTES-->
+<div class="modal fade " id="myModalReportes" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Reportes</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+          <ul class="list-group">
+          {{#each etapa.reportes as |reporte|}}
+            <li data-toggle="collapse" data-target="#collapse{{reporte.codigo}}" aria-expanded="false" aria-controls="collapse{{reporte.codigo}}" class="list-group-item">
+
+  
+            <strong>{{reporte.nombre_t}}</strong>
+            <small class="text-muted">{{reporte.fecha}}</small>
+            <strong class="text-success">{{reporte.estado}}</strong>
+
+
+            <span class="badge">{{reporte.tipo}}</span>
+            </li>
+            <div class="collapse" id="collapse{{reporte.codigo}}">
+              <div class="well">
+                    {{reporte.observ}}
+              </div>
+            </div>
+          {{/each}}
+          </ul>  
+        </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" {{action 'crearReporte' proyecto.etapas}}>Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Modal Actividades-->
+<div class="modal fade " id="myModalActividades" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Actividades</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+          
+        </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 

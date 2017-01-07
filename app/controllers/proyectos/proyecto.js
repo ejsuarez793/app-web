@@ -12,6 +12,8 @@ export default Ember.Controller.extend({
 	pg:{},
 	pe:{},
 	msg: {},
+	editing_pe:false,
+	reporte_detalle: '',
 
 	init(){
 		this._super();
@@ -599,15 +601,41 @@ export default Ember.Controller.extend({
 		$("#myModalGeneral").modal('show');
 	},
 	openModalEtapa(etapa,editing){
-		var arrayLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']; //array de letras para identificar la nueva etapa
-		var cont = 0;
+		if(!editing){
+			var arrayLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']; //array de letras para identificar la nueva etapa
+			var cont = 0;
+			$.each(this.get('proyecto.etapas').toArray(),function(i,etapa){
+				cont++;
+			});
+			this.set('pe',{});
+			this.set('pe.letra',arrayLetras[cont]);
+			this.set('pe.codigo_pro',this.get('proyecto.codigo'));
+		}else{
+			this.set('pe',etapa);
+		}
+		this.set('editing_pe',editing);
 		$("#myModalEtapa").modal('show');
-		$.each(this.get('proyecto.etapas').toArray(),function(i,etapa){
-			cont++;
+	},
+	openModalReporteDetalle(etapa){
+		this.set('reporte_detalle',etapa.reporte_detalle);
+		//console.log("implementar modal reporte detalle");
+		$("#myModalReporteDetalle").modal('show');
+	},
+	openModalReportes(etapa){
+		//console.log("implementar modal reportes");
+		$.each(etapa.reportes.toArray(),function(i,reporte){
+			if (reporte.leido){
+				reporte.estado = "";
+			}else{
+				reporte.estado = "Nuevo!";
+			}
 		});
-		this.set('pe',{});
-		this.set('pe.letra',arrayLetras[cont]);
-		this.set('pe.codigo_pro',this.get('proyecto.codigo'));
+		this.set('etapa',etapa);
+		$("#myModalReportes").modal('show');
+	},
+	openModalActividades:function(){
+		//console.log("implementar modal actividades");
+		$("#myModalActividades").modal('show');
 	},
 	guardarProyectoGeneral(){
 		var method;
@@ -625,13 +653,19 @@ export default Ember.Controller.extend({
 		var method;
 		var url;
 		var data = {};
-		method = "POST";
-		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/';
 		$.extend(true,data,this.get('pe'));
+		if (this.get('editing_pe')){
+			method = "PATCH";
+			url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/' +data.codigo+'/';
+		}else{
+			method = "POST";
+			url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/';
+		}
 		this.validarPE();
         if ($("#formulario_pe").valid()){
         	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
         }
+        $("#myModalEtapa").modal('hide');
 	},
 	actions: {
 		procesar:function(){
@@ -648,6 +682,15 @@ export default Ember.Controller.extend({
     	},
 		openModalPresupuesto: function(editing,presupuesto){
 			this.prepararModalPresupuesto(editing,presupuesto);
+		},
+		openModalReporteDetalle:function(etapa){
+			this.openModalReporteDetalle(etapa);
+		},
+		openModalReportes:function(etapa){
+			this.openModalReportes(etapa);
+		},
+		openModalActividades:function(){
+			this.openModalActividades();
 		},
 		openModalAgregarMS: function(){
 			var seleccion = $("#anadir").val();
@@ -670,6 +713,43 @@ export default Ember.Controller.extend({
 		},
 		guardarPE: function(){
 			this.guardarPE();
-		}
+		},
+		llenarReporteDetalle: function(){
+			console.log(this.get('proyecto.etapas'));
+			var codigo = this.get('proyecto.etapas').toArray()[0].codigo;
+			var data = {
+				persona_a: 'Miguel Perez',
+				cargo_a:'Vigilante',
+				nombre_t: 'Enrique Suarez',
+				vicios_ocu:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibu',
+				observ:'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibu',
+				compleado:'true',
+			};
+			var method = "POST";
+			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' + codigo + '/reporteDetalle/';
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		},
+		crearReporte: function(etapas){
+			console.log("creado" + etapas[0].codigo);
+			var codigo_eta = etapas[0].codigo;
+			var tipos = ['Avance','Problema','Otro'];
+			var nombre_t = "Enrique Suarez";
+			var observ = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.';
+			//console.log(Math.floor(Math.random() * 2));
+			var tipo = tipos[Math.floor(Math.random() * 3)];
+
+			var data = {
+				'codigo_eta' : codigo_eta,
+				'tipo':tipo,
+				'nombre_t':nombre_t,
+				'observ':observ,
+			};
+
+			console.log(data);
+
+			var method = "POST";
+			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' + codigo_eta + '/reporte/';
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		},
 	}
 });
