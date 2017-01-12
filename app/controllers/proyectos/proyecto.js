@@ -243,6 +243,9 @@ export default Ember.Controller.extend({
 		}	
 		_this.set('materiales',materiales);
 	},
+	setDesglose(desglose,context){
+		console.log(desglose);
+	},
 	ordenar(prop, asc,array) {
 			/*if (prop==="precio_act" || prop==="cantidad"){
 				array = array.sort(function(a, b) {
@@ -872,5 +875,10 @@ export default Ember.Controller.extend({
 			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' + codigo_eta + '/reporte/';
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		},
+		materialDesglose: function(){
+			var method= "GET";
+			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/materiales/' ;
+		    this.getElements(method,url,this.setDesglose,this);
+		}
 	}
 });
