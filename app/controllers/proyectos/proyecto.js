@@ -15,6 +15,14 @@ export default Ember.Controller.extend({
 	editing_pe:false,
 	reporte_detalle: '',
 
+
+	sin_actividades:false,//variable para saber si hay que definir actividades en una etapa o solo imprimirlas
+	na:{
+		nro:'',
+		desc:'',
+	},//variable para definir una nueva actividad na = nueva actividad
+	nuevas_actividades: [], //arreglo para almacenar las nuevas actividades definidas antes de  guardarlas en el servidor
+
 	init(){
 		this._super();
 		if (this.get('codigo')!==null && this.get('codigo')!==undefined){
@@ -127,6 +135,37 @@ export default Ember.Controller.extend({
 			}
 		});
 	},
+	validarNuevasActividades(){
+		$.validator.addMethod("maxlength", function (value, element, len) {
+				return value === "" || value.length <= len;
+		});
+
+		$("#formulario_na").validate({
+			rules:{
+				desc:{
+					required:true,
+					maxlength:200,
+				},
+			},
+			messages:{
+				desc:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 200 caracteres.',
+				},
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.parent());
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element).addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+	},
 	getElements(method,url,callback,context){
 		$.ajax({
 			type: method,
@@ -182,7 +221,7 @@ export default Ember.Controller.extend({
 	setProyecto(proyecto,context){
 		var _this = context;
 		_this.set('proyecto',proyecto);
-		console.log(proyecto);
+		//console.log(proyecto);
 	},
 	setServicios(servicios,context){
 		var _this = context;
@@ -604,7 +643,7 @@ export default Ember.Controller.extend({
 		if(!editing){
 			var arrayLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']; //array de letras para identificar la nueva etapa
 			var cont = 0;
-			$.each(this.get('proyecto.etapas').toArray(),function(i,etapa){
+			$.each(this.get('proyecto.etapas').toArray(),function(/*i,etapa*/){
 				cont++;
 			});
 			this.set('pe',{});
@@ -623,18 +662,25 @@ export default Ember.Controller.extend({
 	},
 	openModalReportes(etapa){
 		//console.log("implementar modal reportes");
-		$.each(etapa.reportes.toArray(),function(i,reporte){
+		var aux = $.extend(true,{},etapa);
+		$.each(aux.reportes,function(i,reporte){
 			if (reporte.leido){
 				reporte.estado = "";
 			}else{
 				reporte.estado = "Nuevo!";
 			}
 		});
-		this.set('etapa',etapa);
+		this.set('etapa',aux);
 		$("#myModalReportes").modal('show');
 	},
-	openModalActividades:function(){
-		//console.log("implementar modal actividades");
+	openModalActividades:function(etapa){
+		//console.log(etapa);
+		this.set('etapa',etapa);
+		if (etapa.actividades.length === 0){
+			this.set('sin_actividades',true);
+			var nuevas_actividades = this.get('nuevas_actividades');
+			this.set('na.nro',nuevas_actividades.length + 1);
+		}
 		$("#myModalActividades").modal('show');
 	},
 	guardarProyectoGeneral(){
@@ -667,6 +713,69 @@ export default Ember.Controller.extend({
         }
         $("#myModalEtapa").modal('hide');
 	},
+	guardarReportesLeidos(){
+		var checkbox = '#myModalReportes input:checked';
+		var codigo_eta = this.get('etapa.codigo');
+		var codigos = [];
+
+		$(checkbox).each(function() {
+			codigos.push($(this).val());
+		});
+		//console.log(codigos);
+		var data = {
+			'codigos':codigos,
+		};
+		var method = "PATCH";
+		var url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/' +codigo_eta+'/reporte/';
+		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		$("#myModalReportes").modal('hide');
+	},
+	agregarActividad(){
+		//console.log("agregar actividad");
+		var nuevas_actividades = this.get('nuevas_actividades');
+
+		this.validarNuevasActividades();
+        if ($("#formulario_na").valid()){
+        	nuevas_actividades.pushObject(this.get('na'));
+        }
+
+		this.set('na',{});
+		this.set('na.nro',nuevas_actividades.length + 1);
+		this.set('na.desc','');
+
+		console.log(this.get('nuevas_actividades'));
+	},
+	eliminarActividad(actividad){
+		var nuevas_actividades = this.get('nuevas_actividades');
+		nuevas_actividades.removeObject(actividad);
+
+		var aux = [];
+		$.extend(true,aux,nuevas_actividades);
+		$.each(aux,function(i,nueva_actividad){
+			nueva_actividad.nro = i + 1;
+		});
+		this.set('nuevas_actividades',aux);
+
+		this.set('na.nro',nuevas_actividades.length + 1);
+	},
+	guardarActividades(){
+		var method;
+		var url;
+		var data = [];
+		var codigo_eta = this.get('etapa.codigo');
+		$.each(this.get('nuevas_actividades').toArray(),function(i,actividad){
+			
+			actividad.codigo_eta = codigo_eta;
+			//console.log(codigo_eta);
+		});
+
+		$.extend(true,data,this.get('nuevas_actividades').toArray());
+		console.log(data);
+		method = "POST";
+		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/' +this.get('etapa.codigo')+'/actividad/';
+        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+        $("#myModalActividades").modal('hide');
+	},
 	actions: {
 		procesar:function(){
 			this.procesar();
@@ -689,8 +798,17 @@ export default Ember.Controller.extend({
 		openModalReportes:function(etapa){
 			this.openModalReportes(etapa);
 		},
-		openModalActividades:function(){
-			this.openModalActividades();
+		guardarReportesLeidos:function(){
+			this.guardarReportesLeidos();
+		},
+		openModalActividades:function(etapa){
+			this.openModalActividades(etapa);
+		},
+		agregarActividad:function(){
+			this.agregarActividad();
+		},
+		eliminarActividad: function(actividad){
+			this.eliminarActividad(actividad);
 		},
 		openModalAgregarMS: function(){
 			var seleccion = $("#anadir").val();
@@ -714,8 +832,11 @@ export default Ember.Controller.extend({
 		guardarPE: function(){
 			this.guardarPE();
 		},
+		guardarActividades:function(){
+			this.guardarActividades();
+		},
 		llenarReporteDetalle: function(){
-			console.log(this.get('proyecto.etapas'));
+			//console.log(this.get('proyecto.etapas'));
 			var codigo = this.get('proyecto.etapas').toArray()[0].codigo;
 			var data = {
 				persona_a: 'Miguel Perez',
@@ -730,7 +851,7 @@ export default Ember.Controller.extend({
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		},
 		crearReporte: function(etapas){
-			console.log("creado" + etapas[0].codigo);
+			//console.log("creado" + etapas[0].codigo);
 			var codigo_eta = etapas[0].codigo;
 			var tipos = ['Avance','Problema','Otro'];
 			var nombre_t = "Enrique Suarez";
@@ -745,7 +866,7 @@ export default Ember.Controller.extend({
 				'observ':observ,
 			};
 
-			console.log(data);
+			//console.log(data);
 
 			var method = "POST";
 			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' + codigo_eta + '/reporte/';

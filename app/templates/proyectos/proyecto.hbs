@@ -464,6 +464,12 @@
               <div class="well">
                     {{reporte.observ}}
               </div>
+              <div class="row">
+                <div class="col-sm-10"></div>
+                <div class="col-sm-2">
+                  <input type="checkbox" value="{{reporte.codigo}}"><span> Leido</span>
+                </div>
+              </div>
             </div>
           {{/each}}
           </ul>  
@@ -472,6 +478,7 @@
 
       </div>
       <div class="modal-footer">
+        <button class="btn btn-primary" {{action 'guardarReportesLeidos'}}>Marcar Leidos</button>
         <button class="btn btn-primary" {{action 'crearReporte' proyecto.etapas}}>Guardar</button>
       </div>
     </div>
@@ -494,14 +501,77 @@
           
         <div class="row">
         <div class="col-md-12">
-          
+          {{#if sin_actividades}}
+             <div class="page-header">
+                  <h3>Definición de actividades</h3>
+                  <p>Esta etapa no tiene actividades definidas, a continuación deberá definirlas según se requiera y basándose en el contenido del reporte de detalle, una vez que finalice debe oprimir el botón guardar. <strong> Esta definición solo puede hacerce una vez. No se puede editar las actividades despues de guardadas</strong></p>
+              </div>
+
+                <ul class="list-group">
+                  {{#each nuevas_actividades as |actividad|}}
+                    <li data-toggle="collapse" data-target="#collapse_act{{actividad.nro}}" aria-expanded="false" aria-controls="collapse_act{{actividad.nro}}" class="list-group-item">
+                    <button type="button" class="close" aria-label="Close" {{action 'eliminarActividad' actividad bubbles=false}}>
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong> Actividad Nro: {{actividad.nro}}</strong>
+                    </li>
+                    <div class="collapse" id="collapse_act{{actividad.nro}}">
+                      <div class="well">
+                            {{actividad.desc}}
+                      </div>
+                    </div>
+                  {{/each}}
+                </ul>  
+                <form id="formulario_na">
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="form-group">
+                    <label>Nro </label><small class="form-text text-muted"></small>
+                    <div class="input-group">
+                      {{input name="nro" type="text" class="form-control" value=na.nro disabled="true"}}
+                    </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-10">
+                    <div class="form-group">
+                    <label>Descripción </label><small class="form-text text-muted"></small>
+                    <div class="input-group">
+                      {{input name="desc" type="text" class="form-control" value=na.desc}}
+                      <span class="input-group-addon">{{fa-icon "bars"}}</span>
+                    </div>
+
+                    </div>
+                  </div>
+
+                </div>
+                </form>
+              <button class="btn btn-primary pull-right" {{action 'agregarActividad'}}>Añadir Actividad</button>
+          {{else}}
+             <ul class="list-group">
+                  {{#each etapa.actividades as |actividad|}}
+                    <li data-toggle="collapse" data-target="#collapse_act{{actividad.nro}}" aria-expanded="false" aria-controls="collapse_act{{actividad.nro}}" class="list-group-item">
+                    <strong> Actividad Nro: {{actividad.nro}}</strong>
+                    {{#if actividad.completada}}
+                      <span class="badge">Completada</span>
+                    {{else}}
+                      <span class="badge">Pendiente</span>
+                    {{/if}}
+                    </li>
+                    <div class="collapse" id="collapse_act{{actividad.nro}}">
+                      <div class="well">
+                            {{actividad.desc}}
+                      </div>
+                    </div>
+                  {{/each}}
+              </ul>  
+          {{/if}}
         </div>
         </div>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button class="btn btn-primary">Guardar</button>
+        <button class="btn btn-primary" {{action 'guardarActividades'}}>Guardar</button>
       </div>
     </div>
   </div>
