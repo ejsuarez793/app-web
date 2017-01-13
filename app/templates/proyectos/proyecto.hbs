@@ -145,7 +145,18 @@
                   </div>
                 </div>
               </div>
-              <div role="tabpanel" class="tab-pane" id="listado">listado</div>
+              <div role="tabpanel" class="tab-pane" id="listado">
+                <div class="well jumbo-color">
+                  <div class="panel panel-default">
+
+                      <div class="panel-heading">
+                      </div>
+                       <div class="panel-body">
+                       listado
+                       </div>
+                  </div>
+                </div>
+              </div>
 
 
 
@@ -155,53 +166,121 @@
               <!--SOLICITUDES DE MATERIAL-->
 
               <div role="tabpanel" class="tab-pane" id="solicitudesmat">
-                
-                 <div class="well jumbo-color">
-                 </div>
+                <div class="well jumbo-color">
+                  <div class="panel panel-default">
+
+                    <div class="panel-heading">
+                      <div class="row">
+                        <div class="col-lg-9">
+                          <h4>
+                            Solicitudes de material
+                          </h4>
+                        </div>
+                        <div class="col-lg-3">
+                          <h6>
+                          <button class="btn btn-primary" {{action 'agregarMaterialSolicitud' }} type="submit">Agregar Material</button>
+</h6>
+                           <h6>
+                          <button class="btn btn-primary" {{action 'guardarSolicitud' }} type="submit">Guardar Solicitud</button>
+                          </h6>
+                          <div class="input-group">
+                {{input name="nombre" type="text" class="form-control" placeholder="Codigo material" value=prueba.codigo_mat}}
+                <span class="input-group-addon">{{fa-icon "user"}}</span>
+              </div>
+              <div class="input-group">
+                {{input name="nombre" type="text" class="form-control" placeholder="Cantidad Material" value=prueba.cant}}
+                <span class="input-group-addon">{{fa-icon "money"}}</span>
+              </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel-body">          
+                      <div class="row">
+                        
+
+                      <div class="col-md-12">
+                      <table class="table table-bordered table-hover " id="tabla">  
+                        <thead class="header-tabla">
+                          <tr>
+                            <th class="col-md-2">Técnico</th>
+                            <th class="col-md-2"> Fecha Solicitud</th>
+                            <th class="col-md-1">Estado</th>
+                            <th>Detalles Materiales</th>
+                            <th> Aprobar</th>
+                          </tr>
+                        </thead>
+                        <tbody id="tbody" class="text-center">
+                          {{#each proyecto.solicitudes as |solicitud|}}
+                          <tr>
+                            <td class="col-tabla">{{presupuesto.codigo}}</td>
+                            <td class="col-tabla"><{{presupuesto.desc}}</td>
+                            <td class="col-tabla">{{presupuesto.fecha}}</td>
+                            <td class="col-tabla">{{presupuesto.estatus}}</td>
+                            <td ><button {{action 'openModalPresupuesto' true presupuesto}} class="btn btn-default btn-xs">Aprobar</button></td>
+                          </tr>
+                          {{/each}}
+                        </tbody>
+                      </table>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <!--PRESUPUESTOS-->
               <div role="tabpanel" class="tab-pane" id="presupuesto">
+                <div class="well jumbo-color">
+                  <div class="panel panel-default">
 
-              <div class="row">
+                    <div class="panel-heading">
+                      <div class="row">
+                        <div class="col-lg-9">
+                          <h4>
+                            Presupuestos
+                          </h4>
+                        </div>
+                        <div class="col-lg-3">
+                          <h6>
+                          <button class="btn btn-primary" {{action 'openModalPresupuesto' false}} type="submit">Solicitar Presupuesto</button>
+                          </h6>
+                        </div>
+                      </div>
+                    </div>
 
-                <div class="col-lg-9">
-                
+                    <div class="panel-body">          
+                      <div class="row">
+                        
+
+                      <div class="col-md-12">
+                      <table class="table table-bordered table-hover " id="tabla">  
+                        <thead class="header-tabla">
+                          <tr>
+                            <th class="col-md-2" {{action "ordenarPor" "codigo" true}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+                            <th {{action "ordenarPor" "desc" true}}>Descripción<span id="th-desc" class="glyphicon glyphicon-chevron-down"></span></th>
+                            <th class="col-md-1"{{action "ordenarPor" "fecha" true}}>Fecha<span id="th-fecha" class="glyphicon glyphicon-chevron-down"></span></th>
+                            <th class="col-md-1"{{action "ordenarPor" "estatus" true}}>Estado<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
+                            <th class="col-md-1">Detalles</th>
+                          </tr>
+                        </thead>
+                        <tbody id="tbody" class="text-center">
+                          {{#each proyecto.presupuestos as |presupuesto|}}
+                          <tr>
+                            <td class="col-tabla">{{presupuesto.codigo}}</td>
+                            <td class="col-tabla"><{{presupuesto.desc}}</td>
+                            <td class="col-tabla">{{presupuesto.fecha}}</td>
+                            <td class="col-tabla">{{presupuesto.estatus}}</td>
+                            <td ><button {{action 'openModalPresupuesto' true presupuesto}} class="btn btn-default btn-xs">Abrir</button></td>
+                          </tr>
+                          {{/each}}
+                        </tbody>
+                      </table>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-                <div class="col-lg-3">
-                  <h6>
-                    <button class="btn btn-primary" {{action 'openModalPresupuesto' false}} type="submit">Solicitar Presupuesto</button>
-                  </h6>
-                </div>
-
-                <div class="col-md-12">
-                <table class="table table-bordered table-hover " id="tabla">  
-                  <thead class="header-tabla">
-                    <tr>
-                      <th class="col-md-2" {{action "ordenarPor" "codigo" true}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th {{action "ordenarPor" "desc" true}}>Descripción<span id="th-desc" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th class="col-md-1"{{action "ordenarPor" "fecha" true}}>Fecha<span id="th-fecha" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th class="col-md-1"{{action "ordenarPor" "estatus" true}}>Estado<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th class="col-md-1">Detalles</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody" class="text-center">
-                    {{#each proyecto.presupuestos as |presupuesto|}}
-                    <tr>
-                      <td class="col-tabla">{{presupuesto.codigo}}</td>
-                      <td class="col-tabla"><{{presupuesto.desc}}</td>
-                      <td class="col-tabla">{{presupuesto.fecha}}</td>
-                      <td class="col-tabla">{{presupuesto.estatus}}</td>
-                      <td ><button {{action 'openModalPresupuesto' true presupuesto}} class="btn btn-default btn-xs">Abrir</button></td>
-                    </tr>
-                    {{/each}}
-                  </tbody>
-                </table>
-                </div>
-
-              </div>
-
               </div>
 
           </div>

@@ -15,6 +15,9 @@ export default Ember.Controller.extend({
 	editing_pe:false,
 	reporte_detalle: '',
 
+	prueba: {}, //usado en la prueba de crear solicidut borrar despues
+	solicitud_material_prueba: [],
+
 
 	sin_actividades:false,//variable para saber si hay que definir actividades en una etapa o solo imprimirlas
 	na:{
@@ -244,7 +247,90 @@ export default Ember.Controller.extend({
 		_this.set('materiales',materiales);
 	},
 	setDesglose(desglose,context){
-		console.log(desglose);
+		//console.log(desglose);
+		context.set('desglose',desglose);
+		context.listadoMateriales();
+	},
+	listadoMateriales(){
+		console.log(this.get('desglose'));
+		var desglose = this.get('desglose');
+		var disponibles = [];
+		var usados_e = {};
+		var usados_efectivamente = {};
+		var flag = false; // usada para saber si un material no fue sumado/restado en la iteracion de usados efectivamente
+		var aux;
+
+		//aqui organizo los egresados y retornados por etapas, para luego sacar los usados efectivamente en cada etapa.
+		$.each(desglose.egresados.toArray(),function(i,egresado){
+			if (usados_e[egresado.codigo_eta]==null || usados_e[egresado.codigo_eta]==undefined){
+				usados_e[egresado.codigo_eta] = [];
+			}
+			usados_e[egresado.codigo_eta].push(egresado);
+		});
+
+		$.each(desglose.retornados.toArray(),function(i,retornado){
+			if (usados_e[retornado.codigo_eta]==null || usados_e[retornado.codigo_eta]==undefined){
+				usados_e[retornado.codigo_eta] = [];
+			}
+			usados_e[retornado.codigo_eta].push(retornado);
+		});
+
+		//hasta este punto me deberian salir un json con un campo de cada etapa y sus egresados y retornados, para luego restar los eleentos
+		console.log(usados_e);
+
+		//ahora resto los elementos
+		$.each(usados_e,function(i,usado_e){
+			flag = false;
+			if (usados_efectivamente[usado_e.codigo_eta]==null || usados_e[usado_e.codigo_eta]==undefined){
+				usados_efectivamente[usado_e.codigo_eta] = [];
+			}
+			$.each(usados_efectivamente[usado_e.codigo_eta],function(i,usado_efectivamente){
+				if(usado_efectivamente.codigo_mat === usado_e.codigo_mat){
+					if(usado_e.tipo_mov === "Egreso"){
+						usados_efectivamente.cant = usados_efectivamente.cant - usado_e.cant;
+					}else if(usados_e.tipo_mov === "Retorno"){
+						usados_efectivamente.cant = usados_efectivamente.cant + usado_e.cant;
+					}
+					flag=true
+				}
+			});
+			if(!flag){
+				aux = $.extend(true,{},usado_e);
+				usados_efectivamente[usado_e.codigo_eta].push(aux);
+			}
+		});
+
+		//por ultimo sumo los materiales disponibles de los presupuestos
+		$.each(desglose.presupuestos.toArray(),function(i,material){
+			flag = false;
+			$.each(disponibles,function(i,disponible){
+				if (material.codigo_mat === disponible.codigo_mat){
+					disponible.cant += material.cant;
+					flag = true;
+				}
+			});
+			if(!flag){
+				aux = $.extend(true,{},material);
+				disponibles.push(aux);
+			}
+		});
+
+
+		//finalizando restamos los disponibles del presupuesto con los usados efectivamente en cada etapa
+		$.each(disponibles,function(i,disponible){
+			for (var etapa in usados_efectivamente) {
+			  if (usados_efectivamente.hasOwnProperty(etapa)) {
+			  	$.each(usados_efectivamente[etapa],function(i,usado_efectivamente){
+			  		if(disponible.codigo_mat === usado_efectivamente.codigo_mat){
+			  			disponible.cant = disponible.cant - usado_efectivamente.cant;
+			  		}
+				});
+			  }
+			}
+		});
+
+		console.log(disponibles);
+
 	},
 	ordenar(prop, asc,array) {
 			/*if (prop==="precio_act" || prop==="cantidad"){
@@ -879,6 +965,29 @@ export default Ember.Controller.extend({
 			var method= "GET";
 			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/materiales/' ;
 		    this.getElements(method,url,this.setDesglose,this);
+		},
+		agregarMaterialSolicitud: function(){
+			var prueba = this.get('prueba');
+
+			this.get('solicitud_material_prueba').pushObject(prueba);
+			this.set('prueba',{});
+			console.clear();
+			console.log(this.get('solicitud_material_prueba'));
+		},
+		guardarSolicitud:function(){
+			console.log("implemetar guardar solicitud");
+			var data={};
+			data.otros ={
+				"ci_tecnico":208034,
+				"codigo_eta":8,
+			}
+			data.materiales= [];
+			var materiales = this.get('solicitud_material_prueba').toArray();
+			$.extend(true,data.materiales,materiales);
+			console.log(data);
+			var method = "POST";
+			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' +8 +'/solicitud/';
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		}
 	}
 });
