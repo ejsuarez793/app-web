@@ -224,7 +224,7 @@ export default Ember.Controller.extend({
 	setProyecto(proyecto,context){
 		var _this = context;
 		_this.set('proyecto',proyecto);
-		//console.log(proyecto);
+		console.log(proyecto);
 	},
 	setServicios(servicios,context){
 		var _this = context;
@@ -468,6 +468,20 @@ export default Ember.Controller.extend({
 		$("#myModalPresupuesto").modal('show');
 		//this.calcularMontoTotal();
 
+	},
+	openModalSolicitud(solicitud){
+		this.set('solicitud',solicitud);
+		$("#myModalSolicitudes").modal('show');
+		var method = "GET";
+		var url = window.serverUrl +'/almacen/disponibilidad/' +solicitud.codigo+'/';
+		this.getElements(method,url,this.msgDisponibilidadMaterial,this);
+		console.log("abriendo");
+	},
+	msgDisponibilidadMaterial(response,context){
+		console.log(response);
+	},
+	aprobarSolicitud(solicitud){
+		console.log("aprobando");
 	},
 	/*
 		agregarElementos: funcion que permite agregar los materiales o servicios que fueron seleccionados y los incorpora
@@ -880,6 +894,12 @@ export default Ember.Controller.extend({
     	},
 		openModalPresupuesto: function(editing,presupuesto){
 			this.prepararModalPresupuesto(editing,presupuesto);
+		},
+		openModalSolicitud: function(solicitud){
+			this.openModalSolicitud(solicitud);
+		},
+		aprobarSolicitud: function(solicitud){
+			this.aprobarSolicitud(solicitud);
 		},
 		openModalReporteDetalle:function(etapa){
 			this.openModalReporteDetalle(etapa);

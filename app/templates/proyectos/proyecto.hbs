@@ -205,19 +205,25 @@
                           <tr>
                             <th class="col-md-2">Técnico</th>
                             <th class="col-md-2"> Fecha Solicitud</th>
-                            <th class="col-md-1">Estado</th>
-                            <th>Detalles Materiales</th>
-                            <th> Aprobar</th>
+                            <th class="col-md-1">Etapa</th>
+                            <th class="col-md-1">Autorizada</th>
+                             <th class="col-md-1">Completada</th>
+                            <th class="col-md-1">Detalles Materiales</th>
+                            <th class="col-md-1"> Aprobar</th>
                           </tr>
                         </thead>
                         <tbody id="tbody" class="text-center">
                           {{#each proyecto.solicitudes as |solicitud|}}
                           <tr>
-                            <td class="col-tabla">{{presupuesto.codigo}}</td>
-                            <td class="col-tabla"><{{presupuesto.desc}}</td>
-                            <td class="col-tabla">{{presupuesto.fecha}}</td>
-                            <td class="col-tabla">{{presupuesto.estatus}}</td>
-                            <td ><button {{action 'openModalPresupuesto' true presupuesto}} class="btn btn-default btn-xs">Aprobar</button></td>
+                            <td class="col-tabla">{{solicitud.nombre_t}} ci:{{solicitud.ci_tecnico}}</td>
+                            <td class="col-tabla"><{{solicitud.f_sol}}</td>
+                             <td class="col-tabla">{{solicitud.letra_eta}}</td>
+                             <td class="col-tabla">{{#if solicitud.autorizado}} Autorizada {{else}} No Autorizada{{/if}}</td>
+                            <td class="col-tabla">
+                              {{#if solicitud.completado}} Completada {{else}} No Completada{{/if}}
+                            </td>
+                            <td ><button {{action 'openModalSolicitud' solicitud}} class="btn btn-default btn-xs">Ver</button></td>
+                            <td ><button {{action 'aprobarSolicitud' solicitud}} class="btn btn-default btn-xs">Aprobar</button></td>
                           </tr>
                           {{/each}}
                         </tbody>
@@ -448,6 +454,46 @@
 </div>
 
 
+
+<!-- MODAL SOLICITUDES DE MATERIAL-->
+<div class="modal fade " id="myModalSolicitudes" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Solicitud Detalle Material</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">  
+              <thead class="header-tabla">
+                <tr>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each solicitud.materiales as |material|}}
+                <tr>
+                  <td class="col-tabla">{{material.codigo_mat}}</td>
+                  <td class="col-tabla">{{material.nombre_mat}}</td>
+                  <td class="col-tabla">{{material.desc_mat}}</td>
+                  <td class="col-tabla">{{material.cant}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+        </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
