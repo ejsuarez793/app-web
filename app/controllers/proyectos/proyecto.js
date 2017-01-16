@@ -14,6 +14,7 @@ export default Ember.Controller.extend({
 	msg: {},
 	editing_pe:false,
 	reporte_detalle: '',
+	disponibilidad_material: {},//usado para chequear la disponibilidad de materiales en la solicitud y luego para poder aprobar
 
 	prueba: {}, //usado en la prueba de crear solicidut borrar despues
 	solicitud_material_prueba: [],
@@ -224,7 +225,7 @@ export default Ember.Controller.extend({
 	setProyecto(proyecto,context){
 		var _this = context;
 		_this.set('proyecto',proyecto);
-		console.log(proyecto);
+		//console.log(proyecto);
 	},
 	setServicios(servicios,context){
 		var _this = context;
@@ -475,13 +476,23 @@ export default Ember.Controller.extend({
 		var method = "GET";
 		var url = window.serverUrl +'/almacen/disponibilidad/' +solicitud.codigo+'/';
 		this.getElements(method,url,this.msgDisponibilidadMaterial,this);
-		console.log("abriendo");
+		//console.log("abriendo");
 	},
 	msgDisponibilidadMaterial(response,context){
 		console.log(response);
+		if (response.tipo === "Sin Disponibilidad"){
+			response.sin_disponibilidad = true;
+		}
+		context.set('disponibilidad_material',response);
 	},
 	aprobarSolicitud(solicitud){
-		console.log("aprobando");
+		//console.log(solicitud);
+		var codigo_pro = this.get('proyecto.codigo');
+		var method = "POST";
+		var url = window.serverUrl +'/proyecto/'+codigo_pro+'/solicitud/' +solicitud.codigo+'/aprobar/';
+		var data = this.get('disponibilidad_material.disponible');
+		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		$("#myModalSolicitudes").modal('hide');
 	},
 	/*
 		agregarElementos: funcion que permite agregar los materiales o servicios que fueron seleccionados y los incorpora
@@ -731,7 +742,7 @@ export default Ember.Controller.extend({
 			url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo')+'/presupuesto/';
 		}
 		data = this.get('presupuesto');
-		this.llamadaServidor(method,url,data);
+		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		this.init();
 	},
 	openModalGeneral(){

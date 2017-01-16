@@ -209,13 +209,12 @@
                             <th class="col-md-1">Autorizada</th>
                              <th class="col-md-1">Completada</th>
                             <th class="col-md-1">Detalles Materiales</th>
-                            <th class="col-md-1"> Aprobar</th>
                           </tr>
                         </thead>
                         <tbody id="tbody" class="text-center">
                           {{#each proyecto.solicitudes as |solicitud|}}
                           <tr>
-                            <td class="col-tabla">{{solicitud.nombre_t}} ci:{{solicitud.ci_tecnico}}</td>
+                            <td class="col-tabla">{{solicitud.nombre_t}}, VE-{{solicitud.ci_tecnico}}</td>
                             <td class="col-tabla"><{{solicitud.f_sol}}</td>
                              <td class="col-tabla">{{solicitud.letra_eta}}</td>
                              <td class="col-tabla">{{#if solicitud.autorizado}} Autorizada {{else}} No Autorizada{{/if}}</td>
@@ -223,7 +222,6 @@
                               {{#if solicitud.completado}} Completada {{else}} No Completada{{/if}}
                             </td>
                             <td ><button {{action 'openModalSolicitud' solicitud}} class="btn btn-default btn-xs">Ver</button></td>
-                            <td ><button {{action 'aprobarSolicitud' solicitud}} class="btn btn-default btn-xs">Aprobar</button></td>
                           </tr>
                           {{/each}}
                         </tbody>
@@ -488,8 +486,43 @@
               </tbody>
             </table>
         </div>
+        <div class="col-md-12">
+            <div id="solicitudMsg" class="alert alert-dismissible" role="alert">
+            <strong>{{disponibilidad_material.tipo}}:</strong> {{disponibilidad_material.msg}}
+          </div>
         </div>
-
+        {{#if disponibilidad_material.sin_disponibilidad}}
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          <table class="table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Cantidad Solicitada</th>
+              <th>Cantidad Inventario</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each disponibilidad_material.materiales as |material|}}
+            <tr>
+                <td>{{material.codigo_mat}}</td>
+                <td>{{material.nombre_mat}}</td>
+                <td>{{material.desc_mat}}</td>
+                <td>{{material.cantidad_solicitada}}</td>
+                <td>{{material.cantidad_inventario}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+          </table>
+        </div>
+         <div class="col-md-1"></div>
+         {{/if}}
+        </div>
+      </div>
+       <div class="modal-footer">
+        <button class="btn btn-primary" {{action 'aprobarSolicitud' solicitud}}>Aprobar</button>
       </div>
     </div>
   </div>
