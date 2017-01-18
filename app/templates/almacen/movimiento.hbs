@@ -1,0 +1,438 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Movimiento</h2>
+          </div>
+          <div class="col-lg-10">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden >
+              <button type="button" class="close" aria-label="Close" {{action 'cerrarMsgAlert'}}><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
+        </div>
+
+
+<div class="row ">
+	{{almacen-sidebar-component}}
+	<div class="col-md-10">
+
+      <div class="well jumbo-color">
+
+        <div class="row">
+
+          	<div class="col-md-12 ">
+            	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Tipo Movimiento</h3>
+	                </div>
+                	<div class="panel-body">
+	                	<div class="row">
+	                		<div class="col-md-3"></div>
+		                	<div class="col-md-6">
+								<div class="form-group">
+									<div class="input-group input-group">
+									  <select class="form-control" name="tipo_mov" id="select_tipo_mov" onchange={{action 'selectTipoMov'}}>
+									  	<option disabled selected value="">Seleccione...</option>
+									      <option value="ni">Nuevo Ingreso</option>
+									      <option value="re">Retorno</option>
+									      <option value="eg">Egreso</option>
+									    </select>
+									  <span class="input-group-addon">Tipo</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3"></div>
+						</div>
+                	</div>
+	                <div class="panel-footer">
+	                </div>
+              	</div>
+            </div>
+
+            <div class="col-md-12 ">
+            	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Información Movimiento:
+
+	                  {{#if movimiento.ni}}
+	                  	Ingreso
+	                  {{else if movimiento.re}}
+	                  	Retorno
+	                  {{else if movimiento.eg}}
+	                  	Egreso
+	                  {{/if}}
+	                  </h3>
+	                </div>
+	                <div class="panel-body">
+	                	{{#if movimiento.ni}}
+	                		<form  id="formulario_ni">
+					      		<div class="row">
+
+					      			<div class="col-md-6">
+										<div class="form-group">
+											<label>Rif Proveedor</label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="rif_prove" id="rif_prove" type="text" class="form-control" placeholder="Rif del proveedor" value=movimiento.ingreso.rif_prove}}
+											  <span class="input-group-btn">
+							                    <button class="btn btn-primary" type="button" {{action 'buscar'}}><span class="glyphicon glyphicon-search"></span></button>
+							                  </span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Nombre proveedor</label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="nombre_prove" id="nombre_prove" type="text" class="form-control" placeholder="Aqui aparecerá el nombre del proveedor" value=movimiento.ingreso.nombre_prove disabled=true}}
+											  <span class="input-group-addon">{{fa-icon "user"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+					      			<div class="col-md-6">
+										<div class="form-group">
+											<label>Codigo nota de entrega</label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="codigo_ne" id="codigo_ne" type="text" class="form-control" placeholder="Código nota de entrega" value=movimiento.ingreso.codigo_ne}}
+											  <span class="input-group-addon">{{fa-icon "file-text-o"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Codigo orden de compra </label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="codigo_oc" id="codigo_oc" type="text" class="form-control" placeholder="Código orden de compra" value=movimiento.ingreso.codigo_oc}}
+											  <span class="input-group-addon">{{fa-icon "file-text-o"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Persona transporte </label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="persona_t" id="persona_t" type="text" class="form-control" placeholder="Persona que traslado los materiales" value=movimiento.ingreso.persona_t}}
+											  <span class="input-group-addon">{{fa-icon "bus"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Persona entrega </label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="persona_e" id="persona_e" type="text" class="form-control" placeholder="Persona del proveedor que hizo entrega de los materiales" value=movimiento.ingreso.persona_e}}
+											  <span class="input-group-addon">{{fa-icon "user"}}</span>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</form>
+	                	{{else if movimiento.re}}
+	                		<form  id="formulario_re">
+					      		<div class="row">
+
+					      			<div class="col-md-6">
+										<div class="form-group">
+											<label>Codigo proyecto</label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="codigo_pro" id="codigo_pro" type="text" class="form-control" placeholder="Codigo del proyecto de donde proviene el retorno" value=movimiento.retorno.codigo_pro}}
+											   <span class="input-group-btn">
+							                    <button class="btn btn-primary" type="button" {{action 'buscar'}}><span class="glyphicon glyphicon-search"></span></button>
+							                  </span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Nombre proyecto</label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="nombre_pro" id="nombre_pro" type="text" class="form-control" placeholder="Aqui debe aparecer el nombre del proyectoo" value=movimiento.retorno.nombre_pro disabled=true}}
+											  <span class="input-group-addon">{{fa-icon "bars"}}</span>
+											</div>
+
+										</div>
+									</div>
+									<div class="col-md-12"></div>
+
+									<div class="col-md-6">
+									<div class="form-group">
+										<label>Etapa</label>
+										<div class="input-group ">
+										  <select class="form-control" name="etapas" id="select_etapa" onchange={{action 'selectEtapaRetorno'}}>
+										  	  <option disabled selected value="">Seleccione...</option>
+										      {{#each movimiento.retorno.etapas as |etapa|}}
+										      	<option value="{{etapa.codigo_eta}}">{{etapa.letra_eta}}</option>
+										      {{/each}}
+										    </select>
+										  <span class="input-group-addon">{{fa-icon "folder-open-o"}}</span>
+										</div>
+									</div>
+									</div>
+
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Nombre Etapa</label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="nombre_eta" id="nombre_eta" type="text" class="form-control" placeholder="Aqui debe aparecer el nombre de la etapa" value=movimiento.retorno.nombre_eta disabled=true}}
+											  <span class="input-group-addon">{{fa-icon "user"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-12"></div>
+
+									<div class="col-md-6">
+									<div class="form-group">
+										<label>Cédula Técnico</label>
+										<div class="input-group">
+										  <select class="form-control" name="tecnicos" id="select_tecnico" onchange={{action 'selectTecnicoRetorno'}}>
+										  	  <option disabled selected value="">Seleccione...</option>
+										      {{#each movimiento.retorno.tecnicos as |tecnico|}}
+										      	<option value="{{tecnico.ci_tecnico}}">{{tecnico.ci_tecnico}}</option>
+										      {{/each}}
+										    </select>
+										  <span class="input-group-addon">{{fa-icon "folder-open-o"}}</span>
+										</div>
+									</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Nombre Técnico</label><small class="form-text text-muted">* </small>
+											<div class="input-group">
+											  {{input name="nombre_tec" id="nombre_tec" type="text" class="form-control" placeholder="Codigo del proyecto del retorno" value=movimiento.retorno.nombre_tec disabled=true}}
+											  <span class="input-group-addon">{{fa-icon "user"}}</span>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</form>
+	                	{{else if movimiento.eg}}
+
+					      			<div class="col-md-6">
+										<div class="form-group">
+											<label>Codigo solicitud</label><small class="form-text text-muted"> </small>
+											<div class="input-group">
+											  {{input name="codigo_sol" id="codigo_sol" type="text" class="form-control" placeholder="Codigo de la solicitud" value=movimiento.egreso.codigo_sol}}
+											  <span class="input-group-btn">
+							                    <button class="btn btn-primary" type="button"{{action 'buscar'}}><span class="glyphicon glyphicon-search"></span></button>
+							                  </span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-3">
+										<div class="form-group">
+											<label>Autorizado</label><small class="form-text text-muted"></small>
+											<div class="input-group">
+											  {{input name="autorizado" id="autorizado" type="text" class="form-control" placeholder="Estatus de la solicitud" value=movimiento.egreso.autorizado disabled=true}}
+											  <span class="input-group-addon">{{fa-icon "spinner"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-3">
+										<div class="form-group">
+											<label>Completado</label><small class="form-text text-muted"> </small>
+											<div class="input-group">
+											  {{input name="completado" id="completado" type="text" class="form-control" placeholder="Estatus de la solicitud" value=movimiento.egreso.completado disabled=true}}
+											  <span class="input-group-addon">{{fa-icon "spinner"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Cédula Técnico Responsable</label><small class="form-text text-muted"></small>
+											<div class="input-group">
+											  {{input  type="text" class="form-control" placeholder="Técnico responsable" value=movimiento.egreso.ci_tecnico disabled=true}}
+											  <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Nombre Técnico Responsable</label><small class="form-text text-muted"> </small>
+											<div class="input-group">
+											  {{input  type="text" class="form-control" placeholder="Técnico responsable" value=movimiento.egreso.nombre_t disabled=true}}
+											  <span class="input-group-addon">{{fa-icon "user"}}</span>
+											</div>
+
+										</div>
+									</div>
+
+									
+	                	{{/if}}
+	                </div>
+	                <div class="panel-footer">
+	                </div>
+              	</div>
+            </div>
+
+            <div class="col-md-12 ">
+            	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Materiales</h3>
+	                </div>
+	                <div class="panel-body">
+	                {{#if movimiento.eg}}
+		                 <table class="table table-bordered table-hover " id="tabla">  
+		                    <thead class="header-tabla">
+		                      <tr>
+		                        <th class="col-md-2">Código</th>
+		                        <th class="col-md-2">Nombre</th>
+		                        <th >Descipción</th>
+		                        <th class="col-md-2">Serial</th>
+		                        <th class="col-md-1">Cantidad</th>
+		                      </tr>
+		                    </thead>
+		                    <tbody id="tbody" class="text-center">
+		                      {{#each movimiento.materiales as |material|}}
+		                      <tr>
+		                        <td class="col-tabla">{{material.codigo}}</td>
+		                        <td class="col-tabla"><{{material.nombre}}</td>
+		                        <td class="col-tabla">{{material.desc}}</td>
+		                        <td class="col-tabla"> {{#if material.serial}} {{material.serial}}{{else}}N/A{{/if}}</td>
+		                        <td class="col-tabla">{{material.cantidad}}</td>
+		                      </tr>
+		                      {{/each}}
+		                    </tbody>
+	                    </table>
+	                	<div class="row">
+	                		<div class="col-md-12">
+	                			<button class="btn btn-primary pull-right" type="submit" {{action 'procesarMovimiento'}}>Procesar</button>
+	                		</div>
+	                	</div>
+	                {{else}}
+	                	<table class="table table-bordered table-hover " id="tabla">  
+		                    <thead class="header-tabla">
+		                      <tr>
+		                        <th class="col-md-2">Código</th>
+		                        <th class="col-md-2">Nombre</th>
+		                        <th >Descipción</th>
+		                        <th class="col-md-2">Serial</th>
+		                        <th class="col-md-1">Cantidad</th>
+		                        <th class="col-md-1">Seleccionar</th>
+
+		                      </tr>
+		                    </thead>
+		                    <tbody id="tbody" class="text-center">
+		                      {{#each movimiento.materiales as |material|}}
+		                      {{#if material.mostrar_seleccion}}
+		                      <tr>
+		                        <td class="col-tabla">{{material.codigo}}</td>
+		                        <td class="col-tabla"><{{material.nombre}}</td>
+		                        <td class="col-tabla">{{material.desc}}</td>
+		                        <td class="col-tabla"> {{#if material.serial}} {{material.serial}}{{else}}N/A{{/if}}</td>
+		                        <td class="col-tabla">{{material.cantidad_seleccion}}</td>
+		                        <td><input type="checkbox" value={{material.codigo}}></td>
+		                      </tr>
+		                      {{/if}}
+		                      {{/each}}
+		                    </tbody>
+	                    </table>
+	                	<div class="row">
+	                		<div class="col-md-3"></div>
+	                		<div class="col-md-3">
+	                			<button class="btn btn-default pull-right" type="submit" {{action 'eliminarMaterialesSeleccionados'}}>Eliminar Seleccionados</button>
+	                		</div>
+	                		<div class="col-md-3">
+	                			<button class="btn btn-default pull-right" type="submit" {{action 'openModalMateriales'}}>Agregar Material</button>
+	                		</div>
+	                		<div class="col-md-3">
+	                			<button class="btn btn-primary pull-right" type="submit" {{action 'procesarMovimiento'}}>Procesar</button>
+	                		</div>
+	                	</div>
+	                {{/if}}
+	                </div>
+	                <div class="panel-footer">
+	                </div>
+              	</div>
+            </div>
+
+          </div>
+
+        </div>
+	</div>
+</div>
+
+</div>
+
+
+<!-- Modal MATERIALES-->
+<div class="modal fade " id="myModalMateriales" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Materiales</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">  
+              <thead class="header-tabla">
+                <tr>
+                  <th class="col-md-1">Código</th>
+                  <th class="col-md-2">Nombre</th>
+                  <th>Descripción</th>
+                  <th class="col-md-1">Serial</th>
+                  <th class="col-md-1">Cantidad Disponible</th>
+                  <th class="col-md-1">Cantidad Retornar</th>
+                  <th class="col-md-1">Seleccionar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each movimiento.materiales as |material|}}
+                {{#if material.mostrar_sin_seleccion}}
+                <tr>
+                  <td class="col-tabla">{{material.codigo}}</td>
+                  <td class="col-tabla">{{material.nombre}}</td>
+                  <td class="col-tabla">{{material.desc}}</td>
+                  <td class="col-tabla">{{#if material.serial}} {{material.serial}}{{else}}N/A{{/if}}</td>
+                  <td class="col-tabla">{{material.cantidad_sin_seleccion}}</td>
+                  <td>
+                  	
+                  	<input type="number" class="form-control input-sm" id="cant_sel_{{material.codigo}}" min="0" max="{{material.cantidad}}">
+
+                  </td>
+                  <td><input type="checkbox" value={{material.codigo}}></td>
+                </tr>
+                {{/if}}
+                {{/each}}
+              </tbody>
+            </table>
+        </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'agregarMaterial'}} class="btn btn-primary">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
