@@ -85,7 +85,7 @@
 
 									<div class="col-md-6">
 										<div class="form-group">
-											<label>Nombre proveedor</label><small class="form-text text-muted">* </small>
+											<label>Nombre proveedor</label><small class="form-text text-muted"> </small>
 											<div class="input-group">
 											  {{input name="nombre_prove" id="nombre_prove" type="text" class="form-control" placeholder="Aqui aparecerá el nombre del proveedor" value=movimiento.ingreso.nombre_prove disabled=true}}
 											  <span class="input-group-addon">{{fa-icon "user"}}</span>
@@ -93,6 +93,9 @@
 
 										</div>
 									</div>
+
+
+					      			<div class="col-md-12"></div>
 
 					      			<div class="col-md-6">
 										<div class="form-group">
@@ -115,6 +118,8 @@
 
 										</div>
 									</div>
+
+									<div class="col-md-12"></div>
 
 									<div class="col-md-6">
 										<div class="form-group">
@@ -158,7 +163,7 @@
 
 									<div class="col-md-6">
 										<div class="form-group">
-											<label>Nombre proyecto</label><small class="form-text text-muted">* </small>
+											<label>Nombre proyecto</label><small class="form-text text-muted"> </small>
 											<div class="input-group">
 											  {{input name="nombre_pro" id="nombre_pro" type="text" class="form-control" placeholder="Aqui debe aparecer el nombre del proyectoo" value=movimiento.retorno.nombre_pro disabled=true}}
 											  <span class="input-group-addon">{{fa-icon "bars"}}</span>
@@ -170,7 +175,7 @@
 
 									<div class="col-md-6">
 									<div class="form-group">
-										<label>Etapa</label>
+										<label>Etapa</label><small class="form-text text-muted"> * </small>
 										<div class="input-group ">
 										  <select class="form-control" name="etapas" id="select_etapa" onchange={{action 'selectEtapaRetorno'}}>
 										  	  <option disabled selected value="">Seleccione...</option>
@@ -186,7 +191,7 @@
 
 									<div class="col-md-6">
 										<div class="form-group">
-											<label>Nombre Etapa</label><small class="form-text text-muted">* </small>
+											<label>Nombre Etapa</label><small class="form-text text-muted"> </small>
 											<div class="input-group">
 											  {{input name="nombre_eta" id="nombre_eta" type="text" class="form-control" placeholder="Aqui debe aparecer el nombre de la etapa" value=movimiento.retorno.nombre_eta disabled=true}}
 											  <span class="input-group-addon">{{fa-icon "user"}}</span>
@@ -199,7 +204,7 @@
 
 									<div class="col-md-6">
 									<div class="form-group">
-										<label>Cédula Técnico</label>
+										<label>Cédula Técnico</label><small class="form-text text-muted"> *</small>
 										<div class="input-group">
 										  <select class="form-control" name="tecnicos" id="select_tecnico" onchange={{action 'selectTecnicoRetorno'}}>
 										  	  <option disabled selected value="">Seleccione...</option>
@@ -214,7 +219,7 @@
 
 									<div class="col-md-6">
 										<div class="form-group">
-											<label>Nombre Técnico</label><small class="form-text text-muted">* </small>
+											<label>Nombre Técnico</label><small class="form-text text-muted"></small>
 											<div class="input-group">
 											  {{input name="nombre_tec" id="nombre_tec" type="text" class="form-control" placeholder="Codigo del proyecto del retorno" value=movimiento.retorno.nombre_tec disabled=true}}
 											  <span class="input-group-addon">{{fa-icon "user"}}</span>
@@ -225,12 +230,12 @@
 								</div>
 							</form>
 	                	{{else if movimiento.eg}}
-
+	                			<form  id="formulario_eg">
 					      			<div class="col-md-6">
 										<div class="form-group">
-											<label>Codigo solicitud</label><small class="form-text text-muted"> </small>
+											<label>Codigo solicitud</label><small class="form-text text-muted">* </small>
 											<div class="input-group">
-											  {{input name="codigo_sol" id="codigo_sol" type="text" class="form-control" placeholder="Codigo de la solicitud" value=movimiento.egreso.codigo_sol}}
+											  {{input name="codigo_sol" id="codigo_sol" type="number" class="form-control" placeholder="Codigo de la solicitud" value=movimiento.egreso.codigo_sol}}
 											  <span class="input-group-btn">
 							                    <button class="btn btn-primary" type="button"{{action 'buscar'}}><span class="glyphicon glyphicon-search"></span></button>
 							                  </span>
@@ -261,6 +266,7 @@
 										</div>
 									</div>
 
+									<div class="col-md-12"></div>
 									<div class="col-md-6">
 										<div class="form-group">
 											<label>Cédula Técnico Responsable</label><small class="form-text text-muted"></small>
@@ -283,7 +289,7 @@
 										</div>
 									</div>
 
-									
+								</form>
 	                	{{/if}}
 	                </div>
 	                <div class="panel-footer">
@@ -326,6 +332,9 @@
 	                		</div>
 	                	</div>
 	                {{else}}
+	                	{{#if movimiento.ni}}
+	                		<p class="col-tabla"><strong>*Nota:</strong> Si algun material no tiene registrado en su lista de proveedores el proveedor seleccionado, se agregará automaticamente dicho proveedor a la lista.</p>
+	                	{{/if}}
 	                	<table class="table table-bordered table-hover " id="tabla">  
 		                    <thead class="header-tabla">
 		                      <tr>
@@ -393,6 +402,7 @@
           
         <div class="row">
         <div class="col-md-12">
+        {{#if movimiento.re}}
             <table class="table table-bordered table-hover">  
               <thead class="header-tabla">
                 <tr>
@@ -425,6 +435,38 @@
                 {{/each}}
               </tbody>
             </table>
+        {{else if movimiento.ni}}
+        	<table class="table table-bordered table-hover">  
+              <thead class="header-tabla">
+                <tr>
+                  <th class="col-md-1">Código</th>
+                  <th class="col-md-2">Nombre</th>
+                  <th>Descripción</th>
+                  <th class="col-md-1">Serial</th>
+                  <th class="col-md-1">Cantidad</th>
+                  <th class="col-md-1">Seleccionar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each movimiento.materiales as |material|}}
+                {{#if material.mostrar_sin_seleccion}}
+                <tr>
+                  <td class="col-tabla">{{material.codigo}}</td>
+                  <td class="col-tabla">{{material.nombre}}</td>
+                  <td class="col-tabla">{{material.desc}}</td>
+                  <td class="col-tabla">{{#if material.serial}} {{material.serial}}{{else}}N/A{{/if}}</td>
+                  <td>
+                  	
+                  	<input type="number" class="form-control input-sm" id="cant_sel_{{material.codigo}}" min="0" max="{{material.cantidad}}">
+
+                  </td>
+                  <td><input type="checkbox" value={{material.codigo}}></td>
+                </tr>
+                {{/if}}
+                {{/each}}
+              </tbody>
+            </table>
+        {{/if}}
         </div>
         </div>
 
