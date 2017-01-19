@@ -1,0 +1,426 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Historial</h2>
+          </div>
+          <div class="col-lg-10">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden >
+              <button type="button" class="close" aria-label="Close" {{action 'cerrarMsgAlert'}}><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
+        </div>
+
+
+<div class="row ">
+	{{almacen-sidebar-component}}
+	<div class="col-md-10">
+
+      <div class="well jumbo-color">
+
+        <div class="row">
+
+          	<div class="col-md-12 ">
+            	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Tipo Consulta</h3>
+	                </div>
+                	<div class="panel-body">
+	                	<div class="row">	
+	                		<div class="col-md-3"></div>		
+            				<div class="col-md-6">
+							<div class="form-group">
+								<div class="input-group ">
+								  <select class="form-control" name="consulta" id="select_consulta" onchange={{action 'selectTipoConsulta'}}>
+								  	  <option disabled selected value="">Seleccione...</option>
+								      <option value="mes">Mes</option>
+								      <option value="rango">Rango</option>
+								    </select>
+								  <span class="input-group-addon">{{fa-icon "clock-o"}}</span>
+								</div>
+							</div>
+							</div>
+							<div class="col-md-3"></div>
+	                	</div>
+	                	<hr>
+	                	{{#if consulta.mes}}
+	                	<div class="row">
+	                		<div class="col-md-3"></div>		
+            				<div class="col-md-6">
+            				<form id="formulario_mes">
+							<div class="form-group">
+								<label>Seleccione Mes:</label><small class="form-text text-muted">* </small>
+								<div class="input-group ">
+								  <select class="form-control" name="mes" id="select_mes" onchange={{action 'selectMesConsulta'}}>
+								  	  <option disabled selected value="">Seleccione...</option>
+								      <option value="1">Enero</option>
+								      <option value="2">Febrero</option>
+								      <option value="3">Marzo</option>
+								      <option value="4">Abril</option>
+								      <option value="5">Mayo</option>
+								      <option value="6">Junio</option>
+								      <option value="7">Julio</option>
+								      <option value="8">Agosto</option>
+								      <option value="9">Septiembre</option>
+								      <option value="10">Octubre</option>
+								      <option value="11">Noviembre</option>
+								      <option value="12">Diciembre</option>
+								    </select>
+								  <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+								</div>
+							</div>
+							</form>
+							</div>
+							<div class="col-md-3"></div>
+	                	</div>
+	                	{{else if consulta.rango}}
+	                		<div class="row">
+	                		<form id="formulario_rango">
+	                		<div class="col-md-2"></div>		
+            				<div class="col-md-3">
+            				<div class="form-group">
+								<label>Desde:</label><small class="form-text text-muted">* </small>
+			                  <div class="input-group">
+			                    {{input name="desde" id="desde" type="date" class="form-control" value=consulta.desde}}
+			                    <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+			                  </div>
+			                </div>
+			                </div>
+			                <div class="col-md-2"></div>
+			                <div class="col-md-3">
+			                <div class="form-group">
+								<label>Hasta:</label><small class="form-text text-muted">* </small>
+			                  <div class="input-group">
+			                    {{input name="hasta" id="hasta" type="date" class="form-control" value=consulta.hasta}}
+			                    <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+			                  </div>
+			                </div>
+			                </div>
+							
+							<div class="col-md-2"></div>
+							</form>
+	                	</div>
+	                	{{/if}}
+                	</div>
+	                <div class="panel-footer">
+	                </div>
+              	</div>
+
+            </div>
+
+            <div class="col-md-12 ">
+            	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Filtro:
+	                  </h3>
+	                </div>
+	                <div class="panel-body">
+	      				<div class="row text-center" id="filtro_tipo_mov" onchange={{action 'filtrarMovimientos'}}>
+	      					<div class="col-md-4">
+	      						<label class="checkbox-inline"><input type="checkbox" value="Egreso" >Egreso</label>
+	      					</div>
+	      					<div class="col-md-4">
+	      						<label class="checkbox-inline"><input type="checkbox" value="Ingreso">Ingreso</label>
+	      					</div>
+	      					<div class="col-md-4">
+	      						<label class="checkbox-inline"><input type="checkbox" value="Retorno">Retorno</label>
+	      					</div>
+	      				</div>
+	                </div>
+	                <div class="panel-footer">
+	                </div>
+              	</div>
+            </div>
+
+            <div class="col-md-12 ">
+            	<div class="panel panel-default">
+                	<div class="panel-body">
+	                	<table class="table table-bordered table-hover">  
+			              <thead class="header-tabla">
+			                <tr>
+			                  <th class="col-md-1">Código</th>
+			                  <th class="col-md-1">Tipo</th>
+			                  <th class="col-md-1">Fecha</th>
+			                  <th class="col-md-1">Detalle</th>
+			                </tr>
+			              </thead>
+			              <tbody>
+			                {{#each movimientos as |movimiento|}}
+			                {{#if movimiento.mostrar}}
+			                <tr>
+			                  <td class="col-tabla">{{movimiento.codigo}}</td>
+			                  <td class="col-tabla">{{movimiento.tipo}}</td>
+			                  <td class="col-tabla">{{movimiento.fecha}}</td>
+			                  <td class="col-tabla"><button {{action 'openModalDetalleMovimiento' movimiento}} class="btn btn-default btn-xs">ver</button></td>
+			                </tr>
+			                {{/if}}
+			                {{/each}}
+			              </tbody>
+			            </table>
+
+			            <div class="row">
+	                		<div class="col-md-12">
+	                			<button class="btn btn-primary pull-right" type="submit" {{action 'consultar'}}>Consultar</button>
+	                		</div>
+	                	</div>
+                	</div>
+	                
+              	</div>
+            </div>
+
+          </div>
+
+        </div>
+	</div>
+</div>
+
+</div>
+
+
+<!-- Modal MOVIMIENTO DETALLE-->
+<div class="modal fade " id="myModalMovimiento" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Detalle Movimiento</h4>
+      </div>
+      <div class="modal-body">
+          <div class="well jumbo-color">
+        <div class="row">
+        	
+       		<div class="col-md-12">
+			    	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Información General:
+	                  </h3>
+	                </div>
+	                <div class="panel-body">
+	                	<div class="row">
+	                		<div class="col-md-6">
+								<div class="form-group">
+									<label>Tipo Movimiento</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.tipo disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "task"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Fecha Movimiento</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control"value=movimiento.fecha_mostrar disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+									</div>
+
+								</div>
+							</div>
+	                		<div class="col-md-6">
+								<div class="form-group">
+									<label>C.I Almacenista Responsable</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.ci_almace disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Nombre Almacenista Responsable</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control"value=movimiento.nombre_almace disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "user"}}</span>
+									</div>
+
+								</div>
+							</div>
+	                	</div>
+	                </div>
+	                <div class="panel-footer">
+	                </div>
+			    </div>
+
+			    <div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Información Específica:
+	                  </h3>
+	                </div>
+	                <div class="panel-body">
+	                	{{#if movimiento.ingreso}}
+	                	<div class="row">
+	                		<div class="col-md-6">
+								<div class="form-group">
+									<label>Rif Proveedor</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.rif_prove disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "task"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Nombre Proveedor</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control"value=movimiento.nombre_prove disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+									</div>
+
+								</div>
+							</div>
+	                		<div class="col-md-6">
+								<div class="form-group">
+									<label>Codigo Nota de Entrega</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.codigo_ne disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Codigo Orden de Compra</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control"value=movimiento.codigo_oc disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "user"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Persona Transporte</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control"value=movimiento.persona_t disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "user"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Persona Entrega</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control"value=movimiento.persona_e disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "user"}}</span>
+									</div>
+
+								</div>
+							</div>
+	                	</div>
+	                	{{else}}
+						<div class="row">
+	                		<div class="col-md-6">
+								<div class="form-group">
+									<label>Codigo Proyecto</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.codigo_pro disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "task"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Nombre Proyecto</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.nombre_pro disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "task"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Codigo Etapa</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.letra_eta disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "task"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Nombre Etapa</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.nombre_eta disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "task"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>C.I Técnico Responsable</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.ci_tecnico disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "task"}}</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Nombre Técnico Responsable</label><small class="form-text text-muted"></small>
+									<div class="input-group">
+									  {{input  type="text" class="form-control" value=movimiento.nombre_tec disabled=true}}
+									  <span class="input-group-addon">{{fa-icon "task"}}</span>
+									</div>
+
+								</div>
+							</div>
+
+						</div>
+						{{/if}}
+	                </div>
+	                <div class="panel-footer">
+	                </div>
+			    </div>
+	    	</div>
+
+	        <div class="col-md-12">
+	        	<div class="panel panel-default">
+                	<div class="panel-body">
+			            <table class="table table-bordered table-hover">  
+			              <thead class="header-tabla">
+			                <tr>
+			                  <th class="col-md-1">Código</th>
+			                  <th class="col-md-2">Nombre</th>
+			                  <th>Descripción</th>
+			                  <th class="col-md-1">Serial</th>
+			                  <th class="col-md-1">Cantidad</th>
+			                </tr>
+			              </thead>
+			              <tbody>
+			                {{#each movimiento.materiales as |material|}}
+			                <tr>
+			                  <td class="col-tabla">{{material.codigo}}</td>
+			                  <td class="col-tabla">{{material.nombre}}</td>
+			                  <td class="col-tabla">{{material.desc}}</td>
+			                  <td class="col-tabla">{{#if material.serial}} {{material.serial}}{{else}}N/A{{/if}}</td>
+			                  <td class="col-tabla">{{material.cantidad}}</td>
+			                </tr>
+			                {{/each}}
+			              </tbody>
+			            </table>
+	            	</div>
+	            </div>
+	        </div>
+        </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'agregarMaterial'}} class="btn btn-primary">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>

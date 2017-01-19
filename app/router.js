@@ -29,6 +29,7 @@ Router.map(function() {
     this.route('equipos');
     this.route('proveedores');
     this.route('movimiento');
+    this.route('historial');
   });
   this.route('404notfound', {path: "/*path"});
 });
