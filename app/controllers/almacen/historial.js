@@ -97,6 +97,7 @@ export default Ember.Controller.extend({
 	setMovimientos(response,context){
 		var _this = context;
 		_this.set('movimientos',response.data.movimientos);
+		_this.msgRespuesta("Exito: ", response.msg,1,context);
 		//console.log(response.data.movimientos);
 	},
 	msgRespuesta(tipo,desc,estatus,context){
@@ -195,18 +196,19 @@ export default Ember.Controller.extend({
 			var method = "GET";
 			var tipo_consulta = this.get('tipo_consulta');
 			if (tipo_consulta==="mes"){
+				console.log(this.get('consulta.mes'));
 				this.validarConsultaMes();
 				if ($("#formulario_mes").valid()){
-					console.log("mes");
-					console.log(this.get('consulta'));	
+					url = window.serverUrl + '/almacen/consulta/'+tipo_consulta+'/' + this.get('consulta.mes_consulta') + '/'+this.get('consulta.mes_consulta')+'/';
+					this.getElements(method,url,this.setMovimientos,this);	
 				}
 			}else if(tipo_consulta==="rango"){
 				this.validarConsultaRango();
 				if ($("#formulario_rango").valid()){
-					console.log("rango");
-					console.log(this.get('consulta'));	
-					url = window.serverUrl + '/almacen/consulta/rango/' + this.get('consulta.desde') + '/'+this.get('consulta.hasta')+'/';
-					console.log(url);
+					//console.log("rango");
+					//console.log(this.get('consulta'));	
+					url = window.serverUrl + '/almacen/consulta/'+tipo_consulta+'/' + this.get('consulta.desde') + '/'+this.get('consulta.hasta')+'/';
+					//console.log(url);
 					this.getElements(method,url,this.setMovimientos,this);
 				}
 			}else{
