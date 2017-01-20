@@ -263,14 +263,14 @@ export default Ember.Controller.extend({
 
 		//aqui organizo los egresados y retornados por etapas, para luego sacar los usados efectivamente en cada etapa.
 		$.each(desglose.egresados.toArray(),function(i,egresado){
-			if (usados_e[egresado.codigo_eta]==null || usados_e[egresado.codigo_eta]==undefined){
+			if (usados_e[egresado.codigo_eta]===null || usados_e[egresado.codigo_eta]===undefined){
 				usados_e[egresado.codigo_eta] = [];
 			}
 			usados_e[egresado.codigo_eta].push(egresado);
 		});
 
 		$.each(desglose.retornados.toArray(),function(i,retornado){
-			if (usados_e[retornado.codigo_eta]==null || usados_e[retornado.codigo_eta]==undefined){
+			if (usados_e[retornado.codigo_eta]===null || usados_e[retornado.codigo_eta]===undefined){
 				usados_e[retornado.codigo_eta] = [];
 			}
 			usados_e[retornado.codigo_eta].push(retornado);
@@ -282,7 +282,7 @@ export default Ember.Controller.extend({
 		//ahora resto los elementos
 		$.each(usados_e,function(i,usado_e){
 			flag = false;
-			if (usados_efectivamente[usado_e.codigo_eta]==null || usados_e[usado_e.codigo_eta]==undefined){
+			if (usados_efectivamente[usado_e.codigo_eta]===null || usados_e[usado_e.codigo_eta]===undefined){
 				usados_efectivamente[usado_e.codigo_eta] = [];
 			}
 			$.each(usados_efectivamente[usado_e.codigo_eta],function(i,usado_efectivamente){
@@ -292,7 +292,7 @@ export default Ember.Controller.extend({
 					}else if(usados_e.tipo_mov === "Retorno"){
 						usados_efectivamente.cant = usados_efectivamente.cant + usado_e.cant;
 					}
-					flag=true
+					flag=true;
 				}
 			});
 			if(!flag){
@@ -319,15 +319,24 @@ export default Ember.Controller.extend({
 
 		//finalizando restamos los disponibles del presupuesto con los usados efectivamente en cada etapa
 		$.each(disponibles,function(i,disponible){
-			for (var etapa in usados_efectivamente) {
-			  if (usados_efectivamente.hasOwnProperty(etapa)) {
+			//for (var etapa in usados_efectivamente) {
+			$.each(usados_efectivamente, function(i,etapa){
+				if (usados_efectivamente.hasOwnProperty(etapa)) {
 			  	$.each(usados_efectivamente[etapa],function(i,usado_efectivamente){
 			  		if(disponible.codigo_mat === usado_efectivamente.codigo_mat){
 			  			disponible.cant = disponible.cant - usado_efectivamente.cant;
 			  		}
 				});
 			  }
-			}
+			});
+			  /*if (usados_efectivamente.hasOwnProperty(etapa)) {
+			  	$.each(usados_efectivamente[etapa],function(i,usado_efectivamente){
+			  		if(disponible.codigo_mat === usado_efectivamente.codigo_mat){
+			  			disponible.cant = disponible.cant - usado_efectivamente.cant;
+			  		}
+				});
+			  }*/
+			//}
 		});
 
 		console.log(disponibles);
@@ -1011,7 +1020,7 @@ export default Ember.Controller.extend({
 			data.otros ={
 				"ci_tecnico":208034,
 				"codigo_eta":8,
-			}
+			};
 			data.materiales= [];
 			var materiales = this.get('solicitud_material_prueba').toArray();
 			$.extend(true,data.materiales,materiales);

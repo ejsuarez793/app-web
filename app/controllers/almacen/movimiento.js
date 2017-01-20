@@ -173,7 +173,7 @@ export default Ember.Controller.extend({
 				//data: data,
 		})    
 		.done(function(response){ callback(response, context); })    
-		.fail(function(response) { console.log(response); context.msgRespuesta('Error: ',response.responseText,-1,context)}); 
+		.fail(function(response) { console.log(response); context.msgRespuesta('Error: ',response.responseText,-1,context);}); 
 	},
 	llamadaServidor(method,url,data,callback,context){
 		$.ajax({
@@ -395,8 +395,8 @@ export default Ember.Controller.extend({
 			data.materiales = [];
 			data.completado = true;
 			$.each(this.get('movimiento.materiales').toArray(),function(i,material){
-				if (material.mostrar_seleccion==true){
-					var aux = {}
+				if (material.mostrar_seleccion===true){
+					var aux = {};
 					aux.codigo = material.codigo;
 					aux.cantidad = material.cantidad_seleccion;
 					data.materiales.push(aux);
@@ -410,8 +410,8 @@ export default Ember.Controller.extend({
 			data.materiales = [];
 			data.completado = true;
 			$.each(this.get('movimiento.materiales').toArray(),function(i,material){
-				if (material.mostrar_seleccion==true){
-					var aux = {}
+				if (material.mostrar_seleccion===true){
+					var aux = {};
 					aux.codigo = material.codigo;
 					aux.cantidad = material.cantidad_seleccion;
 					data.materiales.push(aux);

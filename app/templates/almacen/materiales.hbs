@@ -33,8 +33,9 @@
           </div>
 
            <div class="col-lg-4">
-            <div id="alert" class="alert alert-success hidden" role="alert">
-              <strong>{{alert.strong}}!</strong> {{alert.msg}}
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden >
+              <button type="button" class="close" aria-label="Close" {{action 'cerrarMsgAlert'}}><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
             </div>
           </div>
 
@@ -54,13 +55,9 @@
 	        		<tr>
 					    <th {{action "ordenarPor" "codigo"}}>Codigo <span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
 					    <th {{action "ordenarPor" "nombre"}}>Nombre <span id="th-nombre" class="glyphicon glyphicon-chevron-down"></span></th>
-					    <!--<th{{action "ordenarPor" "presen"}} >Presentación <span id="th-presen" class="glyphicon glyphicon-chevron-down"></span></th>-->
-					    <!--<th{{action "ordenarPor" "serial"}} >Serial<span id="th-serial" class="glyphicon glyphicon-chevron-down"></span></th>-->
 					    <th{{action "ordenarPor" "marca"}} >Marca<span id="th-marca" class="glyphicon glyphicon-chevron-down"></span></th>
-					    <!--<th{{action "ordenarPor" "dim"}} >Dimensiones<span id="th-dim" class="glyphicon glyphicon-chevron-down"></span></th>-->
 					    <th{{action "ordenarPor" "cantidad"}} >Cantidad<span id="th-cantidad" class="glyphicon glyphicon-chevron-down"></span></th>
 					    <th{{action "ordenarPor" "precio_act"}} >Precio actual <small class="form-text text-muted">F.Act</small><span id="th-precio_act" class="glyphicon glyphicon-chevron-down"></span></th>
-					   <!-- <th{{action "ordenarPor" "f_act"}} >Fecha Actualización<span id="th-f_Act" class="glyphicon glyphicon-chevron-down"></span></th>-->
 					   	<th>Detalles</th>
 					    <th>Editar</th>
 	  				</tr>
@@ -72,7 +69,7 @@
 					<td class="col-tabla"><{{material.nombre}}</td>
 					<td class="col-tabla">{{material.marca}}</td>
 					<td class="col-tabla">{{material.cantidad}}</td>
-					<td class="col-tabla">{{material.precio_act}} <br> <small class="form-text text-muted"> act: {{material.f_act}} </small></td>
+					<td class="col-tabla">{{material.precio_act_mostar}} <br> <small class="form-text text-muted"> act: {{material.f_act}} </small></td>
           			<td class="col-tabla"><button {{action 'openModalDetail' material}} class="btn btn-default btn-xs">ver</button></td>
 					<td class="col-tabla"><button {{action 'openModal' 'true' material}} class="btn btn-default btn-xs">editar</button></td>
 				</tr>
@@ -300,18 +297,18 @@
         <small class="form-text text-muted">{{solicitud.codigo}}</small>
       </div>
       <div class="modal-body">
-          
+          <div class="well jumbo-color">
     	
 
 	        <div class="row">
 
 		        <div class="col-md-6 ">
 
-		        	<div class="panel panel-primary">
+		        	<div class="panel panel-default">
 					  <div class="panel-heading">
 					    <h3 class="panel-title">Detalles</h3>
 					  </div>
-					  <div class="panel-body">
+					  <div class="panel-body height-150">
 					    <dl class="dl-horizontal">
 					    	<dt>Código</dt> <dd>{{material.codigo}}</dd>
 							<dt>Serial</dt> <dd>{{material.serial}}</dd>
@@ -319,17 +316,19 @@
 							<dt>Precio</dt> <dd>{{material.precio_act}}</dd>						
 						</dl>	
 					  </div>
+					   <div class="panel-footer">
+	                </div>
 					</div>
 
 		        </div>
 
-		         <div class="col-md-6 ">
+		         <div class="col-md-6">
 		        
-			        <div class="panel panel-primary">
+			        <div class="panel panel-default">
 					  <div class="panel-heading">
 					    <h3 class="panel-title">Características</h3>
 					  </div>
-					  <div class="panel-body">
+					  <div class="panel-body height-150">
 					    <dl class="dl-horizontal">
 					    	<dt>Marca / Modelo</dt> <dd>{{material.marca}} / {{material.modelo}}</dd>
 							<dt>Presentación</dt> <dd>{{material.presen}}</dd>
@@ -337,6 +336,8 @@
 							<dt>Dimensiones</dt> <dd>{{material.ancho}} {{material.alto}}  {{material.largo}}</dd>						
 						</dl>	
 					  </div>
+					  <div class="panel-footer">
+	                  </div>
 					</div>
 
 		        </div>
@@ -347,13 +348,15 @@
 
 		        <div class="col-md-12">
 
-		        	<div class="panel panel-primary">
+		        	<div class="panel panel-default">
 					  <div class="panel-heading">
 					    <h3 class="panel-title">Descripción</h3>
 					  </div>
 					  <div class="panel-body">
 					  	{{material.desc}}
 					  </div>
+					  <div class="panel-footer">
+	                  </div>
 					</div>
 
 		        </div>
@@ -364,7 +367,7 @@
 
 		        <div class="col-md-12">
 
-		        	<div class="panel panel-primary">
+		        	<div class="panel panel-default">
 					  <div class="panel-heading">
 					    <h3 class="panel-title">Proveedores</h3>
 					  </div>
@@ -388,8 +391,9 @@
 								</tbody>
 							</table>
 					  </div>
+					  <div class="panel-footer">
+	                  </div>
 					</div>
-
 		        </div>
 		        
 	        </div>
@@ -397,6 +401,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
       </div>
     </div>
   </div>

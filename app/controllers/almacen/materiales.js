@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
 	//material:{},
+	msg: {},
 	editing:false,
 	materiales: [],
 	proveedores: [],
@@ -10,36 +11,7 @@ export default Ember.Controller.extend({
 	select:{},
 	pcs: [],
 	pss: [],
-	/*material:{
-		codigo: '',
-		nombre: '',
-		serial: '',
-		desc: '',
-		presen: '',
-		precio_act: '',
-		cantidad: '',
-		marca: '',
-		modelo: '',
-		color: '',
-		alto: '',
-		largo: '',
-		ancho: '',
-	},*/
-	material:{
-		'codigo': 'MAT-001',
-		nombre: "Nombre material",
-		serial: 'Serial',
-		desc: 'Descripcion',
-		presen: 'Presentacion',
-		precio_act: '105870',
-		cantidad: '100',
-		marca: 'Marca',
-		modelo: 'Modelo',
-		color: 'Color',
-		alto: 'Alto',
-		largo: 'Largo',
-		ancho: 'Ancho',
-	},
+	material: {},
 	init(){
 		this._super();
 		if (!((Cookies.get('token')===undefined) || (Cookies.getJSON('current')===undefined))){
@@ -57,8 +29,8 @@ export default Ember.Controller.extend({
 				return value === "" || value.length <= len;
 		});
 
-		$.validator.addMethod('codigoServicio', function(value, element){
-				return this.optional(element) ||   value.length <= 15 && /[S][T][-]\d{3}/.test(value);
+		$.validator.addMethod('codigoMaterial', function(value, element){
+				return this.optional(element) ||   value.length <= 15 && /[M][A][T][-]\d{3}/.test(value);
 		}, 'Código no válido');
 
 
@@ -67,6 +39,16 @@ export default Ember.Controller.extend({
 				codigo:{
 					required:true,
 					maxlength:10,
+					codigoMaterial:true,
+					remote: {
+                    url: window.serverUrl + '/validar/material/',
+                    type: "GET",
+                    data: {
+                      codigo: function() {
+                        return $( "#codigo" ).val();
+                      }
+                    }
+                  }
 				},
 				serial:{
 					maxlength:50,
@@ -197,27 +179,29 @@ export default Ember.Controller.extend({
 				data: JSON.stringify(data),
 		})    
 		.done(function(response) { 
-			if(method==="PATCH"){
-				this.set('alert.strong','Editado'); 
-				this.set('alert.msg','Material '+response.codigo+' editado exitosamente'); 
-			} 
-			else if (method==='POST'){
-				this.set('alert.strong','Creado');
-				this.set('alert.msg','Material '+response.codigo+' creado exitosamente'); 
-			} 
-			$("#alert").removeClass('hidden');
-			$("#alert").removeClass('alert-danger');
-			$("#alert").addClass('alert-success');
+			this.msgRespuesta('Exito: ',response.msg,1,this); 
 			this.init(); 
 		})    
 		.fail(function(response) { 
-			console.log(response); this.set('alert.strong','Error'); 
-			this.set('alert.msg','Ocurrio un error en el servidor'); 
-
-			$("#alert").removeClass('hidden');
-			$("#alert").removeClass('alert-success');
-			$("#alert").addClass('alert-danger');
+			console.log(response); 
+			this.msgRespuesta('Error: ',response.responseText,-1,this);
 		});
+	},
+	msgRespuesta(tipo,desc,estatus,context){
+		var clases = ['alert-danger','alert-warning','alert-success'];
+		var _this = context;
+		_this.set('msg.tipo',tipo);
+		_this.set('msg.desc',desc);
+		$.each(clases,function(i/*,clase*/){
+			if (i === (estatus+1)){
+				$("#alertMsg").addClass(clases[i]);
+			}else{
+				$("#alertMsg").removeClass(clases[i]);
+			}
+
+		});
+		$("#alertMsg").show();
+
 	},
 	asignarMateriales(materiales,context){
 		var _this = context;
@@ -229,7 +213,7 @@ export default Ember.Controller.extend({
 		}
 		$.each(materiales, function(i,material){
 			
-			material.precio_act = numeral(material.precio_act).format('0,0.00');
+			material.precio_act_mostar = numeral(material.precio_act).format('0,0.00');
 			material.f_act = moment(material.f_act).format('l');
 
 		});
@@ -350,11 +334,11 @@ export default Ember.Controller.extend({
 
 	},
 
-	prepararModal(editing,material){
+	openModal(editing,material){
 		if (editing==='false'){
 			this.set('editing',false);
 			$("#codigo").prop('disabled', false);
-			//this.set('material', {});
+			this.set('material', {});
 			this.set('pcs',[]);
 			this.set('pss',this.get('proveedores').toArray());
 		}else{
@@ -403,11 +387,96 @@ export default Ember.Controller.extend({
 			material.flag = true;
 		}
 	},
+	save(){
+		var material = this.get('material');
+		var method = "";
+		var url = "";
+		if (!this.get('editing')){
+			method = "POST";
+			url = window.serverUrl + '/material/';
+		}else{
+			method = "PATCH";
+			url = window.serverUrl +'/material/' + material.codigo +'/';
+		}
+		if (material.serial==null || material.serial==="" || material.serial===undefined){
+			this.set('material.serial',null);
+		}
+		var data = {};
+		data.material = material;
+		data.proveedores = this.get('pcs').toArray();
+		//console.log(data);
+		this.validarCampos();
+		if ($("#formulario").valid()){
+			this.llamadaServidor(method,url,data);
+			$('#myModal').modal('hide');
+		}
+	},
+	ordenarPor(property){
+		var asc = null;
+		var th = '#th-'+property;
+		if ($(th).hasClass('glyphicon-chevron-down')){
+			asc = true;
+			$(th).removeClass('glyphicon-chevron-down');
+			$(th).addClass('glyphicon-chevron-up');
+		}else{
+			asc = false;
+			$(th).removeClass('glyphicon-chevron-up');
+			$(th).addClass('glyphicon-chevron-down');
+		}
+		var aux = this.ordenar(property,asc,this.get('materiales').toArray());
+		this.set('materiales',aux);
+	},
+	agregarProveedores(){
+		var pcs = [];
+		var _this = this;
 
+
+		$('#myModalProveedores input:checked').each(function() {
+		    pcs.push($(this).val());
+		});
+		var aux =  $.extend(true, {}, this.get('proveedores').toArray());
+		$.each(aux, function(i,proveedor){
+			if ($.inArray(proveedor.rif, pcs) !== -1){
+				_this.get('pcs').pushObject(proveedor);
+			}
+		});
+
+		$.each(this.get('pss').toArray(),function(i,pss){
+			if($.inArray(pss.rif, pcs) !== -1){
+				_this.get('pss').removeObject(pss);
+			}
+		});
+		$("#myModalProveedores").modal('hide');
+	},
+	eliminarProveedores(){
+		console.log("eliminar");
+		var pss = [];
+		var _this = this;
+
+
+		$('#myModal input:checked').each(function() {
+		    pss.push($(this).val());
+		});
+		var aux =  $.extend(true, {}, this.get('proveedores').toArray());
+		$.each(aux, function(i,proveedor){
+			if ($.inArray(proveedor.rif, pss) !== -1){
+				_this.get('pss').pushObject(proveedor);
+			}
+		});
+
+		$.each(this.get('pcs').toArray(),function(i,pcs){
+			if($.inArray(pcs.rif, pss) !== -1){
+				_this.get('pcs').removeObject(pcs);
+			}
+		});
+	},
+	cerrarMsgAlert(){
+		$("#alertMsg").hide();
+	},
 	actions: {
 
 		openModal: function(editing,material){
-			this.prepararModal(editing,material);
+			this.openModal(editing,material);
 		},
 		openModalDetail: function(material){
 			this.ordenarMaterialProveedores(material);
@@ -415,92 +484,24 @@ export default Ember.Controller.extend({
 			this.set('material',material);
 		},
 		save:function(){
-			var material = this.get('material');
-			var method = "";
-			var url = "";
-			if (!this.get('editing')){
-				method = "POST";
-				url = window.serverUrl + '/material/';
-			}else{
-				method = "PATCH";
-				url = window.serverUrl +'/material/' + material.codigo +'/';
-			}
-			if (material.serial==null || material.serial==="" || material.serial===undefined){
-				this.set('material.serial',null);
-			}
-			var data = {};
-			data.material = material;
-			data.proveedores = this.get('pcs').toArray();
-			console.log(data);
-			this.validarCampos();
-			if ($("#formulario").valid()){
-				this.llamadaServidor(method,url,data);
-				$('#myModal').modal('hide');
-			}
+			this.save();
 		},
 		ordenarPor: function(property) {
-			var asc = null;
-			var th = '#th-'+property;
-			if ($(th).hasClass('glyphicon-chevron-down')){
-				asc = true;
-				$(th).removeClass('glyphicon-chevron-down');
-				$(th).addClass('glyphicon-chevron-up');
-			}else{
-				asc = false;
-				$(th).removeClass('glyphicon-chevron-up');
-				$(th).addClass('glyphicon-chevron-down');
-			}
-			var aux = this.ordenar(property,asc,this.get('materiales').toArray());
-			this.set('materiales',aux);
+			this.ordenarPor(property);
 
     	},
     	openModalProveedores: function(){
     		$('#myModalProveedores').modal('show');
     	},
     	agregarProveedores: function(){
-    		var pcs = [];
-    		var _this = this;
-
-
-			$('#myModalProveedores input:checked').each(function() {
-			    pcs.push($(this).val());
-			});
-			var aux =  $.extend(true, {}, this.get('proveedores').toArray());
-			$.each(aux, function(i,proveedor){
-				if ($.inArray(proveedor.rif, pcs) !== -1){
-					_this.get('pcs').pushObject(proveedor);
-				}
-			});
-
-			$.each(this.get('pss').toArray(),function(i,pss){
-				if($.inArray(pss.rif, pcs) !== -1){
-					_this.get('pss').removeObject(pss);
-				}
-			});
-			$("#myModalProveedores").modal('hide');
+    		this.agregarProveedores();
 
     	},
     	eliminarProveedores: function(){
-    		console.log("eliminar");
-    		var pss = [];
-    		var _this = this;
-
-
-			$('#myModal input:checked').each(function() {
-			    pss.push($(this).val());
-			});
-			var aux =  $.extend(true, {}, this.get('proveedores').toArray());
-			$.each(aux, function(i,proveedor){
-				if ($.inArray(proveedor.rif, pss) !== -1){
-					_this.get('pss').pushObject(proveedor);
-				}
-			});
-
-			$.each(this.get('pcs').toArray(),function(i,pcs){
-				if($.inArray(pcs.rif, pss) !== -1){
-					_this.get('pcs').removeObject(pcs);
-				}
-			});
-    	}
+    		this.eliminarProveedores();
+    	},
+    	cerrarMsgAlert:function(){
+    		this.cerrarMsgAlert();
+    	},
 	}
 });

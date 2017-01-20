@@ -67,7 +67,7 @@ export default Ember.Controller.extend({
                   required: true,
                   nowhitespace: true,
                   remote: {
-                    url: "http://localhost:8000/validar/usuario/",
+                    url: window.serverUrl + "/validar/usuario/",
                     type: "GET",
                     data: {
                       username: function() {

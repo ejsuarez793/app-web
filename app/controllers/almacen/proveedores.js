@@ -35,15 +35,15 @@ export default Ember.Controller.extend({
 					maxlength: 15,
 					nowhitespace: true,
 					rifValido: true,
-					/*remote: {
-						url: window.serverUrl + '/validar/cliente/',
+					remote: {
+						url: window.serverUrl + '/validar/proveedor/',
 						type: "GET",
 						data: {
 							rif: function() {
 								return $( "#rif" ).val();
 							}
 						}
-					}*/
+					}
 				},
 				nombre:{
 					required: true,
@@ -286,43 +286,49 @@ export default Ember.Controller.extend({
 
 		$("#myModal").modal('show');
 	},
+	save(){
+		var method = "";
+		var url = "";
+		var proveedor = this.get('proveedor');
+		if (!this.get('editing')){
+			method = "POST";
+			url = window.serverUrl + '/proveedor/';
+		}else{
+			method = "PATCH";
+			url = window.serverUrl +'/proveedor/' + proveedor.rif +'/';
+		}
+		var data = proveedor;
+		this.validarCampos();
+		if ($("#formulario").valid()){
+			this.llamadaServidor(method,url,data);
+			$('#myModal').modal('hide');
+		}
+	},
+	ordenarPor(property){
+		var asc = null;
+		var th = '#th-'+property;
+		if ($(th).hasClass('glyphicon-chevron-down')){
+			asc = true;
+			$(th).removeClass('glyphicon-chevron-down');
+			$(th).addClass('glyphicon-chevron-up');
+		}else{
+			asc = false;
+			$(th).removeClass('glyphicon-chevron-up');
+			$(th).addClass('glyphicon-chevron-down');
+		}
+		var aux = this.ordenar(property,asc,this.get('proveedores').toArray());
+		this.set('proveedores',aux);
+	},
 	actions: {
 
 		openModal: function(editing,proveedor){
 			this.prepararModal(editing,proveedor);
 		},
 		save:function(){
-			var method = "";
-			var url = "";
-			var proveedor = this.get('proveedor');
-			if (!this.get('editing')){
-				method = "POST";
-				url = window.serverUrl + '/proveedor/';
-			}else{
-				method = "PATCH";
-				url = window.serverUrl +'/proveedor/' + proveedor.rif +'/';
-			}
-			var data = proveedor;
-			this.validarCampos();
-			if ($("#formulario").valid()){
-				this.llamadaServidor(method,url,data);
-				$('#myModal').modal('hide');
-			}
+			this.save();
 		},
 		ordenarPor: function(property) {
-			var asc = null;
-			var th = '#th-'+property;
-			if ($(th).hasClass('glyphicon-chevron-down')){
-				asc = true;
-				$(th).removeClass('glyphicon-chevron-down');
-				$(th).addClass('glyphicon-chevron-up');
-			}else{
-				asc = false;
-				$(th).removeClass('glyphicon-chevron-up');
-				$(th).addClass('glyphicon-chevron-down');
-			}
-			var aux = this.ordenar(property,asc,this.get('proveedores').toArray());
-			this.set('proveedores',aux);
+			this.ordenarPor(property);
     	}
 	},
 });

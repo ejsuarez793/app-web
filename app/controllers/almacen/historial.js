@@ -92,7 +92,7 @@ export default Ember.Controller.extend({
 				//data: data,
 		})    
 		.done(function(response){ callback(response, context); })    
-		.fail(function(response) { console.log(response); context.msgRespuesta('Error: ',response.responseText,-1,context)}); 
+		.fail(function(response) { console.log(response); context.msgRespuesta('Error: ',response.responseText,-1,context); }); 
 	},
 	setMovimientos(response,context){
 		var _this = context;
@@ -151,7 +151,7 @@ export default Ember.Controller.extend({
 		}
 		var movimientos = $.extend(true,[],this.get('movimientos').toArray());
 		$.each(movimientos,function(i,movimiento){
-			if ($.inArray(movimiento.tipo,tipo_mov)!=-1){
+			if ($.inArray(movimiento.tipo,tipo_mov)!==-1){
 				//console.log("entra");
 				movimiento.mostrar = true;
 			}else{
