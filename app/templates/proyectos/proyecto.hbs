@@ -112,7 +112,11 @@
                                     <td class="col-tabla"><{{etapa.nombre}}</td>
                                     <td class="col-tabla">{{etapa.estatus}}</td>
                                     <td >
+                                    {{#if etapa.reporte_detalle}}
                                       <button {{action 'openModalReporteDetalle' etapa}} class="btn btn-default btn-xs">ver</button>
+                                    {{else}}
+                                      N/A
+                                    {{/if}}
                                     </td>
                                     <td >
                                       <button {{action 'openModalReportes' etapa}} class="btn btn-default btn-xs">ver</button>
@@ -445,7 +449,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button class="btn btn-primary" {{action 'guardarPE'}}>Guardar</button>
+        <button class="btn btn-primary" {{action 'guardarEtapa'}}>Guardar</button>
       </div>
     </div>
   </div>
@@ -675,7 +679,7 @@
           {{#if sin_actividades}}
              <div class="page-header">
                   <h3>Definición de actividades</h3>
-                  <p>Esta etapa no tiene actividades definidas, a continuación deberá definirlas según se requiera y basándose en el contenido del reporte de detalle, una vez que finalice debe oprimir el botón guardar. <strong> Esta definición solo puede hacerce una vez. No se puede editar las actividades despues de guardadas</strong></p>
+                  <p>Esta etapa no tiene actividades definidas, a continuación deberá definirlas según se requiera y basándose en el contenido del reporte de detalle, una vez que finalice debe oprimir el botón guardar. <strong> Esta definición solo puede hacerce una vez. No se puede editar las actividades despues de guardadas. Adicionalmente debe esta COMPLETADO el reporte de detalle para poder guardarlas.</strong></p>
               </div>
 
                 <ul class="list-group">
@@ -902,7 +906,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button type="submit" id="submit-button" {{action 'procesar'}} class="btn btn-primary">Procesar</button>
+        <button type="submit" id="submit-button" {{action 'procesarPresupuesto'}} class="btn btn-primary">Procesar</button>
       </div>
     </div>
   </div>

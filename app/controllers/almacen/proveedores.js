@@ -134,15 +134,15 @@ export default Ember.Controller.extend({
 				data: JSON.stringify(data),
 		})    
 		.done(function(response) {
-			this.alertMsg(true,method,response);
+			this.msgRespuesta(true,method,response);
 			this.init(); 
 		})    
 		.fail(function(response) {
-			this.alertMsg(false,method,response); 
+			this.msgRespuesta(false,method,response); 
 			console.log(response);
 		});
 	},
-	alertMsg(success,method,response){
+	msgRespuesta(success,method,response){
 		if (success){
 			if(method==="PATCH"){
 				this.set('alert.strong','Editado'); 

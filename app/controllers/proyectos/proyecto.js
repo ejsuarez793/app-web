@@ -496,11 +496,17 @@ export default Ember.Controller.extend({
 	},
 	aprobarSolicitud(solicitud){
 		//console.log(solicitud);
-		var codigo_pro = this.get('proyecto.codigo');
-		var method = "POST";
-		var url = window.serverUrl +'/proyecto/'+codigo_pro+'/solicitud/' +solicitud.codigo+'/aprobar/';
-		var data = this.get('disponibilidad_material.disponible');
-		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		var disp = this.get('disponibilidad_material');
+
+		if(disp.tipo === "Disponibilidad"){
+			var codigo_pro = this.get('proyecto.codigo');
+			var method = "POST";
+			var url = window.serverUrl +'/proyecto/'+codigo_pro+'/solicitud/' +solicitud.codigo+'/aprobar/';
+			var data = this.get('disponibilidad_material.disponible');
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		}else{
+			this.msgRespuesta("Error: ", "No se puede aprobar la solicitud, ya que no hay disponibilidad de material o existe disponibilidad limitada.",-1,this);
+		}
 		$("#myModalSolicitudes").modal('hide');
 	},
 	/*
@@ -735,9 +741,9 @@ export default Ember.Controller.extend({
 		this.set('presupuesto',presupuesto);
 	},
 	/*
-		procesar: procesa la llamada al servidor para salvar el presupuesto.
+		procesarPresupuesto: procesa la llamada al servidor para salvar el presupuesto.
 	*/
-	procesar(){
+	procesarPresupuesto(){
 		var method;
 		var url;
 		var data;
@@ -751,8 +757,13 @@ export default Ember.Controller.extend({
 			url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo')+'/presupuesto/';
 		}
 		data = this.get('presupuesto');
-		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
-		this.init();
+		if(data.estatus === "Aprobado"){
+			this.msgRespuesta("Error: ","Presupuesto ya aprobado no se puede editar.",-1,this);
+		}else{
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+			this.init();
+		}
+		$("#myModalPresupuesto").modal('hide');
 	},
 	openModalGeneral(){
 		this.set('pg.nombre',this.get('proyecto.nombre'));
@@ -797,12 +808,14 @@ export default Ember.Controller.extend({
 		$("#myModalReportes").modal('show');
 	},
 	openModalActividades:function(etapa){
-		//console.log(etapa);
+		console.log(etapa);
 		this.set('etapa',etapa);
-		if (etapa.actividades.length === 0){
+		if (etapa.actividades===null || etapa.actividades===undefined || etapa.actividades.length === 0){
 			this.set('sin_actividades',true);
 			var nuevas_actividades = this.get('nuevas_actividades');
 			this.set('na.nro',nuevas_actividades.length + 1);
+		}else{
+			this.set('sin_actividades',false);
 		}
 		$("#myModalActividades").modal('show');
 	},
@@ -818,7 +831,7 @@ export default Ember.Controller.extend({
         	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
         }
 	},
-	guardarPE(){
+	guardarEtapa(){
 		var method;
 		var url;
 		var data = {};
@@ -833,8 +846,9 @@ export default Ember.Controller.extend({
 		this.validarPE();
         if ($("#formulario_pe").valid()){
         	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+        	$("#myModalEtapa").modal('hide');
         }
-        $("#myModalEtapa").modal('hide');
+       // $("#myModalEtapa").modal('hide');
 	},
 	guardarReportesLeidos(){
 		var checkbox = '#myModalReportes input:checked';
@@ -893,15 +907,28 @@ export default Ember.Controller.extend({
 		});
 
 		$.extend(true,data,this.get('nuevas_actividades').toArray());
-		console.log(data);
-		method = "POST";
-		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/' +this.get('etapa.codigo')+'/actividad/';
-        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		//console.log(data);
+		if (data.length > 0 && this.get('etapa.codigo_rd')!==null){
+			method = "POST";
+			url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/' +this.get('etapa.codigo')+'/actividad/';
+	        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+	        this.init();
+		}else if(data.length==0){
+			this.msgRespuesta("Error: ","No hay ninguna actividad definida.",-1,this);
+		}else if(this.get('etapa.codigo_rd')===null){
+			this.msgRespuesta("Error: ","No se pueden definir actividades si no hay un reporte de detalle completado.",-1,this);
+		}
         $("#myModalActividades").modal('hide');
 	},
+	cerrarMsg(){
+		$("#alertMsg").hide();
+	},
 	actions: {
-		procesar:function(){
-			this.procesar();
+		cerrarMsg:function(){
+			this.cerrarMsg();
+		},
+		procesarPresupuesto:function(){
+			this.procesarPresupuesto();
 		},
 		ordenarPor: function(property,presupuestos) {
 			this.ordenarPor(property,presupuestos);
@@ -958,8 +985,8 @@ export default Ember.Controller.extend({
 		guardarProyectoGeneral:function(){
 			this.guardarProyectoGeneral();
 		},
-		guardarPE: function(){
-			this.guardarPE();
+		guardarEtapa: function(){
+			this.guardarEtapa();
 		},
 		guardarActividades:function(){
 			this.guardarActividades();
