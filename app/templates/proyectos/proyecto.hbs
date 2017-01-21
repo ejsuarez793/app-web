@@ -22,10 +22,12 @@
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
               <li role="presentation" class="active"><a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a></li>
+              <li role="presentation"><a href="#tecnicos" aria-controls="tecnicos" role="tab" data-toggle="tab">Técnico(s)</a></li>
               <li role="presentation"><a href="#etapas" aria-controls="etapas" role="tab" data-toggle="tab">Etapas</a></li>
               <li role="presentation"><a href="#listado" aria-controls="listado" role="tab" data-toggle="tab">Listado Materiales</a></li>
               <li role="presentation"><a href="#solicitudesmat" aria-controls="solicitudesmat" role="tab" data-toggle="tab">Solicitudes de Material</a></li>
               <li role="presentation"><a href="#presupuesto" aria-controls="presupuesto" role="tab" data-toggle="tab">Presupuesto(s)</a></li>
+
             </ul>
 
             <!-- Tab panes -->
@@ -77,6 +79,72 @@
                   </div>
                 </div>
 
+
+              </div>
+
+
+              <!-- Técnicos-->
+              <div role="tabpanel" class="tab-pane" id="tecnicos">
+                
+
+              <div class="well jumbo-color">
+                <div class="row">
+                  <div class="col-md-12 ">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Técnicos Proyecto
+
+                          </h3>
+                        </div>
+                        <div class="panel-body">
+                           <div class="row">
+                              <div class="col-md-12">
+                                <table class="table table-bordered table-hover " id="tabla_tecnicos">  
+                                  <thead class="header-tabla">
+                                    <tr>
+                                      <th class="col-md-2">C.I</th>
+                                      <th class="col-md-4"> Nombre Técnico</th>
+                                      <th class="col-md-2">Teléfono</th>
+                                      <th class="col-md-2">Correo</th>
+                                       <th class="col-md-1">Seleccionar</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody id="tbody" class="text-center">
+                                    {{#each tecnicos as |tecnico|}}
+                                    {{#if tecnico.mostrar_asociado}}
+                                    <tr>
+                                      <td class="col-tabla">{{tecnico.ci}}</td>
+                                      <td class="col-tabla"><{{tecnico.nombre}}</td>
+                                      <td class="col-tabla">{{tecnico.tlf}}</td>
+                                      <td class="col-tabla">{{tecnico.correo}}</td>
+                                      <td > <input type="checkbox" value="{{tecnico.ci}}"></td>
+                                    </tr>
+                                    {{/if}}
+                                    {{/each}}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                          <div class="row">
+                          <div class="col-sm-5"></div>
+
+                            <div class="col-sm-3">
+                              <button class="btn btn-default pull-right" {{action 'eliminarTecnicosSeleccionados'}} type="submit">Eliminar Seleccionados</button>      
+                            </div>
+                            <div class="col-sm-2">
+                              <button class="btn btn-primary pull-right" {{action 'openModalTecnicos'}} type="submit">Agregar Técnico</button>
+                            </div>
+                            <div class="col-sm-2">
+                              <button class="btn btn-primary pull-right" {{action 'guardarTecnicos'}} type="submit">Guardar</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
               </div>
 
@@ -386,6 +454,61 @@
 
 
 
+<!-- Modal Tecnicos-->
+<div class="modal fade " id="myModalTecnicos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Tecnicos</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
+          <form  id="formulario_pe">
+            <div class="row">
+
+                <table class="table table-bordered table-hover " id="tabla_tecnicos_ss">  
+                  <thead class="header-tabla">
+                    <tr>
+                      <th class="col-md-2">C.I</th>
+                      <th class="col-md-4"> Nombre Técnico</th>
+                      <th class="col-md-2">Teléfono</th>
+                      <th class="col-md-2">Correo</th>
+                       <th class="col-md-1">Seleccionar</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody" class="text-center">
+                    {{#each tecnicos as |tecnico|}}
+                    {{#unless tecnico.mostrar_asociado}}
+                    <tr>
+                      <td class="col-tabla">{{tecnico.ci}}</td>
+                      <td class="col-tabla">
+                      {{tecnico.nombre}}
+                      </td>
+                      <td class="col-tabla">{{tecnico.tlf}}</td>
+                      <td class="col-tabla">{{tecnico.correo}}</td>
+                      <td > <input type="checkbox" value="{{tecnico.ci}}"></td>
+                    </tr>
+                    {{/unless}}
+                    {{/each}}
+                  </tbody>
+                </table>
+
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" {{action 'agregarTecnico'}}>Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -454,6 +577,9 @@
     </div>
   </div>
 </div>
+
+
+
 
 
 

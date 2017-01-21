@@ -37,6 +37,9 @@ export default Ember.Controller.extend({
 			var url = window.serverUrl + '/proyecto/' + this.get('codigo') + '/';
 		    this.getElements(method,url,this.setProyecto,this);
 
+		    url = window.serverUrl + '/proyecto/' + this.get('codigo') + '/tecnico/';
+		    this.getElements(method,url,this.setTecnicos,this);
+
 		    url = window.serverUrl + '/material/';
 		    this.getElements(method,url,this.setMateriales,this);
 
@@ -226,6 +229,11 @@ export default Ember.Controller.extend({
 		var _this = context;
 		_this.set('proyecto',proyecto);
 		//console.log(proyecto);
+	},
+	setTecnicos(tecnicos,context){
+		var _this = context;
+		_this.set('tecnicos',tecnicos);
+		console.log(tecnicos);
 	},
 	setServicios(servicios,context){
 		var _this = context;
@@ -773,6 +781,29 @@ export default Ember.Controller.extend({
 
 		$("#myModalGeneral").modal('show');
 	},
+	openModalTecnicos(){
+		/*var tecnicos_asociados = this.get('proyecto.tecnicos').toArray();
+		var tecnicos = this.get('tecnicos').toArray();
+		var tecnicos_mostrar = [];
+		var aux = {};
+		$.each(tecnicos, function(i,tecnico){
+			$.each(tecnicos_asociados, function(i,tecnico_a){
+				aux=$.extend(true,{},tecnico_a);
+				if (tecnico_a.ci === tecnico.ci){
+					aux['mostrar_asociado'] = true;
+					aux['mostrar_no_asociado'] = false;
+				}
+				else{
+					aux['mostrar_asociado'] = false;
+					aux['mostrar_no_asociado'] = true;
+				}
+				tecnicos_mostrar.push(aux);
+			});
+		});
+		console.log(tecnicos_mostrar);*/
+		//this.set('tecnicos_mostrar',tecnicos_mostrar);
+		$("#myModalTecnicos").modal('show');
+	},
 	openModalEtapa(etapa,editing){
 		if(!editing){
 			var arrayLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']; //array de letras para identificar la nueva etapa
@@ -829,7 +860,9 @@ export default Ember.Controller.extend({
 		this.validarPG();
         if ($("#formulario_pg").valid()){
         	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+        	$("#myModalGeneral").modal('hide');
         }
+
 	},
 	guardarEtapa(){
 		var method;
@@ -923,6 +956,57 @@ export default Ember.Controller.extend({
 	cerrarMsg(){
 		$("#alertMsg").hide();
 	},
+	agregarTecnico(){
+		var checkbox = "#tabla_tecnicos_ss input:checked";
+		var cedulas_t = []
+		var tecnicos = $.extend(true,[],this.get('tecnicos').toArray());
+		$(checkbox).each(function() {
+			cedulas_t.push($(this).val());
+		});
+
+		$.each(tecnicos,function(i,tecnico){
+			if ($.inArray(tecnico.ci,cedulas_t)!==-1){
+				tecnico.mostrar_asociado = true;
+			}
+		});
+		this.set('tecnicos',tecnicos);
+		$("#myModalTecnicos").modal('hide');
+		//console.log("agregar tecnico");
+	},
+	eliminarTecnicosSeleccionados(){
+		var checkbox = "#tabla_tecnicos input:checked";
+		var cedulas_t = []
+		var tecnicos = $.extend(true,[],this.get('tecnicos').toArray());
+		$(checkbox).each(function() {
+			cedulas_t.push($(this).val());
+		});
+
+		$.each(tecnicos,function(i,tecnico){
+			if ($.inArray(tecnico.ci,cedulas_t)!==-1){
+				tecnico.mostrar_asociado = false;
+			}
+		});
+		this.set('tecnicos',tecnicos);
+
+	},
+	guardarTecnicos(){
+		console.log("guardando...");
+		var method;
+		var url;
+		var data = [];
+		method = "POST";
+		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/tecnico/';
+		var tecnicos = this.get('tecnicos');
+
+		$.each(tecnicos, function(i,tecnico){
+			if (tecnico.mostrar_asociado==true){
+				data.push(tecnico);
+			}
+		});
+		//$.extend(true,data,this.get('tecnicos'));
+        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+        this.init();
+	},
 	actions: {
 		cerrarMsg:function(){
 			this.cerrarMsg();
@@ -935,6 +1019,18 @@ export default Ember.Controller.extend({
     	},
     	openModalGeneral:function(){
     		this.openModalGeneral();
+    	},
+    	openModalTecnicos: function(){
+    		this.openModalTecnicos();
+    	},
+    	agregarTecnico:function(){
+    		this.agregarTecnico();
+    	},
+    	eliminarTecnicosSeleccionados:function(){
+    		this.eliminarTecnicosSeleccionados();
+    	},
+    	guardarTecnicos:function(){
+    		this.guardarTecnicos();
     	},
     	openModalEtapa:function(etapa,editing){
     		this.openModalEtapa(etapa,editing);
