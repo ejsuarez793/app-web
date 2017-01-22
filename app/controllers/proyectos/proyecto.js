@@ -19,6 +19,11 @@ export default Ember.Controller.extend({
 	prueba: {}, //usado en la prueba de crear solicidut borrar despues
 	solicitud_material_prueba: [],
 
+ 	//3 arreglos usados para generar el listado de materiales usados (total y por etapas) y disponibles
+	materiales_disponibles : [],
+	materiales_usados_etapas: [],
+	materiales_usados_totales:[],
+
 
 	sin_actividades:false,//variable para saber si hay que definir actividades en una etapa o solo imprimirlas
 	na:{
@@ -229,11 +234,14 @@ export default Ember.Controller.extend({
 		var _this = context;
 		_this.set('proyecto',proyecto);
 		//console.log(proyecto);
+		var method = "GET";
+		var url = window.serverUrl + '/proyecto/' + _this.get('proyecto.codigo') + '/materiales/' ;
+		_this.getElements(method,url,_this.setDesglose,_this);
 	},
 	setTecnicos(tecnicos,context){
 		var _this = context;
 		_this.set('tecnicos',tecnicos);
-		console.log(tecnicos);
+		//console.log(tecnicos);
 	},
 	setServicios(servicios,context){
 		var _this = context;
@@ -261,17 +269,19 @@ export default Ember.Controller.extend({
 		context.listadoMateriales();
 	},
 	listadoMateriales(){
-		console.log(this.get('desglose'));
+		//console.log(this.get('desglose'));
 		var desglose = this.get('desglose');
 		var disponibles = [];
 		var usados_e = {};
 		var usados_efectivamente = {};
+		var total_usados = [];
 		var flag = false; // usada para saber si un material no fue sumado/restado en la iteracion de usados efectivamente
 		var aux;
 
 		//aqui organizo los egresados y retornados por etapas, para luego sacar los usados efectivamente en cada etapa.
 		$.each(desglose.egresados.toArray(),function(i,egresado){
 			if (usados_e[egresado.codigo_eta]===null || usados_e[egresado.codigo_eta]===undefined){
+				//console.log(egresado.codigo_eta);
 				usados_e[egresado.codigo_eta] = [];
 			}
 			usados_e[egresado.codigo_eta].push(egresado);
@@ -285,29 +295,44 @@ export default Ember.Controller.extend({
 		});
 
 		//hasta este punto me deberian salir un json con un campo de cada etapa y sus egresados y retornados, para luego restar los eleentos
-		console.log(usados_e);
+		/*console.log("usados antes proce");
+		console.log(usados_e);*/
 
 		//ahora resto los elementos
 		$.each(usados_e,function(i,usado_e){
-			flag = false;
-			if (usados_efectivamente[usado_e.codigo_eta]===null || usados_e[usado_e.codigo_eta]===undefined){
-				usados_efectivamente[usado_e.codigo_eta] = [];
-			}
-			$.each(usados_efectivamente[usado_e.codigo_eta],function(i,usado_efectivamente){
-				if(usado_efectivamente.codigo_mat === usado_e.codigo_mat){
-					if(usado_e.tipo_mov === "Egreso"){
-						usados_efectivamente.cant = usados_efectivamente.cant - usado_e.cant;
-					}else if(usados_e.tipo_mov === "Retorno"){
-						usados_efectivamente.cant = usados_efectivamente.cant + usado_e.cant;
+			//flag = false;
+			//console.log(usado_e);
+			$.each(usado_e,function(i, usado){
+				flag = false;
+				//console.log(usado);
+				if (usados_efectivamente[usado.codigo_eta]===null || usados_efectivamente[usado.codigo_eta]===undefined){
+					usados_efectivamente[usado.codigo_eta] = [];
+					//usados_efectivamente['letra_eta'] = usado.letra_eta;
+					//usados_efectivamente['nombre_eta'] = usado.nombre_eta;
+				}
+				$.each(usados_efectivamente[usado.codigo_eta],function(i,usado_efectivamente){
+					if(usado_efectivamente.codigo_mat === usado.codigo_mat){
+						if(usado.tipo_mov === "Egreso"){
+							usado_efectivamente.cant = usado_efectivamente.cant + usado.cant;
+						}else if(usado.tipo_mov === "Retorno"){
+							usado_efectivamente.cant = usado_efectivamente.cant - usado.cant;
+						}
+						flag=true;
 					}
-					flag=true;
+				});
+				if(!flag){
+					aux = $.extend(true,{},usado);
+					if(aux.tipo_mov === "Retorno"){
+						aux.cant = aux.cant * (-1);
+					}
+					usados_efectivamente[usado.codigo_eta].push(aux);
 				}
 			});
-			if(!flag){
-				aux = $.extend(true,{},usado_e);
-				usados_efectivamente[usado_e.codigo_eta].push(aux);
-			}
+			
 		});
+
+		/*console.log("usados efectivamente");
+		console.log(usados_efectivamente);*/
 
 		//por ultimo sumo los materiales disponibles de los presupuestos
 		$.each(desglose.presupuestos.toArray(),function(i,material){
@@ -324,30 +349,70 @@ export default Ember.Controller.extend({
 			}
 		});
 
+		//aqui agregamos los usados efectivamente por etapa y los agrupamos en otro arreglo para poder mostrar otra categoria
+		//de usados totales
 
-		//finalizando restamos los disponibles del presupuesto con los usados efectivamente en cada etapa
-		$.each(disponibles,function(i,disponible){
-			//for (var etapa in usados_efectivamente) {
-			$.each(usados_efectivamente, function(i,etapa){
-				if (usados_efectivamente.hasOwnProperty(etapa)) {
-			  	$.each(usados_efectivamente[etapa],function(i,usado_efectivamente){
-			  		if(disponible.codigo_mat === usado_efectivamente.codigo_mat){
-			  			disponible.cant = disponible.cant - usado_efectivamente.cant;
-			  		}
+		$.each(usados_efectivamente,function(i, etapa){
+			$.each(etapa,function(i, usado_efectivamente){
+				flag = false;
+				$.each(total_usados,function(i,material_tu){
+					if (usado_efectivamente.codigo_mat === material_tu.codigo_mat){
+						material_tu.cant = material_tu.cant + usado_efectivamente.cant;
+						flag = true;
+					}
 				});
-			  }
+				if(!flag && usado_efectivamente.cant>0){
+					aux = $.extend(true,{},usado_efectivamente);
+					total_usados.push(aux);
+				}
 			});
-			  /*if (usados_efectivamente.hasOwnProperty(etapa)) {
-			  	$.each(usados_efectivamente[etapa],function(i,usado_efectivamente){
-			  		if(disponible.codigo_mat === usado_efectivamente.codigo_mat){
-			  			disponible.cant = disponible.cant - usado_efectivamente.cant;
-			  		}
-				});
-			  }*/
-			//}
 		});
 
-		console.log(disponibles);
+		/*console.log("total usados");
+		console.log(total_usados);*/
+
+		//finalizando restamos los disponibles del presupuesto con los usados efectivamente en cada etapa
+		
+		$.each(disponibles,function(i,disponible){
+			$.each(usados_efectivamente, function(i,etapa){
+				$.each(etapa, function(i, material){
+					if(disponible.codigo_mat === material.codigo_mat){
+			  			disponible.cant = disponible.cant - material.cant;
+			  		}
+				});
+				
+			});
+		});
+
+		var propValue;
+		var materiales_x_etapa = [];
+		for(var propName in usados_efectivamente) {
+		    //propValue = nyc[propName]
+		    $.each(this.get('proyecto.etapas'),function(i,etapa){
+		    	console.log(etapa);
+		    	if (etapa.codigo === parseInt(propName)){
+		    		console.log(etapa.nombre);
+		    		aux = $.extend(true,{},etapa); 
+		    		aux['materiales'] = []
+		    		$.each(usados_efectivamente[propName],function(i,mat){
+		    			if (mat.cant>0){
+		    				aux['materiales'].push(mat);
+		    			}
+		    		});
+		    		materiales_x_etapa.push(aux);
+
+
+		    	}
+		    });
+		    //console.log(propName);
+		}
+		console.log(materiales_x_etapa);
+		/*console.log("disponibles");
+		console.log(disponibles);*/
+
+		this.set('materiales_disponibles',disponibles);
+		this.set('materiales_usados_etapas',materiales_x_etapa);
+		this.set('materiales_usados_totales',total_usados);
 
 	},
 	ordenar(prop, asc,array) {
@@ -1007,6 +1072,37 @@ export default Ember.Controller.extend({
         this.llamadaServidor(method,url,data,this.msgRespuesta,this);
         this.init();
 	},
+	generarPDF(tipo){
+		//$("#modalBody").css('background', '#fff');
+
+		function canvasSc(element){
+		  var clone = element.cloneNode(true);
+		  var style = clone.style;
+		  style.position = 'relative';
+		  style.top = window.innerHeight + 'px';
+		  //style.width =$("#"+tipo).width();
+		  style.left = 0;
+		  document.body.appendChild(clone);
+		  return clone;
+		}
+
+		var panel = document.getElementById(tipo);
+		var clone = canvasSc(panel);
+		var nombrepdf = this.get('proyecto.codigo')+"-listado-materiales-"+tipo+".pdf";
+		console.log($("#"+tipo).width());
+		html2canvas(clone, {
+		    onrendered: function(canvas) {
+		     document.body.removeChild(clone);
+		      var imgData = canvas.toDataURL(
+                    'image/jpeg');             
+                var doc = new jsPDF('p', 'mm', [320,480]);
+                var width = doc.internal.pageSize.width;    
+				var height = doc.internal.pageSize.height;
+                doc.addImage(imgData, 'jpeg', 0, 0);//,width,height);
+                doc.save(nombrepdf);
+		    },
+		});
+	},
 	actions: {
 		cerrarMsg:function(){
 			this.cerrarMsg();
@@ -1086,6 +1182,9 @@ export default Ember.Controller.extend({
 		},
 		guardarActividades:function(){
 			this.guardarActividades();
+		},
+		generarPDF:function(tipo){
+			this.generarPDF(tipo);
 		},
 		llenarReporteDetalle: function(){
 			//console.log(this.get('proyecto.etapas'));

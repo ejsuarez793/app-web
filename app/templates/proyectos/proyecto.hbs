@@ -219,14 +219,137 @@
               </div>
               <div role="tabpanel" class="tab-pane" id="listado">
                 <div class="well jumbo-color">
-                  <div class="panel panel-default">
+                  <div class="panel panel-default" id="disponibles">
 
                       <div class="panel-heading">
+                        Materiales Disponibles
                       </div>
                        <div class="panel-body">
-                       listado
+                            <div class="row">
+                              <div class="col-md-12">
+                                <table class="table table-bordered table-hover">  
+                                <thead class="header-tabla">
+                                  <tr>
+                                    <th class="col-md-2">Código</th>
+                                    <th >Nombre</th>
+                                    <th >Desc</th>
+                                    <th class="col-md-1">Cantidad</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="tbody" class="text-center">
+                                  {{#each materiales_disponibles as |material|}}
+                                  <tr>
+                                    <td class="col-tabla">{{material.codigo_mat}}</td>
+                                    <td class="col-tabla"><{{material.nombre}}</td>
+                                    <td class="col-tabla">{{material.desc}}</td>
+                                    <td class="col-tabla">{{material.cant}}</td>
+                                  </tr>
+                                  {{/each}}
+                                </tbody>
+                                </table>
+                              </div>
+                            </div>
                        </div>
-                  </div>
+                        <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-sm-12">
+                              <button class="btn btn-primary pull-right" {{action 'generarPDF' 'disponibles'}} type="submit">Exportar PDF</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                     <div class="panel panel-default" id="usados">
+
+                      <div class="panel-heading">
+                        Materiales Usados
+                      </div>
+                       <div class="panel-body">
+                            <div class="row">
+                              <div class="col-md-12">
+                                <table class="table table-bordered table-hover">  
+                                <thead class="header-tabla">
+                                  <tr>
+                                    <th class="col-md-2">Código</th>
+                                    <th >Nombre</th>
+                                    <th >Desc</th>
+                                    <th class="col-md-1">Cantidad</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="tbody" class="text-center">
+                                  {{#each materiales_usados_totales as |material|}}
+                                  <tr>
+                                    <td class="col-tabla">{{material.codigo_mat}}</td>
+                                    <td class="col-tabla"><{{material.nombre}}</td>
+                                    <td class="col-tabla">{{material.desc}}</td>
+                                    <td class="col-tabla">{{material.cant}}</td>
+                                  </tr>
+                                  {{/each}}
+                                </tbody>
+                                </table>
+                              </div>
+                            </div>
+                       </div>
+                        <div class="panel-footer">
+                         <div class="row">
+                            <div class="col-sm-12">
+                              <button class="btn btn-primary pull-right" {{action 'generarPDF' 'usados'}} type="submit">Exportar PDF</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+
+                    <div class="panel panel-default" id="material_etapas">
+
+                      <div class="panel-heading">
+                        Materiales usados por etapas
+                      </div>
+                       <div class="panel-body">
+                       {{#each materiales_usados_etapas as |etapa|}}
+                           <div class="panel panel-default">
+
+                            <div class="panel-heading">
+                             <p><strong>Etapa: </strong>{{etapa.letra}}<strong>Nombre:</strong>{{etapa.nombre}}</p>
+                            </div>
+                             <div class="panel-body">
+                                 <div class="row">
+                              <div class="col-md-12">
+                                <table class="table table-bordered table-hover">  
+                                <thead class="header-tabla">
+                                  <tr>
+                                    <th class="col-md-2">Código</th>
+                                    <th >Nombre</th>
+                                    <th >Desc</th>
+                                    <th class="col-md-1">Cantidad</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="tbody" class="text-center">
+                                  {{#each etapa.materiales as |material|}}
+                                  <tr>
+                                    <td class="col-tabla">{{material.codigo_mat}}</td>
+                                    <td class="col-tabla"><{{material.nombre}}</td>
+                                    <td class="col-tabla">{{material.desc}}</td>
+                                    <td class="col-tabla">{{material.cant}}</td>
+                                  </tr>
+                                  {{/each}}
+                                </tbody>
+                                </table>
+                              </div>
+                            </div>
+                             </div>
+                             </div>
+                       {{/each}}
+                           
+                       </div>
+                        <div class="panel-footer">
+                         <div class="row">
+                            <div class="col-sm-12">
+                              <button class="btn btn-primary pull-right" {{action 'generarPDF' 'material_etapas'}} type="submit">Exportar PDF</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
                 </div>
               </div>
 
