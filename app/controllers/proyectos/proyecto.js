@@ -438,23 +438,14 @@ export default Ember.Controller.extend({
 
 	},
 	ordenar(prop, asc,array) {
-			/*if (prop==="precio_act" || prop==="cantidad"){
-				array = array.sort(function(a, b) {
-		        if (asc) {
-		            return ( parseFloat(a[prop]) > parseFloat(b[prop]) ) ? 1 : (( parseFloat(a[prop]) < parseFloat(b[prop]) )? -1 : 0);
-		        } else {
-		            return (parseFloat(b[prop]) > parseFloat(a[prop])) ? 1 : (( parseFloat(b[prop]) < parseFloat(a[prop])) ? -1 : 0);
-		        }
-		    });
-			}else{*/
-		    array = array.sort(function(a, b) {
-		        if (asc) {
-		            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
-		        } else {
-		            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
-		        }
-		    });
-		/*}*/
+	    array = array.sort(function(a, b) {
+	        if (asc) {
+	            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
+	        } else {
+	            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
+	        }
+	    });
+
 	   	return array;
 	},
 	ordenarPor(property,presupuestos){

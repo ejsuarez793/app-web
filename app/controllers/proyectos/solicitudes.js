@@ -17,9 +17,6 @@ export default Ember.Controller.extend({
 		var url = window.serverUrl + /solicitud/;
 		this.getElements(method,url,this.asignarSolicitudes,this);
 
-		url = window.serverUrl + /cliente/;
-	    this.getElements(method,url,this.asignarClientes,this);
-
 	    url = window.serverUrl + '/tecnicos/';
 	    this.getElements(method,url,this.asignarTecnicos,this);
 	},
@@ -109,18 +106,9 @@ export default Ember.Controller.extend({
 			solicitudes = aux;
 		}
 
+		console.log(solicitudes);
 		_this.set('solicitudes',solicitudes);
-	},
-	asignarClientes(clientes,context){
-		var _this = context;
-
-		if (!Array.isArray(clientes)){
-			var aux = [];
-			aux.push(clientes);
-			clientes = aux;
-		}
-
-		_this.set('clientes',clientes);
+		_this.paginationInitialize(10);
 	},
 	asignarTecnicos(tecnicos,context){
 		var _this = context;
@@ -154,12 +142,6 @@ export default Ember.Controller.extend({
 		$("#nombre_t").val('');
 
 		this.set('solicitud',solicitud);
-		$.each(this.get('clientes'), function(i,cliente){
-			if (cliente.rif === solicitud.rif_c){
-				aux=cliente;
-			}
-		});
-		this.set('cliente',aux);
 		
 		//se reinician los errores
 		$(".input-group").removeClass('has-success');
@@ -223,9 +205,131 @@ export default Ember.Controller.extend({
 
 		return data;
 	},
+	ordenar(prop, asc,array) {
+		if (prop==="codigo"){
+			array = array.sort(function(a, b) {
+		        if (asc) {
+		            return ( parseFloat(a[prop]) > parseFloat(b[prop]) ) ? 1 : (( parseFloat(a[prop]) < parseFloat(b[prop]) )? -1 : 0);
+		        } else {
+		            return (parseFloat(b[prop]) > parseFloat(a[prop])) ? 1 : (( parseFloat(b[prop]) < parseFloat(a[prop])) ? -1 : 0);
+		        }
+		    });
+		}else{
+		    array = array.sort(function(a, b) {
+		        if (asc) {
+		            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
+		        } else {
+		            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
+		        }
+		    });
+	    }
+
+	   	return array;
+	},
+	ordenarPor(property){
+		var asc = null;
+		var th='#th-'+property;
+		if ($(th).hasClass('glyphicon-chevron-down')){
+			asc = true;
+			$(th).removeClass('glyphicon-chevron-down');
+			$(th).addClass('glyphicon-chevron-up');
+		}else{
+			asc = false;
+			$(th).removeClass('glyphicon-chevron-up');
+			$(th).addClass('glyphicon-chevron-down');
+		}
+	
+		var aux = this.ordenar(property,asc,this.get('solicitudes').toArray());
+		this.set('solicitudes',aux);
+	},
+	filtrar: function(theObject, str) {
+    	var field, match;
+    	match = false;
+    	var camposFiltrables = ['codigo','nombre_cliente','estatus'];
+    	for (field in theObject) {
+	     	if (theObject[field]!==null && ($.inArray(field,camposFiltrables)!==-1) && theObject[field].toString().toLowerCase().includes(str.toLowerCase())){
+	        	match = true;
+	      	}
+    	}
+    	return match;
+  	},
+
+  	filter: (function() {
+    	return this.get("solicitudes").filter(
+
+    	(
+    		function(_this) {
+      			return function(theObject/*, index, enumerable*/) {
+			    	if (_this.get("filtro") && theObject.show){
+			        	return _this.filtrar(theObject, _this.get("filtro"));
+			        }else if (theObject.show){
+			        	return true;
+			        }
+
+      			};
+    		}
+    	)(this)
+
+    	);
+  	}).property("filtro","solicitudes",'select'),
+
+  	paginationInitialize(tamPagina){
+		var _this = this;
+		$('#page').on('change',function(){
+			_this.paginate(parseInt(this.value));
+			_this.set('tamPagina',this.value);
+		});
+		this.paginate(tamPagina);
+	},
+	paginate(tamPagina){
+		var _this = this;
+		$( document ).ready(function(){
+
+    		var solicitudes = _this.get('solicitudes').toArray();
+			var totalSolicitudes = solicitudes.length;
+			var res = totalSolicitudes % tamPagina;
+			var nPaginas = 0;
+			if (res!==0){
+				nPaginas = Math.round((totalSolicitudes/tamPagina) + 0.5);
+			}else{
+				nPaginas = totalSolicitudes/tamPagina;
+			}
+			$('#pagination').twbsPagination('destroy');
+			$('#pagination').twbsPagination({
+	        	totalPages: nPaginas,
+	        	visiblePages: 10,
+	        	first: 'Primera',
+	        	prev: 'Prev',
+	        	next: 'Sig',
+	        	last: 'Última',
+
+		        onPageClick: function (event, page) {
+
+		            var showFrom = tamPagina * (page - 1);
+		            var showTo = showFrom + tamPagina;
+		            var mostrables = solicitudes.slice(showFrom, showTo);
+		            $.each(solicitudes,function(i,solicitud){
+		            	if($.inArray(solicitud, mostrables) !== -1){
+		            		solicitud.show = true;
+		            	}else{
+		            		solicitud.show = false;
+		            	}
+		            });
+		            _this.set('select',page);//AQUI ES IMPORTANTE ya que asi notifica a filter
+
+		            _this.set('solicitudes',solicitudes);
+
+		        }
+    		});
+    	});
+
+	},
 	actions: {
 		openModal: function(solicitud){
 			this.prepararModal(solicitud);
+		},
+		ordenarPor:function(property){
+			this.ordenarPor(property);
 		},
 		save: function(){
 			this.validarCampos();

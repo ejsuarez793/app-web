@@ -9,7 +9,7 @@
           <div class="col-lg-4 ">
             <h2>
               <div class="input-group">
-                 {{input name="cliente" id="cliente" type="text" class="form-control" placeholder="Buscar solicitud" value=registro.usuario}}
+                 {{input name="filtro" id="filtro" type="text" class="form-control" placeholder="Buscar solicitud" value=filtro}}
                   <span class="input-group-btn">
                     <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
                   </span>
@@ -17,6 +17,20 @@
             </h2>
           </div>
 
+          <div class="col-lg-2 ">
+            <h2>
+              <div class="input-group" aria-describedby="basic-addon2">
+                <select class="form-control" name="page" id="page">
+                  <option value="1">1</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>   
+                <span class="input-group-addon" id="basic-addon2">Tam. Pag.</span>
+              </div>
+            </h2>
+          </div>
 
         </div>
 
@@ -26,27 +40,30 @@
 			   <table class="table table-bordered table-hover" id="clientes">	
 	        	<thead class="header-tabla">
 	        		<tr>
-					    <th class="col-md-1">Código</th>
-					    <th class="col-md-2">Cliente</th>
+					    <th class="col-md-1" {{action "ordenarPor" "codigo"}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+					    <th class="col-md-1" {{action "ordenarPor" "nombre_cliente"}}>Cliente<span id="th-nombre_cliente" class="glyphicon glyphicon-chevron-down"></span></th>
 					    <th class="col-md-6">Detalles</th>
 					    <th class="col-md-1">Fecha</th>
-					    <th class="col-md-1">Estatus</th>
+					     <th class="col-md-1" {{action "ordenarPor" "estatus"}}>Estatus<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
 					    <th class="col-md-1">Ver</th>
 	  				</tr>
 	  			</thead>
 	  			<tbody id="tbody" class="text-center">
-	  			{{#each solicitudes as |solicitud|}}
+	  			{{#each filter as |solicitud|}}
 	  				<tr>
-						<td class="col-tabla"><{{solicitud.codigo}}</td>
-						<td class="col-tabla"> <{{format-atrib 'solicitud_cliente' solicitud.rif_c clientes}}</td>
+						<td class="col-tabla">{{solicitud.codigo}}</td>
+						<td class="col-tabla">{{solicitud.nombre_cliente}}</td>
 						<td class="col-tabla"><{{solicitud.desc}} </td>
 						<td class="col-tabla"><{{solicitud.f_sol}}</td>
-						<td class="col-tabla"><{{format-atrib 'solicitud_estatus' solicitud.estatus}}</td>
+						<td class="col-tabla"><{{solicitud.estatus}}</td>
 						<td class="col-tabla"><button {{action 'openModal' solicitud}} class="btn btn-default btn-xs">ver</button></td>
 					</tr>
 				{{/each}}
 	 			</tbody>
 			</table>
+			<div class="text-center">
+		     <ul id="pagination" class="pagination-sm"></ul>
+		    </div>
 		</div>
 	</div>
 
@@ -78,10 +95,10 @@
 					  </div>
 					  <div class="panel-body">
 					    <dl class="dl-horizontal">
-					    	<dt>Rif</dt> <dd>{{cliente.rif}}</dd>
-							<dt>Nombre</dt> <dd>{{cliente.nombre}}</dd>
-							<dt>Tlfs</dt> <dd>{{cliente.tlf1}} / {{cliente.tlf2}}</dd>
-							<dt>Fax</dt> <dd>{{cliente.fax}}</dd>					
+					    	<dt>Rif</dt> <dd>{{solicitud.rif_c}}</dd>
+							<dt>Nombre</dt> <dd>{{solicitud.nombre_cliente}}</dd>
+							<dt>Tlfs</dt> <dd>{{solicitud.tlf1}} / {{solicitud.tlf2}}</dd>
+							<dt>Fax</dt> <dd>{{solicitud.fax}}</dd>					
 						</dl>	
 					  </div>
 					</div>

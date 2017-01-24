@@ -20,6 +20,7 @@ Router.map(function() {
     this.route('servicios');
     this.route('proyectos');
     this.route('proyecto', { path: '/proyecto/:codigo' });
+    this.route('tecnicos');
   });
 
   this.route('almacenista', function() {});
