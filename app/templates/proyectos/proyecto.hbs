@@ -42,11 +42,7 @@
                   <div class="col-md-12 ">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                          <h3 class="panel-title">Detalles Proyecto {{proyecto.estatus}} 
-                          
-                            <small class="bg-info">{{proyecto.f_est}}</small>  
-                            <small class="bg-success">{{proyecto.f_ini}}</small>
-                            <small class="bg-warning">{{proyecto.f_fin}}</small> 
+                          <h3 class="panel-title">Detalles Proyecto <strong>{{proyecto.estatus}} </strong>
 
                           </h3>
                         </div>
@@ -60,6 +56,32 @@
                               <p class="text-justify">{{proyecto.desc}}</p>
                             </div>
                             <div class="col-sm-6">
+                              <div class="panel panel-default">
+                                <div class="panel-body">
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                     <strong> Inicio: </strong> el {{proyecto.f_inicio}}
+                                    </div>
+                                    <div class="col-md-6">
+                                      <strong> Estimado: </strong> para el {{proyecto.f_estimada}}
+                                    </div>
+                                    <div class="col-md-12">
+                                    <div class="alert alert-warning text-center" role="alert">
+                                        <h1> {{proyecto.t_faltante}}</h1>
+                                        <small class="text-muted">según fecha estimada</small>
+                                    </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                      <h3 class="text-center">Progreso</h3>
+                                      <div class="progress">
+                                        <div id="progreso" class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                            {{progreso_porcentaje}}%
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
 
                           </div>
@@ -70,7 +92,7 @@
                           <div class="col-sm-9"></div>
                             <div class="col-sm-3">
                               <button class="btn btn-primary" {{action 'openModalGeneral'}} type="submit">Editar</button>
-                              <button class="btn btn-primary" {{action 'openModalPresupuesto' false}} type="submit">{{accion}}</button>
+                              <button class="btn btn-primary" {{action 'iniciarCulminarProyecto'}} type="submit">{{accion}}</button>
                             </div>
                           </div>
                         </div>
@@ -164,13 +186,15 @@
                                <table class="table table-bordered table-hover " id="tabla">  
                                 <thead class="header-tabla">
                                   <tr>
-                                    <th class="col-md-2">Código</th>
+                                    <th class="col-md-1">Código</th>
                                     <th >Nombre</th>
                                     <th >Estado</th>
+                                    <th class="col-md-1">Act. Entrega</th>
                                     <th class="col-md-1">Reporte Detalle</th>
                                     <th class="col-md-1">Reportes</th>
                                     <th class="col-md-1">Actividades</th>
                                     <th class="col-md-1">Editar</th>
+                                    <th class="col-md-1">Iniciar</th>
                                   </tr>
                                 </thead>
                                 <tbody id="tbody" class="text-center">
@@ -180,7 +204,10 @@
                                     <td class="col-tabla"><{{etapa.nombre}}</td>
                                     <td class="col-tabla">{{etapa.estatus}}</td>
                                     <td >
-                                    {{#if etapa.reporte_detalle}}
+                                      <button {{action 'generarActaEntrega' etapa}} class="btn btn-default btn-xs">generar</button>
+                                    </td>
+                                    <td >
+                                    {{#if etapa.codigo_rd}}
                                       <button {{action 'openModalReporteDetalle' etapa}} class="btn btn-default btn-xs">ver</button>
                                     {{else}}
                                       N/A
@@ -194,6 +221,9 @@
                                     </td>
                                     <td >
                                       <button {{action 'openModalEtapa' etapa true}} class="btn btn-default btn-xs">editar</button>
+                                    </td>
+                                    <td >
+                                      <button {{action 'iniciarCulminarEtapa' etapa}} class="btn btn-default btn-xs">iniciar</button>
                                     </td>
                                   </tr>
                                   {{/each}}

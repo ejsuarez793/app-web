@@ -232,11 +232,33 @@ export default Ember.Controller.extend({
 	},
 	setProyecto(proyecto,context){
 		var _this = context;
+		proyecto.f_inicio = moment(proyecto.f_ini).format('LL');
+		proyecto.f_estimada = moment(proyecto.f_est).format('LL');
+		proyecto.f_finalizada = moment(proyecto.f_fin).format('LL');
+		proyecto.t_faltante = moment(proyecto.f_est, "YYYY-MM-DD").fromNow();
 		_this.set('proyecto',proyecto);
-		//console.log(proyecto);
+		console.log(proyecto);
 		var method = "GET";
 		var url = window.serverUrl + '/proyecto/' + _this.get('proyecto.codigo') + '/materiales/' ;
 		_this.getElements(method,url,_this.setDesglose,_this);
+		_this.prepararProgreso();
+	},
+	prepararProgreso(){
+		//var aux = ['progress-bar-success','progress-bar-success','progress-bar-info','progress-bar-info','progress-bar-warning','progress-bar-warning','progress-bar-warning','progress-bar-danger','progress-bar-danger','progress-bar-danger'];
+
+		var etapas = this.get('proyecto.etapas').toArray();
+		var tCulminadas=0;
+		$.each(etapas,function(i,etapa){
+			if(etapa.estatus==="Culminado"){
+				tCulminadas++;
+			}
+		});
+		var pwidth = tCulminadas * 100 / (etapas.length);
+		//var pclass = aux[1];
+		pwidth = Math.round( pwidth );
+		this.set('progreso_porcentaje',pwidth);
+		$("#progreso").css("width", pwidth+"%");
+		//$('#progreso').addClass(pclass);
 	},
 	setTecnicos(tecnicos,context){
 		var _this = context;
@@ -389,9 +411,9 @@ export default Ember.Controller.extend({
 		for(var propName in usados_efectivamente) {
 		    //propValue = nyc[propName]
 		    $.each(this.get('proyecto.etapas'),function(i,etapa){
-		    	console.log(etapa);
+		    	//console.log(etapa);
 		    	if (etapa.codigo === parseInt(propName)){
-		    		console.log(etapa.nombre);
+		    		//console.log(etapa.nombre);
 		    		aux = $.extend(true,{},etapa); 
 		    		aux['materiales'] = []
 		    		$.each(usados_efectivamente[propName],function(i,mat){
@@ -406,7 +428,7 @@ export default Ember.Controller.extend({
 		    });
 		    //console.log(propName);
 		}
-		console.log(materiales_x_etapa);
+		//console.log(materiales_x_etapa);
 		/*console.log("disponibles");
 		console.log(disponibles);*/
 
@@ -458,6 +480,52 @@ export default Ember.Controller.extend({
 	
 		var aux = this.ordenar(property,asc,this.get(elemento).toArray());
 		this.set(elemento,aux);
+	},
+	iniciarCulminarProyecto(){
+		var method = "PATCH";
+		var url;
+		var data = {};
+		var proyecto = this.get('proyecto');
+		var estatus = this.get('proyecto.estatus');
+		url = window.serverUrl + '/proyecto/' + proyecto.codigo + '/';
+		data = $.extend(true,{},proyecto);
+		if(estatus === "Aprobado"){
+			data.f_ini = moment().format("YYYY-MM-DD");
+			data.estatus = "Ejecucion";
+			data.accion = "Iniciar";
+		}else if(estatus=== "Ejecucion"){
+			data.f_fin = moment().format("YYYY-MM-DD");;
+			data.estatus = "Culminado";
+			data.accion = "Culminar";
+			//console.log("ejecucion");
+		}else{
+			this.msgRespuesta("Error: ","El estado del proyecto no permite realizar esa acción",-1,this);
+		}
+		//console.log(data);
+		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+			
+	},
+	iniciarCulminarEtapa(etapa){
+		console.log(etapa);
+		var method = "PATCH";
+		var url;
+		var data = {};
+		var estatus = etapa.estatus;
+		url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' + etapa.codigo + '/';
+		data = $.extend(true,{},etapa);
+		if(estatus === "Pendiente"){
+			data.f_ini = moment().format("YYYY-MM-DD");
+			data.estatus = "Ejecucion";
+			data.accion = "Iniciar";
+		}else if(estatus=== "Ejecucion"){
+			data.f_fin = moment().format("YYYY-MM-DD");;
+			data.estatus = "Culminado";
+			data.accion = "Culminar";
+		}else{
+			this.msgRespuesta("Error: ","El estado de la etapa no permite realizar esa acción",-1,this);
+		}
+		//console.log(data);
+		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 	},
 	/*funcion que prepara el contenido del modal de presupuesto, de acuerdo a si es una nueva solicitud o
 	es un presupuesto que se esta editanto*/
@@ -561,7 +629,7 @@ export default Ember.Controller.extend({
 		//console.log("abriendo");
 	},
 	msgDisponibilidadMaterial(response,context){
-		console.log(response);
+		//console.log(response);
 		if (response.tipo === "Sin Disponibilidad"){
 			response.sin_disponibilidad = true;
 		}
@@ -847,26 +915,6 @@ export default Ember.Controller.extend({
 		$("#myModalGeneral").modal('show');
 	},
 	openModalTecnicos(){
-		/*var tecnicos_asociados = this.get('proyecto.tecnicos').toArray();
-		var tecnicos = this.get('tecnicos').toArray();
-		var tecnicos_mostrar = [];
-		var aux = {};
-		$.each(tecnicos, function(i,tecnico){
-			$.each(tecnicos_asociados, function(i,tecnico_a){
-				aux=$.extend(true,{},tecnico_a);
-				if (tecnico_a.ci === tecnico.ci){
-					aux['mostrar_asociado'] = true;
-					aux['mostrar_no_asociado'] = false;
-				}
-				else{
-					aux['mostrar_asociado'] = false;
-					aux['mostrar_no_asociado'] = true;
-				}
-				tecnicos_mostrar.push(aux);
-			});
-		});
-		console.log(tecnicos_mostrar);*/
-		//this.set('tecnicos_mostrar',tecnicos_mostrar);
 		$("#myModalTecnicos").modal('show');
 	},
 	openModalEtapa(etapa,editing){
@@ -904,7 +952,7 @@ export default Ember.Controller.extend({
 		$("#myModalReportes").modal('show');
 	},
 	openModalActividades:function(etapa){
-		console.log(etapa);
+		//console.log(etapa);
 		this.set('etapa',etapa);
 		if (etapa.actividades===null || etapa.actividades===undefined || etapa.actividades.length === 0){
 			this.set('sin_actividades',true);
@@ -922,6 +970,11 @@ export default Ember.Controller.extend({
 		method = "PATCH";
 		url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/';
 		$.extend(true,data,this.get('pg'));
+		data.estatus = this.get('proyecto.estatus');
+		data.f_ini = this.get('proyecto.f_ini');
+		//data.f_est = this.get('proyecto.f_est');
+		data.f_fin = this.get('proyecto.f_fin');
+		data.accion = "Editar";
 		this.validarPG();
         if ($("#formulario_pg").valid()){
         	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
@@ -934,6 +987,7 @@ export default Ember.Controller.extend({
 		var url;
 		var data = {};
 		$.extend(true,data,this.get('pe'));
+		data.accion = "Editar";
 		if (this.get('editing_pe')){
 			method = "PATCH";
 			url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/' +data.codigo+'/';
@@ -978,7 +1032,7 @@ export default Ember.Controller.extend({
 		this.set('na.nro',nuevas_actividades.length + 1);
 		this.set('na.desc','');
 
-		console.log(this.get('nuevas_actividades'));
+		//console.log(this.get('nuevas_actividades'));
 	},
 	eliminarActividad(actividad){
 		var nuevas_actividades = this.get('nuevas_actividades');
@@ -1089,7 +1143,7 @@ export default Ember.Controller.extend({
 		var panel = document.getElementById(tipo);
 		var clone = canvasSc(panel);
 		var nombrepdf = this.get('proyecto.codigo')+"-listado-materiales-"+tipo+".pdf";
-		console.log($("#"+tipo).width());
+		//console.log($("#"+tipo).width());
 		html2canvas(clone, {
 		    onrendered: function(canvas) {
 		     document.body.removeChild(clone);
@@ -1106,6 +1160,12 @@ export default Ember.Controller.extend({
 	actions: {
 		cerrarMsg:function(){
 			this.cerrarMsg();
+		},
+		iniciarCulminarProyecto(){
+			this.iniciarCulminarProyecto();
+		},
+		iniciarCulminarEtapa(etapa){
+			this.iniciarCulminarEtapa(etapa);
 		},
 		procesarPresupuesto:function(){
 			this.procesarPresupuesto();
@@ -1234,10 +1294,10 @@ export default Ember.Controller.extend({
 			this.get('solicitud_material_prueba').pushObject(prueba);
 			this.set('prueba',{});
 			console.clear();
-			console.log(this.get('solicitud_material_prueba'));
+			//console.log(this.get('solicitud_material_prueba'));
 		},
 		guardarSolicitud:function(){
-			console.log("implemetar guardar solicitud");
+			//console.log("implemetar guardar solicitud");
 			var data={};
 			data.otros ={
 				"ci_tecnico":208034,
@@ -1246,7 +1306,7 @@ export default Ember.Controller.extend({
 			data.materiales= [];
 			var materiales = this.get('solicitud_material_prueba').toArray();
 			$.extend(true,data.materiales,materiales);
-			console.log(data);
+			//console.log(data);
 			var method = "POST";
 			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' +8 +'/solicitud/';
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
