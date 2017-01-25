@@ -14,31 +14,30 @@ export default Ember.Controller.extend({
 		correo_cc: '',
 		cargo_cc: '',
 	},
-	/*solicitud: {
-		rif_c: 'J-20803814-5',
-		disp: 'Martes y Miercóles 6:00',
-		referido_p: 'Anuncio Radio',
-		desc: 'Se requiere cableado estructurado para centro comercial',
-		ubicacion: 'Valencia',
-		nombre_cc: 'Enrique',
-		tlf_cc: '04164879877',
-		correo_cc: 'enrique@enrique.com',
-		cargo_cc: 'Logistica',
-	},*/
-	solicitudes: '',
+	filtro: null,
+	solicitudes:[],
+	//solicitud:{},
+
+	//solicitudes: '',
 	clientes: '',
 	nombre_c: '',
 	editing: '',
 	nombresC: [],
+	msg:{},
 
 	init(){
-	    this._super();
-	    var method = 'GET';
-	    var url = window.serverUrl + /cliente/;
-	    this.getElements(method,url,this.asignarClientes,this);
+		this._super();
 
-	    url = window.serverUrl + /solicitud/;
-	    this.getElements(method,url,this.asignarSolicitudes,this);
+		if (!((Cookies.get('token')===undefined) || (Cookies.getJSON('current')===undefined))){
+			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1); 
+			var method = 'GET';
+		    var url = window.serverUrl + /cliente/;
+		    this.getElements(method,url,this.asignarClientes,this);
+
+		    url = window.serverUrl + /solicitud/;
+		    this.getElements(method,url,this.asignarSolicitudes,this);					
+		}
+
 	},
 	prepararModal(){
 
@@ -178,10 +177,11 @@ export default Ember.Controller.extend({
 		.done(function(response){callback(response, context); })    
 		.fail(function(response) { console.log(response); }); 
 	},
-	postSolicitud(method,url,data){
+	llamadaServidor(method,url,data,callback,context){
 		$.ajax({
 			type: method,
 			url: url,
+			context: this,
 			headers:{
 				Authorization: "Token "+ Cookies.get('token'),
 			},
@@ -189,8 +189,31 @@ export default Ember.Controller.extend({
 				dataType: "json",
 				data: JSON.stringify(data),
 		})    
-		.done(function(response){ console.log(response); })    
-		.fail(function(response) { console.log(response); }); 
+		.done(function(response) {
+			//console.log(response);
+			context.init();
+			callback('Exito: ',response.msg,1,context);
+		})    
+		.fail(function(response) { 
+			console.log(response);
+			callback('Error: ',response.responseText,-1,context);
+		});
+	},
+	msgRespuesta(tipo,desc,estatus,context){
+		var clases = ['alert-danger','alert-warning','alert-success'];
+		var _this = context;
+		_this.set('msg.tipo',tipo);
+		_this.set('msg.desc',desc);
+		$.each(clases,function(i/*,clase*/){
+			if (i === (estatus+1)){
+				$("#alertMsg").addClass(clases[i]);
+			}else{
+				$("#alertMsg").removeClass(clases[i]);
+			}
+
+		});
+		$("#alertMsg").show();
+
 	},
 	asignarClientes(clientes,context){
 		var _this = context;
@@ -226,10 +249,132 @@ export default Ember.Controller.extend({
 	},
 	asignarSolicitudes(solicitudes,context){
 		var _this = context;
-		//console.log(solicitudes);
 		_this.set('solicitudes',solicitudes);
+		_this.paginationInitialize(10);
 	},
 
+	ordenar(prop, asc,array) {
+		if (prop==="codigo"){
+			array = array.sort(function(a, b) {
+		        if (asc) {
+		            return ( parseFloat(a[prop]) > parseFloat(b[prop]) ) ? 1 : (( parseFloat(a[prop]) < parseFloat(b[prop]) )? -1 : 0);
+		        } else {
+		            return (parseFloat(b[prop]) > parseFloat(a[prop])) ? 1 : (( parseFloat(b[prop]) < parseFloat(a[prop])) ? -1 : 0);
+		        }
+		    });
+		}else{
+		    array = array.sort(function(a, b) {
+		        if (asc) {
+		            return (a[prop].toLowerCase() > b[prop].toLowerCase()) ? 1 : ((a[prop].toLowerCase() < b[prop].toLowerCase()) ? -1 : 0);
+		        } else {
+		            return (b[prop].toLowerCase() > a[prop].toLowerCase()) ? 1 : ((b[prop].toLowerCase() < a[prop].toLowerCase()) ? -1 : 0);
+		        }
+		    });
+	    }
+
+	   	return array;
+	},
+	ordenarPor(property){
+		var asc = null;
+		var th='#th-'+property;
+		if ($(th).hasClass('glyphicon-chevron-down')){
+			asc = true;
+			$(th).removeClass('glyphicon-chevron-down');
+			$(th).addClass('glyphicon-chevron-up');
+		}else{
+			asc = false;
+			$(th).removeClass('glyphicon-chevron-up');
+			$(th).addClass('glyphicon-chevron-down');
+		}
+	
+		var aux = this.ordenar(property,asc,this.get('solicitudes').toArray());
+		this.set('solicitudes',aux);
+	},
+	filtrar: function(theObject, str) {
+    	var field, match;
+    	match = false;
+    	var camposFiltrables = ['codigo','nombre_c','desc','estatus'];
+    	for (field in theObject) {
+	     	if (theObject[field]!==null && ($.inArray(field,camposFiltrables)!==-1) && theObject[field].toString().toLowerCase().includes(str.toLowerCase())){
+	        	match = true;
+	      	}
+    	}
+    	return match;
+  	},
+
+  	filter: (function() {
+    	return this.get("solicitudes").filter(
+
+    	(
+    		function(_this) {
+      			return function(theObject/*, index, enumerable*/) {
+			    	if (_this.get("filtro") && theObject.show){
+			        	return _this.filtrar(theObject, _this.get("filtro"));
+			        }else if (theObject.show){
+			        	return true;
+			        }
+
+      			};
+    		}
+    	)(this)
+
+    	);
+  	}).property("filtro","solicitudes",'select'),
+
+  	paginationInitialize(tamPagina){
+		var _this = this;
+		$('#page').on('change',function(){
+			_this.paginate(parseInt(this.value));
+			_this.set('tamPagina',this.value);
+		});
+		this.paginate(tamPagina);
+	},
+	paginate(tamPagina){
+		var _this = this;
+		$( document ).ready(function(){
+
+    		var solicitudes = _this.get('solicitudes').toArray();
+			var totalSolicitudes = solicitudes.length;
+			var res = totalSolicitudes % tamPagina;
+			var nPaginas = 0;
+			if (res!==0){
+				nPaginas = Math.round((totalSolicitudes/tamPagina) + 0.5);
+			}else{
+				nPaginas = totalSolicitudes/tamPagina;
+			}
+			$('#pagination').twbsPagination('destroy');
+			$('#pagination').twbsPagination({
+	        	totalPages: nPaginas,
+	        	visiblePages: 10,
+	        	first: 'Primera',
+	        	prev: 'Prev',
+	        	next: 'Sig',
+	        	last: 'Última',
+
+		        onPageClick: function (event, page) {
+
+		            var showFrom = tamPagina * (page - 1);
+		            var showTo = showFrom + tamPagina;
+		            var mostrables = solicitudes.slice(showFrom, showTo);
+		            $.each(solicitudes,function(i,solicitud){
+		            	if($.inArray(solicitud, mostrables) !== -1){
+		            		solicitud.show = true;
+		            	}else{
+		            		solicitud.show = false;
+		            	}
+		            });
+		            _this.set('select',page);//AQUI ES IMPORTANTE ya que asi notifica a filter
+
+		            _this.set('solicitudes',solicitudes);
+
+		        }
+    		});
+    	});
+
+	},
+	cerrarMsg(){
+		$("#alertMsg").hide();
+	},
 	actions: {
 		openModal: function(){
 			this.prepararModal();
@@ -242,8 +387,15 @@ export default Ember.Controller.extend({
 			var url = window.serverUrl + '/solicitud/';
 			this.validarCampos();
 			if ($("#formulario").valid()){
-				this.postSolicitud(method,url,data);
+				this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+				$("#myModal").modal('hide');
 			}
-		}
+		},
+		ordenarPor: function(property) {
+			this.ordenarPor(property);
+    	},
+    	cerrarMsg:function(){
+			this.cerrarMsg();
+		},
 	}
 });

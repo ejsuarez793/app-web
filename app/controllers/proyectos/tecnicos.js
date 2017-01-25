@@ -43,7 +43,7 @@ export default Ember.Controller.extend({
 				tecnico.disponible = "Disponible";
 			}
 		});
-		console.log(tecnicos);
+		//console.log(tecnicos);
 		_this.set('tecnicos',tecnicos);
 		_this.paginationInitialize(10);	
 	},
@@ -146,7 +146,6 @@ export default Ember.Controller.extend({
 		            var mostrables = tecnicos.slice(showFrom, showTo);
 		            $.each(tecnicos,function(i,tecnico){
 		            	if($.inArray(tecnico, mostrables) !== -1){
-		            		//console.log(servicio);
 		            		tecnico.show = true;
 		            	}else{
 		            		tecnico.show = false;

@@ -9,7 +9,7 @@
           <div class="col-lg-4 ">
             <h2>
               <div class="input-group">
-                 {{input name="cliente" id="cliente" type="text" class="form-control" placeholder="Buscar solicitud" value=registro.usuario}}
+                 {{input name="filtro" id="filtro" type="text" class="form-control" placeholder="Buscar solicitud" value=filtro}}
                   <span class="input-group-btn">
                     <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
                   </span>
@@ -17,7 +17,27 @@
             </h2>
           </div>
 
-          <div class="col-lg-4 "></div>
+          <div class="col-lg-2 ">
+            <h2>
+              <div class="input-group" aria-describedby="basic-addon2">
+                <select class="form-control" name="page" id="page">
+                  <option value="1">1</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>   
+                <span class="input-group-addon" id="basic-addon2">Tam. Pag.</span>
+              </div>
+            </h2>
+          </div>
+
+           <div class="col-lg-2">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden>
+              <button type="button" class="close" {{action "cerrarMsg"}} aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
 
           <div class="col-lg-1 ">
             <h2>
@@ -41,26 +61,26 @@
   <table class="table table-bordered table-hover" id="solicitudes">  
           <thead class="header-tabla">
             <tr>
-            <th class="col-md-1">Código</th>
-            <th class="col-md-1">Cliente</th>
+            <th class="col-md-1" {{action "ordenarPor" "codigo"}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+            <th class="col-md-1" {{action "ordenarPor" "nombre_cliente"}}>Cliente<span id="th-nombre_cliente" class="glyphicon glyphicon-chevron-down"></span></th>
             <th class="col-md-4">Descripción</th>
-            <th class="col-md-1">Fecha</th>
-            <th class="col-md-1">Ubicación</th>
-            <th class="col-md-1">Estatus</th>
+            <th class="col-md-1" {{action "ordenarPor" "f_sol"}}>Fecha<span id="th-f_sol" class="glyphicon glyphicon-chevron-down"></span></th>
+            <th class="col-md-1" {{action "ordenarPor" "ubicacion"}}>Ubicación<span id="th-ubicacion" class="glyphicon glyphicon-chevron-down"></span></th>
+           <th class="col-md-1" {{action "ordenarPor" "estatus"}}>Estatus<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
             <th class="col-md-1">Contacto</th>
             <th class="col-md-1">Disponibilidad</th>
             <th class="col-md-1">Referencia</th>
           </tr>
         </thead>
         <tbody id="tbody" class="text-center">
-        {{#each solicitudes as |solicitud|}}
+        {{#each filter as |solicitud|}}
           <tr>
           <td  class="col-tabla">{{solicitud.codigo}}</td>
-          <td  class="col-tabla">{{format-atrib 'solicitud_cliente' solicitud.rif_c clientes}}</td>
+          <td  class="col-tabla">{{solicitud.nombre_cliente}}</td>
           <td class="col-tabla">{{solicitud.desc}} </td>
           <td class="col-tabla">{{solicitud.f_sol}} </td>
          <td  class="col-tabla">{{solicitud.ubicacion}}</td>
-          <td  class="col-tabla">{{format-atrib 'solicitud_estatus' solicitud.estatus}}</td>
+          <td  class="col-tabla">{{solicitud.estatus}}</td>
           <td  class="col-tabla">
            <!-- <ul>
               <li>Nombre: {{solicitud.nombre_cc}}</li>
@@ -80,7 +100,9 @@
       {{/each}}
       </tbody>
     </table>
-
+    <div class="text-center">
+        <ul id="pagination" class="pagination-sm"></ul>
+    </div>
 	</div>
 </div>
 

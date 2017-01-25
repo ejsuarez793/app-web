@@ -9,7 +9,7 @@
           <div class="col-lg-4 ">
             <h2>
               <div class="input-group">
-                 {{input name="cliente" id="cliente" type="text" class="form-control" placeholder="Buscar cliente" value=registro.usuario}}
+                 {{input name="filtro" id="filtro" type="text" class="form-control" placeholder="Buscar cliente" value=filtro}}
                   <span class="input-group-btn">
                     <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
                   </span>
@@ -17,7 +17,27 @@
             </h2>
           </div>
 
-          <div class="col-lg-4 "></div>
+          <div class="col-lg-2 ">
+            <h2>
+              <div class="input-group" aria-describedby="basic-addon2">
+                <select class="form-control" name="page" id="page">
+                  <option value="1">1</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>   
+                <span class="input-group-addon" id="basic-addon2">Tam. Pag.</span>
+              </div>
+            </h2>
+          </div>
+
+          <div class="col-lg-2">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden>
+              <button type="button" class="close" {{action "cerrarMsg"}} aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
 
           <div class="col-lg-1 ">
             <h2>
@@ -41,31 +61,34 @@
 		   <table class="table table-bordered table-hover" id="clientes">	
         	<thead class="header-tabla">
         		<tr>
-				    <th class="tg-yw4l">Rif</th>
-				    <th class="tg-yw4l">Nombre</th>
-				    <th class="tg-yw4l">Teléfonos</th>
-				    <th class="tg-yw4l">Fax</th>
-				    <th class="tg-yw4l">Dirección</th>
-				    <th class="tg-yw4l">Act Ec</th>
-				    <th class="tg-yw4l">Cond. Cont.</th>
-				    <th class="tg-yw4l">Editar</th>
+				    <th class="col-md-1" {{action "ordenarPor" "rif"}}>RIF<span id="th-rif" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th class="col-md-2" {{action "ordenarPor" "nombre"}}>Nombre<span id="th-nombre" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th class="col-md-1">Teléfonos</th>
+				    <th class="col-md-1">Fax</th>
+				    <th class="col-md-3">Dirección</th>
+				    <th class="col-md-1">Act Ec</th>
+				    <th class="col-md-2" {{action "ordenarPor" "cond_contrib"}}>Cond. Contrib.<span id="th-cond_contrib" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th class="col-md-1">Editar</th>
   				</tr>
   			</thead>
   			<tbody id="tbody" class="text-center">
-  			{{#each clientes as |cliente|}}
+  			{{#each filter as |cliente|}}
   				<tr>
-					<td><{{cliente.rif}}</td>
-					<td><{{cliente.nombre}}</td>
-					<td><{{cliente.tlf1}} <br> {{cliente.tlf2}} </td>
-					<td><{{cliente.fax}}</td>
-					<td><{{cliente.dire}}</td>
-					<td><{{cliente.act_eco}}</td>
-					<td>{{format-atrib 'cond_contrib' cliente.cond_contrib}}</td>
-					<td><button {{action 'openModal' 'true' cliente}} class="btn btn-default btn-xs">editar</button></td>
+					<td class="col-tabla"><{{cliente.rif}}</td>
+					<td class="col-tabla"><{{cliente.nombre}}</td>
+					<td class="col-tabla"><{{cliente.tlf1}} <br> {{cliente.tlf2}} </td>
+					<td class="col-tabla"><{{cliente.fax}}</td>
+					<td class="col-tabla"><{{cliente.dire}}</td>
+					<td class="col-tabla"><{{cliente.act_eco}}</td>
+					<td class="col-tabla">{{cliente.cond_contrib}}</td>
+					<td class="text-center"><button {{action 'openModal' 'true' cliente}} class="btn btn-default btn-xs">editar</button></td>
 				</tr>
 			{{/each}}
  			</tbody>
 		</table>
+		<div class="text-center">
+		     <ul id="pagination" class="pagination-sm"></ul>
+		</div>
 	</div>
 </div>
 
@@ -104,6 +127,8 @@
 				</div>
 				</div>
 
+				<div class="col-md-12"></div> 
+
 				<div class="col-md-12">
 				<div class="form-group">
 					<label>Dirección</label><small class="form-text text-muted">* </small>
@@ -113,6 +138,8 @@
 					</div>
 				</div>
 				</div>
+
+				<div class="col-md-12"></div> 
 
 				<div class="col-md-4">
 				<div class="form-group">
@@ -144,6 +171,8 @@
 				</div>
 				</div>
 
+				<div class="col-md-12"></div> 
+
 				<div class="col-md-6">
 				<div class="form-group">
 					<label>Actividad Económica</label><small class="form-text text-muted"> </small>
@@ -160,9 +189,9 @@
 					<div class="input-group input-group">
 					  <select class="form-control" name="cond_contrib" id="selectcond">
 					  	  <option disabled selected value="">Seleccione...</option>
-					      <option value="o">Ordinario</option>
-					      <option value="e">Especial</option>
-					      <option value="f">Formal</option>
+					      <option value="Ordinario">Ordinario</option>
+					      <option value="Especial">Especial</option>
+					      <option value="Formal">Formal</option>
 					    </select>
 					  <span class="input-group-addon">{{fa-icon "user"}}</span>
 					</div>
