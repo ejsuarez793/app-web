@@ -32,7 +32,14 @@ Router.map(function() {
     this.route('movimiento');
     this.route('historial');
   });
+  this.route('', function() {});
   this.route('404notfound', {path: "/*path"});
+
+
+  this.route('admin', function() {
+    this.route('registro');
+    this.route('gestion');
+  });
 });
 
 export default Router;

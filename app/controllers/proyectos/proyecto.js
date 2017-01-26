@@ -484,16 +484,18 @@ export default Ember.Controller.extend({
 			data.f_ini = moment().format("YYYY-MM-DD");
 			data.estatus = "Ejecucion";
 			data.accion = "Iniciar";
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		}else if(estatus=== "Ejecucion"){
 			data.f_fin = moment().format("YYYY-MM-DD");;
 			data.estatus = "Culminado";
 			data.accion = "Culminar";
 			//console.log("ejecucion");
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		}else{
 			this.msgRespuesta("Error: ","El estado del proyecto no permite realizar esa acción",-1,this);
 		}
 		//console.log(data);
-		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		//this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 			
 	},
 	iniciarCulminarEtapa(etapa){

@@ -68,7 +68,11 @@
 					<td class="col-tabla"><{{proyecto.nombre}}</td>
 					<td class="col-tabla">{{proyecto.nombre_c}}</td>
 					<td class="col-tabla">{{proyecto.estatus}}</td>
-          <td >{{#if proyecto.codigo_ri}} <button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Abrir</button> {{else}}No Disponible{{/if}}</td>
+          {{#if proyecto.codigo_ri}} 
+          <td> <button {{action 'openModal' proyecto}} class="btn btn-default btn-xs">Abrir</button> </td>
+          {{else}}
+          <td class="col-tabla"> No Disponible</td>
+          {{/if}}
 					<td >
           {{#link-to 'proyectos.proyecto' proyecto.codigo}}<button  class="btn btn-default btn-xs" {{bindAttr href="view.href"}}>Info</button> {{/link-to}}
           </td>

@@ -1,0 +1,141 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Administración</h2>
+          </div>
+          <div class="col-lg-10">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden >
+              <button type="button" class="close" aria-label="Close" {{action 'cerrarMsg'}}><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
+        </div>
+
+
+<div class="row ">
+	{{admin-sidebar-component}}
+	<div class="col-md-10">
+
+      <div class="well jumbo-color">
+
+        <div class="row">
+
+          	<div class="col-md-12 ">
+            	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Gestión de Usuarios</h3>
+	                </div>
+                	<div class="panel-body">
+                		<form  id="formulario">
+				      		<div class="row">
+				      			<div class="col-md-8">
+									<div class="form-group">
+										<label>Usuario </label><small class="form-text text-muted">* </small>
+										<div class="input-group">
+										  {{input name="cédula" id="cédula" type="text" class="form-control" placeholder="Cédula del usuario registrado" value=ci}}
+										  <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+										</div>
+
+									</div>
+								</div>
+
+							
+
+								<div class="col-md-4">
+								<div class="form-group">
+									<label>Cargo</label><small class="form-text text-muted">* </small>
+									<div class="input-group input-group">
+									  <select class="form-control" name="cargo" id="selectcargo" onchange={{action 'selectNuevoCargo'}}>
+									  	<option disabled selected value="">Seleccione...</option>
+									      <option value="a">Almacenista</option>
+									      <option value="c">Coordinador de Proyectos</option>
+									      <option value="t">Técnico</option>
+									      <option value="v">Vendedor</option>
+									    </select>
+									  <span class="input-group-addon">{{fa-icon "user"}}</span>
+									</div>
+								</div>
+								</div>
+
+							
+
+								<div class="col-md-12"></div>
+							</div>
+						</form>
+                	</div>
+	                <div class="panel-footer">
+	                 	<div class="row">
+	                		<div class="col-md-12">
+	                			<button class="btn btn-primary pull-right" type="submit" {{action 'guardar'}}>Guardar</button>
+	                		</div>
+	                	</div>
+	                </div>
+              	</div>
+            </div>
+
+
+            <div class="col-md-12 ">
+            	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Cambio de clave</h3>
+	                </div>
+                	<div class="panel-body">
+                		<form  id="formulario">
+				      		<div class="row">
+				      			<div class="col-md-12">
+									<div class="form-group">
+										<label>Usuario </label><small class="form-text text-muted">* </small>
+										<div class="input-group">
+										  {{input type="text" class="form-control" placeholder="Cédula del usuario registrado" value=ci_cc}}
+										  <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+										</div>
+
+									</div>
+								</div>
+
+
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Contraseña </label><small class="form-text text-muted">* </small>
+										<div class="input-group">
+										  {{input type="password" class="form-control" placeholder="Nueva contraseña" value=password1}}
+										  <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+										</div>
+
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Repita la nueva contraseña </label><small class="form-text text-muted">* </small>
+										<div class="input-group">
+										  {{input type="password" class="form-control" placeholder="Repita nueva contraseña" value=password2}}
+										  <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+										</div>
+
+									</div>
+								</div>
+
+								<div class="col-md-12"></div>
+							</div>
+						</form>
+                	</div>
+	                <div class="panel-footer">
+	                 	<div class="row">
+	                		<div class="col-md-12">
+	                			<button class="btn btn-primary pull-right" type="submit" {{action 'cambiarClave'}}>Guardar</button>
+	                		</div>
+	                	</div>
+	                </div>
+              	</div>
+            </div>
+
+          </div>
+
+        </div>
+	</div>
+</div>
+
+</div>

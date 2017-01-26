@@ -8,6 +8,8 @@ export default Ember.Controller.extend({
 	solicitud: {},
 	cliente: {},
 	proceso: {},
+	f_hoy:moment().format("YYYY-MM-DD"),
+	msg:{},
 	init(){
 		this._super();
 		this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1); 
@@ -30,6 +32,10 @@ export default Ember.Controller.extend({
 				return ($.inArray(value, aux)!==-1);
 		});
 
+		$.validator.addMethod("mayorQue", function (value, element, params) {
+				return new Date(value) >= new Date($(params).val());
+		});
+
 		$("#formulario").validate({
 			rules:{
 				ci_tecnico:{
@@ -39,6 +45,7 @@ export default Ember.Controller.extend({
 				f_vis:{
 					required:true,
 					date: true,
+					mayorQue: "#f_hoy",
 				},
 			},
 			messages:{
@@ -49,6 +56,7 @@ export default Ember.Controller.extend({
 				f_vis:{
 					required:'Este campo es requerido.',
 					date: 'Fecha no válida.',
+					mayorQue:'La fecha seleccionada ya paso.',
 				},
 			},
 			errorElement: 'small',
@@ -83,10 +91,11 @@ export default Ember.Controller.extend({
 		.done(function(response){callback(response, context); })    
 		.fail(function(response) { console.log(response); }); 
 	},
-	postProcesarSolicitud(method,url,data){
+	llamadaServidor(method,url,data,callback,context){
 		$.ajax({
 			type: method,
 			url: url,
+			context: this,
 			headers:{
 				Authorization: "Token "+ Cookies.get('token'),
 			},
@@ -94,8 +103,31 @@ export default Ember.Controller.extend({
 				dataType: "json",
 				data: JSON.stringify(data),
 		})    
-		.done(function(response){ console.log(response); })    
-		.fail(function(response) { console.log(response); }); 
+		.done(function(response) {
+			//console.log(response);
+			context.init();
+			callback('Exito: ',response.msg,1,context);
+		})    
+		.fail(function(response) { 
+			console.log(response);
+			callback('Error: ',response.responseText,-1,context);
+		});
+	},
+	msgRespuesta(tipo,desc,estatus,context){
+		var clases = ['alert-danger','alert-warning','alert-success'];
+		var _this = context;
+		_this.set('msg.tipo',tipo);
+		_this.set('msg.desc',desc);
+		$.each(clases,function(i/*,clase*/){
+			if (i === (estatus+1)){
+				$("#alertMsg").addClass(clases[i]);
+			}else{
+				$("#alertMsg").removeClass(clases[i]);
+			}
+
+		});
+		$("#alertMsg").show();
+
 	},
 	asignarSolicitudes(solicitudes,context){
 		var _this = context;
@@ -106,7 +138,7 @@ export default Ember.Controller.extend({
 			solicitudes = aux;
 		}
 
-		console.log(solicitudes);
+		//console.log(solicitudes);
 		_this.set('solicitudes',solicitudes);
 		_this.paginationInitialize(10);
 	},
@@ -135,7 +167,7 @@ export default Ember.Controller.extend({
     		}
     	});
 	},
-	prepararModal(solicitud){
+	openModal(solicitud){
 		var aux;
 
 		this.set('proceso',{});
@@ -147,7 +179,7 @@ export default Ember.Controller.extend({
 		$(".input-group").removeClass('has-success');
 		$(".input-group").removeClass('has-error');
 		$(".help-block").text("");  
-		if (solicitud.estatus!=="n"){
+		if (solicitud.estatus!=="Nueva"){
 			$('#submit-button').prop('disabled',true);
 		}else{
 			$('#submit-button').prop('disabled',false);
@@ -193,7 +225,7 @@ export default Ember.Controller.extend({
 
 		var solicitud_s = {
 			'codigo': codigo_s,
-			'estatus': 'p', //procesada
+			'estatus': 'Procesada', //procesada
 			'f_vis': f_vis,
 		};
 
@@ -326,7 +358,7 @@ export default Ember.Controller.extend({
 	},
 	actions: {
 		openModal: function(solicitud){
-			this.prepararModal(solicitud);
+			this.openModal(solicitud);
 		},
 		ordenarPor:function(property){
 			this.ordenarPor(property);
@@ -335,11 +367,11 @@ export default Ember.Controller.extend({
 			this.validarCampos();
 			if ($('#formulario').valid()){
 				var data = this.prepararDatos();
-				console.log(data);
+				//console.log(data);
 
 				var method = 'PUT';
 				var url = window.serverUrl + '/solicitud/procesar/';
-				this.postProcesarSolicitud(method,url,data);
+				this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 			}
 		}
 	}

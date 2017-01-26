@@ -32,6 +32,13 @@
             </h2>
           </div>
 
+            <div class="col-lg-4">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden>
+              <button type="button" class="close" {{action "cerrarMsg"}} aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
+
         </div>
 
     <div class="row ">
@@ -56,7 +63,7 @@
 						<td class="col-tabla"><{{solicitud.desc}} </td>
 						<td class="col-tabla"><{{solicitud.f_sol}}</td>
 						<td class="col-tabla"><{{solicitud.estatus}}</td>
-						<td class="col-tabla"><button {{action 'openModal' solicitud}} class="btn btn-default btn-xs">ver</button></td>
+						<td class="text-center"><button {{action 'openModal' solicitud}} class="btn btn-default btn-xs">ver</button></td>
 					</tr>
 				{{/each}}
 	 			</tbody>
@@ -191,6 +198,7 @@
 			                  </div>
 			                </div>
 			                <div class="col-md-1"></div>
+			                {{input name="f_hoy" id="f_hoy" type="hidden" class="form-control"  value=f_hoy}}
 			                 </div>
 			              </div>
 			            </div>

@@ -1,53 +1,23 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-    isExpanded: false,
-    showMyModal: false,
+	registro:{
+		usuario:'sianfung',
+		ci:'4',
+		nombre1:'sinfungn',
+		nombre2:'sianfungn',
+		apellido1:'sianfunga',
+		apellido2:'sianfunga',
+		tlf:'4',
+		correo:'sianfung@lol.com',
+		cargo:'t',
+		password1:'e1234567',
+		password2:'e1234567',
+	},
+	//registro:{},
+	msg:{},
 
-    init() {
-	    this._super(...arguments);
-
-	    this.username = '';
-	    this.password = '';
-  	},
-
-   /* registro : {
-        usuario : 'nriqpro5',
-        ci: '20803815',
-        nombre1:'Enrique',
-        nombre2:'Jose',
-        apellido1:'Suarez',
-        apellido2:'Mendoza',
-        tlf: '04142900187',
-        correo: 'asda@cas.com',
-        dire: 'Direccion papa',
-        cargo: 'a',
-        password1: 'e1234567',
-        password2: 'e1234567',
-    },*/
-
-     registro : {
-        usuario : '',
-        ci: '',
-        nombre1:'',
-        nombre2:'',
-        apellido1:'',
-        apellido2:'',
-        tlf: '',
-        correo: '',
-        dire: '',
-        cargo: '',
-        password1: '',
-        password2: '',
-    },
-    cargos: [
-        {nombre: "Almacenista", letra: 'a'},
-        {nombre: "Coordinador de Proyectos", letra: 'c'},
-        {nombre: "Técnico", letra: 't'},
-        {nombre: "Vendedor", letra: 'v'},
-    ],
-
-   /* validarCampos: function(){
+	validarCampos: function(){
         $.validator.addMethod('strongPassword', function(value, element){
             return this.optional(element) ||   value.length >= 6 && /\d/.test(value) && /[a-z]/i.test(value);
         }, 'Contraseña debe ser al menos 8 caracteres y al menos 1 letra');
@@ -56,7 +26,7 @@ export default Ember.Controller.extend({
             return value === "" || value.length <= len;
         });
         $.validator.addMethod("customemail", 
-          function(value) {
+          function(value/*, element*/) {
             return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value);
         }, "Por favor ingrese un correo válido");
 
@@ -213,69 +183,64 @@ export default Ember.Controller.extend({
               }
         });
 
-    },*/
-    actions: {
-    	login: function () {
-            var data = {};
-            var token = '';
-            var username = this.get('username');
-            var password = this.get('password');
-            data.username = username;
-            data.password = password;
-            $.ajax( {
-                type: "POST",
-                url: "http://localhost:8000/api-token-auth/",
-                context:this,
-                contentType: "application/json; charset=utf-8",
-                 dataType: "json",
-                 data: JSON.stringify(data),
-            })    
-                .done(function(response) { 
-                    //console.log(response);
-                    token = response.token;
-                    $.ajax( {
-                        type: "GET",
-                        context:this,
-                        url: "http://localhost:8000/users/current/",
-                        headers:{
-                            Authorization: "Token "+ token,
-                        },
-                        contentType: "application/json; charset=utf-8",
-                         dataType: "json",
-                         data: JSON.stringify(data),
-                    })    
-                        .done(function(response) { 
-                            Cookies.set("token", token);
-                            Cookies.set("current", response);
-                            if(response.cargo === 'v'){
-                                this.transitionToRoute('/vendedor/clientes/');
-                            }else if (response.cargo === 'c'){
-                                this.transitionToRoute('/proyectos/proyectos/');
-                            }else if (response.cargo === 'a'){
-                                this.transitionToRoute('/almacen/materiales/');
-                            }else if (response.cargo === 'admin'){
-                                console.log("admin");
-                                this.transitionToRoute('/admin/registro/');
-                                //console.log(response);
-                            }
-                            document.getElementById("loginForm").reset();
-                        })    
-                        .fail(function(response) { console.log(response); });    
-                })    
-                .fail(function(response) { console.log(response); });   
-        },
-        /*toggleShow() {
-            this.set('showMyModal', !this.get('showMyModal'));
-        },*/
-       /*register: function(){
-            var registro = null;
+    },
+    llamadaServidor(method,url,data,callback,context){
+		$.ajax({
+			type: method,
+			url: url,
+			context: this,
+			headers:{
+				Authorization: "Token "+ Cookies.get('token'),
+			},
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				data: JSON.stringify(data),
+		})    
+		.done(function(response) {
+			//console.log(response);
+			context.init();
+			callback('Exito: ',response.msg,1,context);
+		})    
+		.fail(function(response) { 
+			console.log(response);
+			callback('Error: ',response.responseText,-1,context);
+		});
+	},
+	msgRespuesta(tipo,desc,estatus,context){
+		var clases = ['alert-danger','alert-warning','alert-success'];
+		var _this = context;
+		_this.set('msg.tipo',tipo);
+		_this.set('msg.desc',desc);
+		$.each(clases,function(i/*,clase*/){
+			if (i === (estatus+1)){
+				$("#alertMsg").addClass(clases[i]);
+			}else{
+				$("#alertMsg").removeClass(clases[i]);
+			}
+
+		});
+		$("#alertMsg").show();
+
+	},
+	cerrarMsg(){
+		$("#alertMsg").hide();
+	},
+	actions:{
+		cerrarMsg:function(){
+			this.cerrarMsg();
+		},
+		registrar:function(){
+			var registro = null;
             var selects = document.getElementById("selectcargo");
             var  selectedCargo = selects.options[selects.selectedIndex].value;
             registro = this.get('registro');
             registro.cargo = selectedCargo;
-            this.validarCampos(registro);
+            //var data = $.extend(true,{},registro);
+            var method = "POST"
+            var url = window.serverUrl + '/usuarios/'
+            this.validarCampos();
             if ($("#formulario").valid()){
-                var data = {
+            	var data = {
                     user:{
                         username: registro.usuario,
                         password: registro.password1,
@@ -294,16 +259,10 @@ export default Ember.Controller.extend({
                         cargo: registro.cargo,
                     }
                 };
-             $.ajax({
-                type: "POST",
-                url: "http://localhost:8000/users/",
-                contentType: "application/json; charset=utf-8",
-                 dataType: "json",
-                 data: JSON.stringify(data),
-            })    
-                .done(function(response) { console.log(response); })    
-                .fail(function(response) { console.log(response); });
+            	console.log("valido");
+            	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
             }
-        },*/
-    }
+			//console.log("implementar");
+		},
+	},
 });

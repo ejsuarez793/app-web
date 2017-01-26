@@ -11,6 +11,12 @@ export default Ember.Route.extend({
 	    	else if (current.cargo === 'c'){
 	    		this.transitionTo('proyectos.solicitudes');
 	    	}
+	    	else if (current.cargo === 'a'){
+	    		this.transitionTo('almacen.materiales');
+	    	}else if (current.cargo === 'admin'){
+	    		this.transitionTo('admin.registro');
+	    	}
+
 	    
 	    }
   	}

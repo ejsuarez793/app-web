@@ -11,6 +11,8 @@ export default Ember.Route.extend({
                 this.transitionTo('/proyectos/proyectos/');
             }else if (usuario.cargo === 'a'){
                 this.transitionTo('/almacen/materiales/');
+            }else if (usuario.cargo === 'admin'){
+                this.transitionTo('/admin/registro/');
             }
         }else{
         	this.transitionTo("login");
