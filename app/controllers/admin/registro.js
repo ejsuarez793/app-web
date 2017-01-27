@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-	registro:{
+	/*registro:{
 		usuario:'sianfung',
 		ci:'4',
 		nombre1:'sinfungn',
@@ -13,8 +13,8 @@ export default Ember.Controller.extend({
 		cargo:'t',
 		password1:'e1234567',
 		password2:'e1234567',
-	},
-	//registro:{},
+	},*/
+	registro:{},
 	msg:{},
 
 	validarCampos: function(){
