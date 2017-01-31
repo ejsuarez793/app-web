@@ -60,6 +60,10 @@ export default Ember.Controller.extend({
 				return value === "" || value.length <= len;
 		});
 
+		$.validator.addMethod("mayorQue", function (value, element, params) {
+				return new Date(value) >= new Date($(params).val());
+		});
+
 		$("#formulario_pg").validate({
 			rules:{
 				nombre:{
@@ -76,6 +80,7 @@ export default Ember.Controller.extend({
 				f_est:{
 					required:true,
 					date:true,
+					mayorQue:"#f_hoy_pg",
 				},
 			},
 			messages:{
@@ -93,6 +98,7 @@ export default Ember.Controller.extend({
 				f_est:{
 					required:'Este campo es requerido.',
 					date:'Ingrese una fecha válida.',
+					mayorQue: 'La fecha estimada debe ser mayor o igual que la actual.'
 				},
 			},
 			errorElement: 'small',
@@ -113,6 +119,10 @@ export default Ember.Controller.extend({
 				return value === "" || value.length <= len;
 		});
 
+		$.validator.addMethod("mayorQue", function (value, element, params) {
+				return new Date(value) >= new Date($(params).val());
+		});
+
 		$("#formulario_pe").validate({
 			rules:{
 				nombre:{
@@ -122,6 +132,7 @@ export default Ember.Controller.extend({
 				f_est:{
 					required:true,
 					date:true,
+					mayorQue:'#f_hoy',
 				},
 			},
 			messages:{
@@ -132,6 +143,7 @@ export default Ember.Controller.extend({
 				f_est:{
 					required:'Este campo es requerido.',
 					date:'Ingrese una fecha válida.',
+					mayorQue: 'La fecha estimada debe ser mayor o igual que la actual.'
 				},
 			},
 			errorElement: 'small',
@@ -236,12 +248,23 @@ export default Ember.Controller.extend({
 		proyecto.f_estimada = moment(proyecto.f_est).format('LL');
 		proyecto.f_finalizada = moment(proyecto.f_fin).format('LL');
 		proyecto.t_faltante = moment(proyecto.f_est, "YYYY-MM-DD").fromNow();
+
+		$.each(proyecto.etapas,function(i,etapa){
+			if(etapa.estatus==="Pendiente"){
+				etapa.accion="Iniciar";
+			}else if(etapa.estatus ==="Ejecucion"){
+				etapa.accion="Culminar";
+			}else if (etapa.estatus ==="Culminado"){
+				etapa.accion = "Acta Entrega";
+			}
+		});
 		_this.set('proyecto',proyecto);
-		console.log(proyecto);
+		//console.log(proyecto);
 		var method = "GET";
 		var url = window.serverUrl + '/proyecto/' + _this.get('proyecto.codigo') + '/materiales/' ;
 		_this.getElements(method,url,_this.setDesglose,_this);
 		_this.prepararProgreso();
+
 	},
 	prepararProgreso(){
 		//var aux = ['progress-bar-success','progress-bar-success','progress-bar-info','progress-bar-info','progress-bar-warning','progress-bar-warning','progress-bar-warning','progress-bar-danger','progress-bar-danger','progress-bar-danger'];
@@ -498,27 +521,31 @@ export default Ember.Controller.extend({
 		//this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 			
 	},
-	iniciarCulminarEtapa(etapa){
+	accionEtapa(etapa){
 		console.log(etapa);
-		var method = "PATCH";
-		var url;
-		var data = {};
-		var estatus = etapa.estatus;
-		url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' + etapa.codigo + '/';
-		data = $.extend(true,{},etapa);
-		if(estatus === "Pendiente"){
-			data.f_ini = moment().format("YYYY-MM-DD");
-			data.estatus = "Ejecucion";
-			data.accion = "Iniciar";
-		}else if(estatus=== "Ejecucion"){
-			data.f_fin = moment().format("YYYY-MM-DD");;
-			data.estatus = "Culminado";
-			data.accion = "Culminar";
+		if (etapa.accion === "Acta Entrega"){
+			console.log("implementar acta de entrega");
 		}else{
-			this.msgRespuesta("Error: ","El estado de la etapa no permite realizar esa acción",-1,this);
+			var method = "PATCH";
+			var url;
+			var data = {};
+			var estatus = etapa.estatus;
+			url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' + etapa.codigo + '/';
+			data = $.extend(true,{},etapa);
+			if(estatus === "Pendiente"){
+				data.f_ini = moment().format("YYYY-MM-DD");
+				data.estatus = "Ejecucion";
+				data.accion = "Iniciar";
+			}else if(estatus=== "Ejecucion"){
+				data.f_fin = moment().format("YYYY-MM-DD");;
+				data.estatus = "Culminado";
+				data.accion = "Culminar";
+			}else{
+				this.msgRespuesta("Error: ","El estado de la etapa no permite realizar esa acción",-1,this);
+			}
+			//console.log(data);
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		}
-		//console.log(data);
-		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 	},
 	/*funcion que prepara el contenido del modal de presupuesto, de acuerdo a si es una nueva solicitud o
 	es un presupuesto que se esta editanto*/
@@ -932,7 +959,7 @@ export default Ember.Controller.extend({
 		$("#myModalReporteDetalle").modal('show');
 	},
 	openModalReportes(etapa){
-		//console.log("implementar modal reportes");
+		console.log(etapa.reportes);
 		var aux = $.extend(true,{},etapa);
 		$.each(aux.reportes,function(i,reporte){
 			if (reporte.leido){
@@ -942,6 +969,7 @@ export default Ember.Controller.extend({
 			}
 		});
 		this.set('etapa',aux);
+		//console.log(aux.reportes);
 		$("#myModalReportes").modal('show');
 	},
 	openModalActividades:function(etapa){
@@ -968,6 +996,7 @@ export default Ember.Controller.extend({
 		//data.f_est = this.get('proyecto.f_est');
 		data.f_fin = this.get('proyecto.f_fin');
 		data.accion = "Editar";
+		$("#f_hoy_pg").val(moment().format("YYYY-MM-DD"));
 		this.validarPG();
         if ($("#formulario_pg").valid()){
         	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
@@ -980,12 +1009,14 @@ export default Ember.Controller.extend({
 		var url;
 		var data = {};
 		$.extend(true,data,this.get('pe'));
-		data.accion = "Editar";
+		$("#f_hoy").val(moment().format("YYYY-MM-DD"));
 		if (this.get('editing_pe')){
 			method = "PATCH";
+			data.accion = "Editar";
 			url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/' +data.codigo+'/';
 		}else{
 			method = "POST";
+			data.accion = "Crear";
 			url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/';
 		}
 		this.validarPE();
@@ -1157,8 +1188,8 @@ export default Ember.Controller.extend({
 		iniciarCulminarProyecto(){
 			this.iniciarCulminarProyecto();
 		},
-		iniciarCulminarEtapa(etapa){
-			this.iniciarCulminarEtapa(etapa);
+		accionEtapa(etapa){
+			this.accionEtapa(etapa);
 		},
 		procesarPresupuesto:function(){
 			this.procesarPresupuesto();

@@ -5,7 +5,8 @@ export default Ember.Route.extend({
 	beforeModel: function(/*transition*/) {
 	    if (Cookies.get('token') || Cookies.getJSON('current')) {
 	      var current = Cookies.getJSON('current');
-	    	if (current.cargo === 'v'){
+	      if(current!==null && current!==undefined){
+	      	if (current.cargo === 'v'){
 	    		this.transitionTo('vendedor.clientes');
 	    	}
 	    	else if (current.cargo === 'c'){
@@ -16,8 +17,7 @@ export default Ember.Route.extend({
 	    	}else if (current.cargo === 'admin'){
 	    		this.transitionTo('admin.registro');
 	    	}
-
-	    
+	      }    
 	    }
   	}
 });

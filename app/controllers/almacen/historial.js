@@ -196,7 +196,7 @@ export default Ember.Controller.extend({
 			var method = "GET";
 			var tipo_consulta = this.get('tipo_consulta');
 			if (tipo_consulta==="mes"){
-				console.log(this.get('consulta.mes'));
+				//console.log(this.get('consulta.mes'));
 				this.validarConsultaMes();
 				if ($("#formulario_mes").valid()){
 					url = window.serverUrl + '/almacen/consulta/'+tipo_consulta+'/' + this.get('consulta.mes_consulta') + '/'+this.get('consulta.mes_consulta')+'/';

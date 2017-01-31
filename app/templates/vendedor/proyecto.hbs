@@ -165,15 +165,148 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                </div>
+
+                {{/if}}
+
+
+
+                {{#if proyecto.ejecucion}}
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                       <h3 class="panel-title">Presupuesto(s)</h3>
+                      </div>
+                      <div class="panel-body">
+                        <ul class="list-group">
+                        {{#each proyecto.presupuestos as |presupuesto|}}
+                          <li class="list-group-item" {{action 'openModalPresupuesto' presupuesto false}}>
+                            {{fa-icon "file-text"}} 
+                            <strong>Presupuesto:</strong> {{presupuesto.codigo}} 
+                            {{#if presupuesto.noAprobado}}
+                              <button  class="btn btn-success btn-xs" {{action 'openModalPresupuesto' presupuesto true bubbles=false}}> 
+                              {{fa-icon "pencil-square-o"}} editar
+                              </button> 
+                            {{/if}}
+                            <span class="badge">{{presupuesto.estatus}}</span>
+                        </li>
+                        {{/each}}
+                        </ul>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
                   <div class="panel panel-default height-150">
                     <div class="panel-heading">
                       <h3 class="panel-title">Facturar Etapa</h3>
                     </div>
                     <div class="panel-body">
-                      
+                      <div class="row">
+
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label>Seleccione Etapa:</label><small class="form-text text-muted"></small>
+                            <div class="input-group ">
+                              <select class="form-control" name="etapa" id="select_etapa" onchange={{action 'selectEtapaFactura'}}>
+                                  <option disabled selected value="">Seleccione...</option>
+                                  {{#each proyecto.etapas as |etapa|}}
+                                    <option value="{{etapa.codigo}}">{{etapa.letra}}</option>
+                                  {{/each}}
+                                </select>
+                              <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label>Nombre Etapa:</label><small class="form-text text-muted"> </small>
+                            <div class="input-group">
+                              {{input name="nombre_eta" id="nombre_eta" type="text" class="form-control" value=factura.etapa_nombre disabled=true}}
+                              <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {{#if etapa.facturada}}
+
+
+                          <div class="col-md-2">
+                          <div class="form-group">
+                            <label>Ver Factura</label>
+                            <div class="input-group">
+                              <button class="btn btn-primary pull-right" type="submit" {{action 'openModalFactura' false}}>Factura</button>
+                            </div>
+                          </div>
+                          </div>
+
+
+                          <div class="col-md-2">
+                          <div class="form-group">
+                            <label>Pago</label>
+                            <div class="input-group">
+                              <button class="btn btn-primary pull-right" type="submit" {{action 'openModalPagoFactura'}}>Pago</button>
+                            </div>
+                          </div>
+                          </div>
+
+
+                        {{else}}
+                          <div class="col-md-4">
+                          <div class="form-group">
+                            <label>Generar Factura</label>
+                            <div class="input-group">
+                              <button class="btn btn-primary pull-right" type="submit" {{action 'openModalFactura' true}}>Generar</button>
+                            </div>
+                          </div>
+                          </div>
+                        {{/if}}
+                      </div>
                     </div>
                   </div>
+                </div>
+
+
+                </div>
+
+                {{/if}}
+
+
+
+
+
+
+
+              {{#if proyecto.completado}}
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                       <h3 class="panel-title">Presupuesto(s)</h3>
+                      </div>
+                      <div class="panel-body">
+                        <ul class="list-group">
+                        {{#each proyecto.presupuestos as |presupuesto|}}
+                          <li class="list-group-item" {{action 'openModalPresupuesto' presupuesto false}}>
+                            {{fa-icon "file-text"}} 
+                            <strong>Presupuesto:</strong> {{presupuesto.codigo}} 
+                            {{#if presupuesto.noAprobado}}
+                              <button  class="btn btn-success btn-xs" {{action 'openModalPresupuesto' presupuesto true bubbles=false}}> 
+                              {{fa-icon "pencil-square-o"}} editar
+                              </button> 
+                            {{/if}}
+                            <span class="badge">{{presupuesto.estatus}}</span>
+                        </li>
+                        {{/each}}
+                        </ul>
+                      </div>
+                    </div>
+                </div>
+
+                <div>
+                implementar ver facturas
                 </div>
 
                 {{#if proyecto.encuesta}}
@@ -484,11 +617,299 @@
       <div class="modal-footer">
       {{#if editing}}
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button  {{action 'guardar' presupuesto presupuesto.estatus}} class="btn btn-primary">Guadar</button>
+        <button  {{action 'guardarPresupuesto' presupuesto presupuesto.estatus}} class="btn btn-primary">Guardar</button>
       {{else}}
         <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
-        <button  {{action 'guardar' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
-        <button  {{action 'guardar' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
+        <button  {{action 'guardarPresupuesto' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
+        <button  {{action 'guardarPresupuesto' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
+      {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Modal Factura-->
+<div class="modal fade " id="myModalFactura" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalPresupuestoLabel">Factura</h4>
+        <small class="form-text text-muted"></small>
+      </div>
+
+      <div class="modal-body" id="modalBody">
+        <form  id="formulario">
+        <div class="container-fluid">
+          <div class="row">
+
+            <div class="col-md-12 well">
+              {{#if editing}}
+                <div class="row">
+
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Factura Nro: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input name="nro_factura" id="nro_factura" type="text" class="form-control" placeholder="Nro Factura" value=factura.nro_factura}}
+                        <span class="input-group-addon">{{fa-icon "list-alt"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Nro Control: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input name="nro_control" id="nro_control" type="text" class="form-control" placeholder="Nro Control" value=factura.nro_control}}
+                        <span class="input-group-addon">{{fa-icon "list-alt"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Fecha Emisión: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input name="f_emi" id="f_emi" type="date" class="form-control" value=factura.f_emi}}
+                        <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Fecha Vencimiento: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input name="f_ven" id="f_ven" type="date" class="form-control" value=factura.f_ven}}
+                        <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Condición de Pago</label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        <select class="form-control" name="cargo" id="selectcargo">
+                          <option disabled selected value="">Seleccione...</option>
+                            <option value="a">Débito</option>
+                            <option value="c">Crédito</option>
+                            <option value="t">Efectivo</option>
+                          </select>
+                        <span class="input-group-addon">{{fa-icon "cc-visa"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Presupuesto</label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        <select class="form-control" name="cargo" id="selectcargo">
+                          <option disabled selected value="">Seleccione...</option>
+                            {{#each proyecto.presupuestos as |presupuesto|}}
+                              <option value="{{presupuesto.codigo}}">{{presupuesto.codigo}}</option>
+                            {{/each}}
+                          </select>
+                        <span class="input-group-addon">{{fa-icon "file-text-o"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              {{else}}
+                <div class="col-md-8">
+                  <ul class="ul-presupuesto">
+                    <li><b>Nombre: </b>{{factura.nombre_cliente}}</li>
+                    <li><b>RIF: </b>{{factura.rif_cliente}}</li>
+                    <li><b>Teléfono: </b>{{factura.tlf1_c}}<b>Fax:</b>{{factura.fax_c}}</li>
+                    <li><b>Dirección:</b> <p>{{factura.dire_c}}</p></li>
+                    <br>
+                  </ul>
+                </div>
+                <div class="col-md-4">
+                  <ul class="ul-presupuesto">
+                      <li ><b>Factura Nro:</b> {{factura.nro_factura}} <b>Control Nro: </b> {{factura.nro_control}}</li>
+                      <li><b>F. Emisión: </b>{{factura.f_emi}}</li>
+                      <li><b>F. Vencimiento: </b>{{factura.f_ven}}</li>
+                      <li><b>Vendedor: </b>{{factura.nombre_v}}</li>
+                      <li><b>Cond. de Pago: </b>{{factura.cond_pago}}</li>
+                  </ul>
+                </div>
+              {{/if}}
+
+            </div>
+
+
+            {{#if editing}}
+            <div class="col-md-12 well">
+              <div class="row">
+
+                 <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Atencion: </label><small class="form-text text-muted"></small>
+                    <div class="input-group">
+                      {{input name="persona_cc" type="text" class="form-control" placeholder="Persona contacto" value=factura.persona_cc}}
+                      <span class="input-group-addon">{{fa-icon "user"}}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Cargo: </label><small class="form-text text-muted"></small>
+                    <div class="input-group">
+                      {{input name="cargo_cc" type="text" class="form-control" placeholder="Cargo persona contacto" value=factura.cargo_cc}}
+                      <span class="input-group-addon">{{fa-icon "user"}}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Departamento: </label><small class="form-text text-muted"></small>
+                    <div class="input-group">
+                      {{input name="cargo_cc" type="text" class="form-control" placeholder="Departamento ubicado persona contacto" value=factura.departamento_cc}}
+                      <span class="input-group-addon">{{fa-icon "user"}}</span>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Email: </label><small class="form-text text-muted"></small>
+                    <div class="input-group">
+                      {{input name="email_cc" type="text" class="form-control" placeholder="Email persona contacto" value=factura.email_cc}}
+                      <span class="input-group-addon">{{fa-icon "user"}}</span>
+                    </div>
+                  </div>
+                </div>
+
+               <!-- <div class="col-md-3">
+                  <h5><b>Atención:</b></h5>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group"> 
+                      {{input name="persona_cc" type="text" class="form-control" value=factura.persona_cc}}
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <h5><b>Cargo:</b></h5>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group">
+                      
+                      {{input name="cargo_cc" type="text" class="form-control" value=factura.cargo_cc}}
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <h5><b>Departamento:</b></h5>
+                </div>
+                <div class="col-md-9">
+                  <div class="form-group">
+                      {{input name="cargo_cc" type="text" class="form-control" value=factura.departamento_cc}}
+                  </div>
+                </div>
+
+
+                <div class="col-md-3">
+                  <h5><b>Email:</b></h5>
+                </div>
+                 <div class="col-md-9">
+                  <div class="form-group">
+                      {{input name="email_cc" type="text" class="form-control" value=factura.email_cc}}
+                  </div>
+                </div>
+
+              -->
+              </div>
+             </div>
+            {{else}}
+              {{presupuesto.observ}}
+            {{/if}}
+
+
+            <div class="col-md-12 well">
+               <div class="col-md-12">
+               <table class="table table-bordered table-hover ">  
+                  <thead class="header-tabla">
+                    <tr>
+                      <th class="col-md-1">Código</th>
+                      <th>Descripción</th>
+                      <th class="col-md-1">Cantidad</th>
+                      <th class="col-md-2">Precio Unitario</th>
+                      <th class="col-md-2">Precio Total</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody" class="text-center">
+                    {{#each materiales as |material|}}
+                    <tr >
+                      <td class="col-tabla">{{material.codigo}}</td>
+                      <td class="col-tabla"><{{material.desc}}</td>
+                      <td class="col-tabla">{{material.cantidad}} </td>
+                      <td class="col-tabla"> {{material.precio_venta}}</td>
+                      <td class="col-tabla">{{material.precio_total}}</td>
+                    </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+                </div>
+
+            </div>
+
+            <div class="col-md-12 well col-pre-observ">
+               <dl class="dl-horizontal">
+                    <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
+                    <dt>Subtotal Final:</dt> <dd>Bs. <span id="subtotalfinal">0.0</span></dd>
+                    <dt>I.V.A (12%):</dt> <dd>Bs. <span id="iva">0.0</span></dd>
+                    <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
+                </dl>
+            </div>
+
+            
+
+
+
+          </div>
+        </div>
+      </form>
+      </div>
+
+
+
+
+      <div class="modal-footer">
+      {{#if editing}}
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'guardarPresupuesto' presupuesto presupuesto.estatus}} class="btn btn-primary">Guardar</button>
+      {{else}}
+        <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
+        <button  {{action 'guardarPresupuesto' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
+        <button  {{action 'guardarPresupuesto' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
       {{/if}}
       </div>
     </div>

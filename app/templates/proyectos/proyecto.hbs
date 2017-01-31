@@ -5,7 +5,6 @@
           <div class="col-lg-2  ">
             <h2>Proyecto</h2>
           </div>
-         <button class="btn btn-primary" {{action 'materialDesglose'}} type="submit">Material Desglose</button>
           <div class="col-lg-10">
             <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden>
               <button type="button" class="close" {{action "cerrarMsg"}} aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -189,12 +188,12 @@
                                     <th class="col-md-1">Código</th>
                                     <th >Nombre</th>
                                     <th >Estado</th>
-                                    <th class="col-md-1">Act. Entrega</th>
+                                    <th class="col-md-2">F. est</th>
                                     <th class="col-md-1">Reporte Detalle</th>
                                     <th class="col-md-1">Reportes</th>
                                     <th class="col-md-1">Actividades</th>
                                     <th class="col-md-1">Editar</th>
-                                    <th class="col-md-1">Iniciar</th>
+                                    <th class="col-md-1">Accion</th>
                                   </tr>
                                 </thead>
                                 <tbody id="tbody" class="text-center">
@@ -203,8 +202,8 @@
                                     <td class="col-tabla">{{etapa.letra}}</td>
                                     <td class="col-tabla"><{{etapa.nombre}}</td>
                                     <td class="col-tabla">{{etapa.estatus}}</td>
-                                    <td >
-                                      <button {{action 'generarActaEntrega' etapa}} class="btn btn-default btn-xs">generar</button>
+                                    <td class="col-tabla">
+                                      {{etapa.f_est}}
                                     </td>
                                     <td >
                                     {{#if etapa.codigo_rd}}
@@ -223,7 +222,7 @@
                                       <button {{action 'openModalEtapa' etapa true}} class="btn btn-default btn-xs">editar</button>
                                     </td>
                                     <td >
-                                      <button {{action 'iniciarCulminarEtapa' etapa}} class="btn btn-default btn-xs">iniciar</button>
+                                      <button {{action 'accionEtapa' etapa}} class="btn btn-default btn-xs">{{etapa.accion}}</button>
                                     </td>
                                   </tr>
                                   {{/each}}
@@ -587,7 +586,16 @@
           </div>
           </div>
 
-        
+          
+             <div class="col-md-12">
+            <div class="form-group">
+              
+              <div class="input-group">
+                {{input name="f_hoy" id="f_hoy_pg" type="hidden" class="form-control" value=pe.f_hoy}}
+
+              </div>
+            </div>
+            </div>
 
 
 
@@ -619,7 +627,7 @@
           
         <div class="row">
         <div class="col-md-12">
-          <form  id="formulario_pe">
+          <form >
             <div class="row">
 
                 <table class="table table-bordered table-hover " id="tabla_tecnicos_ss">  
@@ -688,7 +696,7 @@
             <div class="form-group">
               <label>Letra </label><small class="form-text text-muted">* </small>
               <div class="input-group">
-                {{input name="nombre" type="text" class="form-control" value=pe.letra disabled="true"}}
+                {{input type="text" class="form-control" value=pe.letra disabled="true"}}
                 <span class="input-group-addon">{{fa-icon "user"}}</span>
               </div>
 
@@ -716,6 +724,15 @@
             </div>
             </div>
 
+             <div class="col-md-12">
+            <div class="form-group">
+              
+              <div class="input-group">
+                {{input name="f_hoy" id="f_hoy" type="hidden" class="form-control" value=pe.f_hoy}}
+
+              </div>
+            </div>
+            </div>
 
               </div>
             </form>
@@ -917,6 +934,32 @@
             <div class="collapse" id="collapse{{reporte.codigo}}">
               <div class="well">
                     {{reporte.observ}}
+                
+                    <div class="row">
+                      <div class="col-md-1"></div>
+                      <div class="col-md-10">
+                        <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#each reporte.servicios as |servicio|}}
+                          <tr>
+                              <td>{{servicio.codigo}}</td>
+                              <td>{{servicio.desc}}</td>
+                              <td>{{servicio.cantidad}}</td>
+                          </tr>
+                          {{/each}}
+                        </tbody>
+                        </table>
+                      </div>
+                      <div class="col-md-1"></div>
+                    </div>
+                         
               </div>
               <div class="row">
                 <div class="col-sm-10"></div>

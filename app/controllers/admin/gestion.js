@@ -158,24 +158,24 @@ export default Ember.Controller.extend({
 
 	},
 	guardar(){
-		console.log("guardando");
+		/*console.log("guardando");
 		console.log(this.get('ci'));
-		console.log(this.get('nuevoCargo'));
+		console.log(this.get('nuevoCargo'));*/
 		var ci = this.get('ci');
 		var method = "PATCH";
 		var url = window.serverUrl + '/admin/gestion/' + ci + '/';
 		var data = this.get('nuevoCargo');
 		this.validar('gestion');
 		if ($("#form_gestion").valid()){
-			console.log("valido gestion");
+			//console.log("valido gestion");
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		}
 	},
 	cambiarClave(){
-		console.log("cabiando");
+		/*console.log("cabiando");
 		console.log(this.get('ci_cc'));
 		console.log(this.get('password1'));
-		console.log(this.get('password2'));
+		console.log(this.get('password2'));*/
 		var ci = this.get('ci_cc');
 		var method = "PATCH";
 		var url = window.serverUrl + '/admin/clave/' + ci + '/';
@@ -184,7 +184,7 @@ export default Ember.Controller.extend({
 		data.password2 = this.get('password2');
 		this.validar('clave');
 		if ($("#form_clave").valid()){
-			console.log("valido clave");
+			//console.log("valido clave");
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		}
 	},
