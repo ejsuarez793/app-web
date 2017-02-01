@@ -45,10 +45,8 @@ export default Ember.Controller.extend({
 			resp:"",
 		},
 	],
-	desglose:{},
-	materiales_disponibles : [],
-	materiales_usados_etapas: [],
-	materiales_usados_totales:[],
+	factura:{},
+	pago:{},
 
 
 	init(){
@@ -252,6 +250,154 @@ export default Ember.Controller.extend({
 			}
 		});
 	},
+	validarFactura(){
+		$.validator.addMethod("maxlength", function (value, element, len) {
+				return value === "" || value.length <= len;
+		});
+
+		$.validator.addMethod("mayorQue", function (value, element, params) {
+				return new Date(value) >= new Date($(params).val());
+		});
+
+		$.validator.addMethod("customemail", 
+          function(value/*, element*/) {
+            return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value);
+        }, "Por favor ingrese un correo válido");
+
+		$("#formulario_factura").validate({
+			rules:{
+				nro_factura:{
+					required:true,
+					number:true,
+				},
+				nro_control:{
+					required:true,
+					number:true,
+				},
+				f_emi:{
+					required:true,
+					mayorQue:"#f_hoy",
+				},
+				f_ven:{
+					required:true,
+					mayorQue:"#f_emi",
+				},
+				cond_pago:{
+					required:true,
+				},
+				codigo_pre:{
+					required:true,
+				},	
+				persona_cc:{
+					required:true,
+					maxlength:100,
+				},
+				cargo_cc:{
+					required:true,
+					maxlength:100,
+				},
+				departamento_cc:{
+					required:true,
+					maxlength:100,
+				},
+				email_cc:{
+					required:true,
+					maxlength:100,
+					customemail:true,
+				},
+			},
+			messages:{
+				nro_factura:{
+					required:'Este campo es requerido.',
+					number:'Solo números por favor.',
+				},
+				nro_control:{
+					required:'Este campo es requerido.',
+					number:'Solo números por favor.',
+				},
+				f_emi:{
+					required:'Este campo es requerido.',
+					mayorQue:'La fecha seleccionada debe ser mayor o igual a la fecha de hoy.',
+				},
+				f_ven:{
+					required:'Este campo es requerido.',
+					mayorQue:'La fecha seleccionada debe ser mayor o igual que la fecha de emisión.',
+				},
+				cond_pago:{
+					required:'Este campo es requerido.',
+				},
+				codigo_pre:{
+					required:'Este campo es requerido.',
+				},	
+				persona_cc:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 100 caracteres.',
+				},
+				cargo_cc:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 100 caracteres.',
+				},
+				departamento_cc:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 100 caracteres.',
+				},
+				email_cc:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 100 caracteres.',
+				},
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.parent());
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element).addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+	},
+	validarPagoFactura(){
+		$.validator.addMethod("maxlength", function (value, element, len) {
+				return value === "" || value.length <= len;
+		});
+
+		$("#formulario_pago").validate({
+			rules:{
+				banco_dest:{
+					required:true,
+					maxlength:100,
+				},
+				nro_ref:{
+					required:true,
+					maxlength:100,
+				},
+			},
+			messages:{
+				banco_dest:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 100 caracteres.',
+				},
+				nro_ref:{
+					required:'Este campo es requerido.',
+					maxlength:'Longitud máxima de 100 caracteres.',
+				},
+			},
+			errorElement: 'small',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.parent());
+			},
+			highlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			},
+			success: function(element) {
+				$(element).addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+			}
+		});
+	},
 	getElements(method,url,callback,context){
 		$.ajax({
 			type: method,
@@ -289,12 +435,9 @@ export default Ember.Controller.extend({
 		});
 	},
 	setProyecto(proyecto,context){
-		console.log(proyecto);
+		//console.log(proyecto);
 		var _this = context;
 		_this.set('proyecto',proyecto);
-		var method = "GET";
-		var url = window.serverUrl + '/proyecto/' + _this.get('proyecto.codigo') + '/materiales/' ;
-		_this.getElements(method,url,_this.setDesglose,_this);
 
 		$.each(proyecto.presupuestos,function(i,presupuesto){
 			if (presupuesto.estatus ==="Aprobado"){
@@ -313,158 +456,13 @@ export default Ember.Controller.extend({
 			proyecto.rechazado=true;
 		}
 	},
-	setDesglose(desglose,context){
-		//console.log(desglose);
-		context.set('desglose',desglose);
-		context.listadoMateriales();
+	setFactura(response, context){
+		//console.log(response);
+		context.set('factura',response);
+		context.set('editing',true);
+		$("#myModalFactura").modal('show');
 	},
-	listadoMateriales(){
-		//console.log(this.get('desglose'));
-		var desglose = this.get('desglose');
-		var disponibles = [];
-		var usados_e = {};
-		var usados_efectivamente = {};
-		var total_usados = [];
-		var flag = false; // usada para saber si un material no fue sumado/restado en la iteracion de usados efectivamente
-		var aux;
-
-		//aqui organizo los egresados y retornados por etapas, para luego sacar los usados efectivamente en cada etapa.
-		$.each(desglose.egresados.toArray(),function(i,egresado){
-			if (usados_e[egresado.codigo_eta]===null || usados_e[egresado.codigo_eta]===undefined){
-				//console.log(egresado.codigo_eta);
-				usados_e[egresado.codigo_eta] = [];
-			}
-			usados_e[egresado.codigo_eta].push(egresado);
-		});
-
-		$.each(desglose.retornados.toArray(),function(i,retornado){
-			if (usados_e[retornado.codigo_eta]===null || usados_e[retornado.codigo_eta]===undefined){
-				usados_e[retornado.codigo_eta] = [];
-			}
-			usados_e[retornado.codigo_eta].push(retornado);
-		});
-
-		//hasta este punto me deberian salir un json con un campo de cada etapa y sus egresados y retornados, para luego restar los eleentos
-		/*console.log("usados antes proce");
-		console.log(usados_e);*/
-
-		//ahora resto los elementos
-		$.each(usados_e,function(i,usado_e){
-			//flag = false;
-			//console.log(usado_e);
-			$.each(usado_e,function(i, usado){
-				flag = false;
-				//console.log(usado);
-				if (usados_efectivamente[usado.codigo_eta]===null || usados_efectivamente[usado.codigo_eta]===undefined){
-					usados_efectivamente[usado.codigo_eta] = [];
-					//usados_efectivamente['letra_eta'] = usado.letra_eta;
-					//usados_efectivamente['nombre_eta'] = usado.nombre_eta;
-				}
-				$.each(usados_efectivamente[usado.codigo_eta],function(i,usado_efectivamente){
-					if(usado_efectivamente.codigo_mat === usado.codigo_mat){
-						if(usado.tipo_mov === "Egreso"){
-							usado_efectivamente.cant = usado_efectivamente.cant + usado.cant;
-						}else if(usado.tipo_mov === "Retorno"){
-							usado_efectivamente.cant = usado_efectivamente.cant - usado.cant;
-						}
-						flag=true;
-					}
-				});
-				if(!flag){
-					aux = $.extend(true,{},usado);
-					if(aux.tipo_mov === "Retorno"){
-						aux.cant = aux.cant * (-1);
-					}
-					usados_efectivamente[usado.codigo_eta].push(aux);
-				}
-			});
-			
-		});
-
-		/*console.log("usados efectivamente");
-		console.log(usados_efectivamente);*/
-
-		//por ultimo sumo los materiales disponibles de los presupuestos
-		$.each(desglose.presupuestos.toArray(),function(i,material){
-			flag = false;
-			$.each(disponibles,function(i,disponible){
-				if (material.codigo_mat === disponible.codigo_mat){
-					disponible.cant += material.cant;
-					flag = true;
-				}
-			});
-			if(!flag){
-				aux = $.extend(true,{},material);
-				disponibles.push(aux);
-			}
-		});
-
-		//aqui agregamos los usados efectivamente por etapa y los agrupamos en otro arreglo para poder mostrar otra categoria
-		//de usados totales
-
-		$.each(usados_efectivamente,function(i, etapa){
-			$.each(etapa,function(i, usado_efectivamente){
-				flag = false;
-				$.each(total_usados,function(i,material_tu){
-					if (usado_efectivamente.codigo_mat === material_tu.codigo_mat){
-						material_tu.cant = material_tu.cant + usado_efectivamente.cant;
-						flag = true;
-					}
-				});
-				if(!flag && usado_efectivamente.cant>0){
-					aux = $.extend(true,{},usado_efectivamente);
-					total_usados.push(aux);
-				}
-			});
-		});
-
-		/*console.log("total usados");
-		console.log(total_usados);*/
-
-		//finalizando restamos los disponibles del presupuesto con los usados efectivamente en cada etapa
-		
-		$.each(disponibles,function(i,disponible){
-			$.each(usados_efectivamente, function(i,etapa){
-				$.each(etapa, function(i, material){
-					if(disponible.codigo_mat === material.codigo_mat){
-			  			disponible.cant = disponible.cant - material.cant;
-			  		}
-				});
-				
-			});
-		});
-
-		var propValue;
-		var materiales_x_etapa = [];
-		for(var propName in usados_efectivamente) {
-		    //propValue = nyc[propName]
-		    $.each(this.get('proyecto.etapas'),function(i,etapa){
-		    	//console.log(etapa);
-		    	if (etapa.codigo === parseInt(propName)){
-		    		//console.log(etapa.nombre);
-		    		aux = $.extend(true,{},etapa); 
-		    		aux['materiales'] = []
-		    		$.each(usados_efectivamente[propName],function(i,mat){
-		    			if (mat.cant>0){
-		    				aux['materiales'].push(mat);
-		    			}
-		    		});
-		    		materiales_x_etapa.push(aux);
-
-
-		    	}
-		    });
-		    //console.log(propName);
-		}
-		//console.log(materiales_x_etapa);
-		/*console.log("disponibles");
-		console.log(disponibles);*/
-
-		this.set('materiales_disponibles',disponibles);
-		this.set('materiales_usados_etapas',materiales_x_etapa);
-		this.set('materiales_usados_totales',total_usados);
-
-	},
+	
 	calcularMontoTotal(){
 		var subtotal1; //= parseFloat($("#subtotal1").text())*/;
 		var descuento; //= parseFloat($("#descuento").text())*/;
@@ -651,7 +649,7 @@ export default Ember.Controller.extend({
 	verEncuesta(){
 		var respuestas = this.get('proyecto.encuesta.preguntas').toArray();
 		var radio_id;
-		console.log(respuestas);
+		//console.log(respuestas);
 		$.each(respuestas,function(i,respuesta){
 			radio_id = "#resp" +(i+1)+"_"+respuesta.respuesta;
 			$(radio_id).prop("checked",true);
@@ -707,8 +705,49 @@ export default Ember.Controller.extend({
 				_this.set('etapa', etapa);
 			}
 		});
-
+		console.log(this.get('etapa'));
 		//console.log(codigo_eta);
+	},
+	selectPresupuestoFactura(){
+		this.set('cod_pre',$("#select_presupuesto").val());
+	},
+	
+	consultarFactura(){
+		var method;
+		var url;
+		var data = {};
+		method = "GET";
+		url = window.serverUrl + '/ventas/factura/consultar/' + this.get('etapa.codigo') + '/' +this.get('cod_pre')+'/';
+		//this.validarCausaRechazo();
+		//if ($("#formulario_cr").valid()){
+			this.getElements(method,url,this.setFactura,this);
+		//}
+	},
+	facturarEtapa(){
+		//console.log(this.get('factura'));
+		this.set('factura.f_hoy',moment().format('YYYY-MM-DD'));
+		var factura = this.get('factura');
+		var method = "POST";
+		var url;
+		var data = {};
+		data.nro_factura = factura.nro_factura
+		data.nro_control = factura.nro_control 
+		data.codigo_pre = factura.codigo_pre
+		data.codigo_eta = factura.codigo_eta
+		data.f_emi = factura.f_emi
+		data.f_ven  = factura.f_ven
+		data.persona_cc = factura.persona_cc
+		data.cargo_cc = factura.cargo_cc
+		data.departamento_cc = factura.departamento_cc
+		data.email_cc = factura.email_cc
+		data.cond_pago = $("#select_cond_pago").val();
+		data.pagada = false;
+		console.log(data);
+		url = window.serverUrl + '/ventas/factura/' + this.get('etapa.codigo') + '/';
+		this.validarFactura();
+		if ($("#formulario_factura").valid()){
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		}
 	},
 	openModalFactura(editing){
 		this.set('editing',editing);
@@ -730,7 +769,7 @@ export default Ember.Controller.extend({
 			email_cc:'',
 			cargo_cc:'',
 			departamento_cc:'',
-			materiales:[],
+			elementos:[],
 			pagada:false,
 			banco_dest:'',
 			nro_ref:'',
@@ -772,6 +811,23 @@ export default Ember.Controller.extend({
 		//console.log("iplementar");
 		//console.log(editing);
 	},
+	openModalPagoFactura(){
+		$("#myModalPagoFactura").modal('show');
+	},
+	guardarPagoFactura(){
+		var pago = this.get('pago');
+		var method = "PATCH";
+		var url;
+		var data = {};
+		data= $.extend(true,{},pago);
+		data.pagada=true;
+		console.log(data);
+		url = window.serverUrl + '/ventas/factura/' + this.get('etapa.codigo') + '/';
+		this.validarPagoFactura();
+		if ($("#formulario_pago").valid()){
+			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		}
+	},
 	actions:{
 		openModalPresupuesto: function(presupuesto, editing){
 			this.openModalPresupuesto(presupuesto, editing);
@@ -803,8 +859,23 @@ export default Ember.Controller.extend({
 		selectEtapaFactura(){
 			this.selectEtapaFactura();
 		},
+		selectPresupuestoFactura(){
+			this.selectPresupuestoFactura();
+		},
 		openModalFactura(editing){
 			this.openModalFactura(editing);
-		}
+		},
+		consultarFactura(){
+			this.consultarFactura();
+		},
+		facturarEtapa(){
+			this.facturarEtapa();
+		},
+		openModalPagoFactura(){
+			this.openModalPagoFactura();
+		},
+		guardarPagoFactura(){
+			this.guardarPagoFactura();
+		},
 	}
 });

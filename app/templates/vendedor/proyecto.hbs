@@ -205,7 +205,7 @@
                     <div class="panel-body">
                       <div class="row">
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                           <div class="form-group">
                             <label>Seleccione Etapa:</label><small class="form-text text-muted"></small>
                             <div class="input-group ">
@@ -215,7 +215,7 @@
                                     <option value="{{etapa.codigo}}">{{etapa.letra}}</option>
                                   {{/each}}
                                 </select>
-                              <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+                              <span class="input-group-addon">{{fa-icon "list-ol"}}</span>
                             </div>
                           </div>
                         </div>
@@ -225,10 +225,12 @@
                             <label>Nombre Etapa:</label><small class="form-text text-muted"> </small>
                             <div class="input-group">
                               {{input name="nombre_eta" id="nombre_eta" type="text" class="form-control" value=factura.etapa_nombre disabled=true}}
-                              <span class="input-group-addon">{{fa-icon "calendar"}}</span>
+                              <span class="input-group-addon">{{fa-icon "list-ol"}}</span>
                             </div>
                           </div>
                         </div>
+
+                      
 
                         {{#if etapa.facturada}}
 
@@ -237,7 +239,7 @@
                           <div class="form-group">
                             <label>Ver Factura</label>
                             <div class="input-group">
-                              <button class="btn btn-primary pull-right" type="submit" {{action 'openModalFactura' false}}>Factura</button>
+                              <button class="btn btn-primary pull-right" type="submit" {{action 'consultarFactura'}}>Factura</button>
                             </div>
                           </div>
                           </div>
@@ -254,11 +256,27 @@
 
 
                         {{else}}
-                          <div class="col-md-4">
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <label>Seleccione Presupuesto:</label><small class="form-text text-muted"></small>
+                              <div class="input-group ">
+                                <select class="form-control" name="presupuesto" id="select_presupuesto" onchange={{action 'selectPresupuestoFactura'}}>
+                                    <option disabled selected value="">Seleccione...</option>
+                                    {{#each proyecto.presupuestos as |presupuesto|}}
+                                      <option value="{{presupuesto.codigo}}">{{presupuesto.codigo}}</option>
+                                    {{/each}}
+                                  </select>
+                                <span class="input-group-addon">{{fa-icon "file-text"}}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-2">
                           <div class="form-group">
                             <label>Generar Factura</label>
                             <div class="input-group">
-                              <button class="btn btn-primary pull-right" type="submit" {{action 'openModalFactura' true}}>Generar</button>
+                              <button class="btn btn-primary pull-right" type="submit" {{action 'consultarFactura'}}>Generar</button>
                             </div>
                           </div>
                           </div>
@@ -655,7 +673,7 @@
       </div>
 
       <div class="modal-body" id="modalBody">
-        <form  id="formulario">
+        <form  id="formulario_factura">
         <div class="container-fluid">
           <div class="row">
 
@@ -663,7 +681,9 @@
               {{#if editing}}
                 <div class="row">
 
+                  {{input name="f_hoy" id="f_hoy" type="hidden" class="form-control" value=factura.f_hoy}}
 
+                  <div class="col-md-12"></div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Factura Nro: </label><small class="form-text text-muted"></small>
@@ -684,6 +704,8 @@
                       </div>
                     </div>
                   </div>
+
+                  <div class="col-md-12"></div>
 
 
                   <div class="col-md-6">
@@ -707,15 +729,18 @@
                     </div>
                   </div>
 
+                  <div class="col-md-12"></div>
+                  
+
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Condición de Pago</label><small class="form-text text-muted"></small>
                       <div class="input-group">
-                        <select class="form-control" name="cargo" id="selectcargo">
+                        <select class="form-control" name="cond_pago" id="select_cond_pago">
                           <option disabled selected value="">Seleccione...</option>
-                            <option value="a">Débito</option>
-                            <option value="c">Crédito</option>
-                            <option value="t">Efectivo</option>
+                            <option value="Debito">Débito</option>
+                            <option value="Credito">Crédito</option>
+                            <option value="Efectivo">Efectivo</option>
                           </select>
                         <span class="input-group-addon">{{fa-icon "cc-visa"}}</span>
                       </div>
@@ -723,6 +748,17 @@
                   </div>
 
                   <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Presupuesto: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input name="presupuesto" id="presupuesto" type="text" class="form-control" value=factura.codigo_pre disabled=true}}
+                        <span class="input-group-addon">{{fa-icon "file-text"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-12"></div>
+                  <!--<div class="col-md-6">
                     <div class="form-group">
                       <label>Presupuesto</label><small class="form-text text-muted"></small>
                       <div class="input-group">
@@ -735,7 +771,7 @@
                         <span class="input-group-addon">{{fa-icon "file-text-o"}}</span>
                       </div>
                     </div>
-                  </div>
+                  </div>-->
 
                 </div>
               {{else}}
@@ -766,7 +802,7 @@
             <div class="col-md-12 well">
               <div class="row">
 
-                 <div class="col-md-6">
+                <div class="col-md-6">
                   <div class="form-group">
                     <label>Atencion: </label><small class="form-text text-muted"></small>
                     <div class="input-group">
@@ -786,11 +822,13 @@
                   </div>
                 </div>
 
+                <div class="col-md-12"></div>
+
                 <div class="col-md-6">
                   <div class="form-group">
                     <label>Departamento: </label><small class="form-text text-muted"></small>
                     <div class="input-group">
-                      {{input name="cargo_cc" type="text" class="form-control" placeholder="Departamento ubicado persona contacto" value=factura.departamento_cc}}
+                      {{input name="departamento_cc" type="text" class="form-control" placeholder="Departamento ubicado persona contacto" value=factura.departamento_cc}}
                       <span class="input-group-addon">{{fa-icon "user"}}</span>
                     </div>
                   </div>
@@ -807,45 +845,8 @@
                   </div>
                 </div>
 
-               <!-- <div class="col-md-3">
-                  <h5><b>Atención:</b></h5>
-                </div>
-                <div class="col-md-9">
-                  <div class="form-group"> 
-                      {{input name="persona_cc" type="text" class="form-control" value=factura.persona_cc}}
-                  </div>
-                </div>
+                <div class="col-md-12"></div>
 
-                <div class="col-md-3">
-                  <h5><b>Cargo:</b></h5>
-                </div>
-                <div class="col-md-9">
-                  <div class="form-group">
-                      
-                      {{input name="cargo_cc" type="text" class="form-control" value=factura.cargo_cc}}
-                  </div>
-                </div>
-
-                <div class="col-md-3">
-                  <h5><b>Departamento:</b></h5>
-                </div>
-                <div class="col-md-9">
-                  <div class="form-group">
-                      {{input name="cargo_cc" type="text" class="form-control" value=factura.departamento_cc}}
-                  </div>
-                </div>
-
-
-                <div class="col-md-3">
-                  <h5><b>Email:</b></h5>
-                </div>
-                 <div class="col-md-9">
-                  <div class="form-group">
-                      {{input name="email_cc" type="text" class="form-control" value=factura.email_cc}}
-                  </div>
-                </div>
-
-              -->
               </div>
              </div>
             {{else}}
@@ -866,13 +867,13 @@
                     </tr>
                   </thead>
                   <tbody id="tbody" class="text-center">
-                    {{#each materiales as |material|}}
+                    {{#each factura.elementos as |elemento|}}
                     <tr >
-                      <td class="col-tabla">{{material.codigo}}</td>
-                      <td class="col-tabla"><{{material.desc}}</td>
-                      <td class="col-tabla">{{material.cantidad}} </td>
-                      <td class="col-tabla"> {{material.precio_venta}}</td>
-                      <td class="col-tabla">{{material.precio_total}}</td>
+                      <td class="col-tabla">{{elemento.codigo}}</td>
+                      <td class="col-tabla"><{{elemento.desc}}</td>
+                      <td class="col-tabla">{{elemento.cantidad}} </td>
+                      <td class="col-tabla"> {{elemento.precio_unitario}}</td>
+                      <td class="col-tabla">{{elemento.precio_total}}</td>
                     </tr>
                     {{/each}}
                   </tbody>
@@ -882,12 +883,20 @@
             </div>
 
             <div class="col-md-12 well col-pre-observ">
-               <dl class="dl-horizontal">
-                    <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
-                    <dt>Subtotal Final:</dt> <dd>Bs. <span id="subtotalfinal">0.0</span></dd>
-                    <dt>I.V.A (12%):</dt> <dd>Bs. <span id="iva">0.0</span></dd>
-                    <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
-                </dl>
+              <div class="row">
+                <div class="col-md-6">
+                  
+                </div>
+                <div class="col-md-6">
+                  <dl class="dl-horizontal">
+                    <dt>Subtotal 1:</dt> <dd>Bs. <span >{{factura.subtotal1}}</span></dd>
+                    <dt>Descuento ({{factura.descuento_p}}%)</dt> <dd>Bs. <span>{{factura.descuento}}</span></dd>
+                    <dt>Subtotal Final:</dt> <dd>Bs. <span >{{factura.subtotal_final}}</span></dd>
+                    <dt>I.V.A (12%):</dt> <dd>Bs. <span >{{factura.iva}}</span></dd>
+                    <dt>TOTAL:</dt> <dd>Bs. <span >{{factura.total}}</span></dd>
+                  </dl>
+                </div>
+              </div>
             </div>
 
             
@@ -905,12 +914,66 @@
       <div class="modal-footer">
       {{#if editing}}
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button  {{action 'guardarPresupuesto' presupuesto presupuesto.estatus}} class="btn btn-primary">Guardar</button>
+        <button  {{action 'facturarEtapa'}} class="btn btn-primary">Guardar</button>
       {{else}}
         <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
         <button  {{action 'guardarPresupuesto' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
         <button  {{action 'guardarPresupuesto' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
       {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Pago Factura-->
+<div class="modal fade " id="myModalPagoFactura" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalPresupuestoLabel">Pago Factura</h4>
+        <small class="form-text text-muted"></small>
+      </div>
+
+      <div class="modal-body">
+      <div class="row">
+
+              
+              <form id="formulario_pago">
+
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Banco Destino: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input name="banco_dest" id="banco_dest" type="text" class="form-control" placeholder="Banco destino" value=pago.banco_dest}}
+                        <span class="input-group-addon">{{fa-icon "institution"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                    <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Nro Referencia: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input name="nro_ref" id="nro_ref" type="text" class="form-control" placeholder="Número de referencia de la transacción" value=pago.nro_ref}}
+                        <span class="input-group-addon">{{fa-icon "credit-card"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+              </form>
+             
+
+      </div>
+      </div>
+
+
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'guardarPagoFactura' }} class="btn btn-primary">Guadar</button>
       </div>
     </div>
   </div>
