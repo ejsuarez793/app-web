@@ -410,7 +410,7 @@ export default Ember.Controller.extend({
 				//data: data,
 		})    
 		.done(function(response){ callback(response, context); })    
-		.fail(function(response) { console.log(response); }); 
+		.fail(function(response) { console.log(response); context.msgRespuesta("Error: ",response.responseText,-1,context) }); 
 	},
 	llamadaServidor(method,url,data,callback,context){
 		$.ajax({
@@ -459,7 +459,15 @@ export default Ember.Controller.extend({
 	setFactura(response, context){
 		//console.log(response);
 		context.set('factura',response);
-		context.set('editing',true);
+		if (response.detalle.facturada!==undefined || response.detalle.facturada!==null){
+			if (response.detalle.facturada===true){
+				context.set('editing',false);
+			}else{
+				context.set('editing',true);
+			}
+		}else{
+			context.set('editing',true);
+		}
 		$("#myModalFactura").modal('show');
 	},
 	
@@ -596,6 +604,36 @@ export default Ember.Controller.extend({
 		    },
 		});
 	},
+	generarFacturaPDF(nombre,modal){
+		console.log("entra");
+		$("#"+modal).css('background', '#fff');
+		function canvasSc(element){
+		  var clone = element.cloneNode(true);
+		  var style = clone.style;
+		  style.position = 'relative';
+		  style.top = window.innerHeight + 'px';
+		  style.left = 0;
+		  document.body.appendChild(clone);
+		  return clone;
+		}
+
+		var modalBody = document.getElementById(modal);
+		var clone = canvasSc(modalBody);
+		var nombrepdf = nombre;
+
+		html2canvas(clone, {
+		    onrendered: function(canvas) {
+		     document.body.removeChild(clone);
+		      var imgData = canvas.toDataURL(
+                    'image/jpeg');             
+                var doc = new jsPDF('1', 'pt',"letter");
+                var width = doc.internal.pageSize.width;    
+				//var height = doc.internal.pageSize.height;
+                doc.addImage(imgData, 'jpeg', 0, 0,width,width);
+                doc.save(nombrepdf);
+		    },
+		});
+	},
 	procesarProyecto(proyecto,estatus){
 		var method;
 		var url;
@@ -705,7 +743,6 @@ export default Ember.Controller.extend({
 				_this.set('etapa', etapa);
 			}
 		});
-		console.log(this.get('etapa'));
 		//console.log(codigo_eta);
 	},
 	selectPresupuestoFactura(){
@@ -717,7 +754,12 @@ export default Ember.Controller.extend({
 		var url;
 		var data = {};
 		method = "GET";
-		url = window.serverUrl + '/ventas/factura/consultar/' + this.get('etapa.codigo') + '/' +this.get('cod_pre')+'/';
+		var codigo_eta = this.get('etapa.codigo');
+		var codigo_pre =this.get('cod_pre');
+		if (codigo_pre===undefined || this.get('etapa.facturada')===true){
+			codigo_pre=null;
+		}
+		url = window.serverUrl + '/ventas/factura/consultar/' + codigo_eta + '/' +codigo_pre+'/';
 		//this.validarCausaRechazo();
 		//if ($("#formulario_cr").valid()){
 			this.getElements(method,url,this.setFactura,this);
@@ -742,7 +784,6 @@ export default Ember.Controller.extend({
 		data.email_cc = factura.email_cc
 		data.cond_pago = $("#select_cond_pago").val();
 		data.pagada = false;
-		console.log(data);
 		url = window.serverUrl + '/ventas/factura/' + this.get('etapa.codigo') + '/';
 		this.validarFactura();
 		if ($("#formulario_factura").valid()){
@@ -877,5 +918,10 @@ export default Ember.Controller.extend({
 		guardarPagoFactura(){
 			this.guardarPagoFactura();
 		},
+		generarFacturaPDF(){
+			console.log("epale");
+			var nombre = "facturaNro-"+this.get('factura.detalle.nro_factura')+'.pdf';
+			this.generarFacturaPDF(nombre,"modalBodyFactura");
+		}
 	}
 });

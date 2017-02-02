@@ -672,7 +672,7 @@
         <small class="form-text text-muted"></small>
       </div>
 
-      <div class="modal-body" id="modalBody">
+      <div class="modal-body" id="modalBodyFactura">
         <form  id="formulario_factura">
         <div class="container-fluid">
           <div class="row">
@@ -758,40 +758,37 @@
                   </div>
 
                   <div class="col-md-12"></div>
-                  <!--<div class="col-md-6">
-                    <div class="form-group">
-                      <label>Presupuesto</label><small class="form-text text-muted"></small>
-                      <div class="input-group">
-                        <select class="form-control" name="cargo" id="selectcargo">
-                          <option disabled selected value="">Seleccione...</option>
-                            {{#each proyecto.presupuestos as |presupuesto|}}
-                              <option value="{{presupuesto.codigo}}">{{presupuesto.codigo}}</option>
-                            {{/each}}
-                          </select>
-                        <span class="input-group-addon">{{fa-icon "file-text-o"}}</span>
-                      </div>
-                    </div>
-                  </div>-->
 
                 </div>
               {{else}}
                 <div class="col-md-8">
                   <ul class="ul-presupuesto">
-                    <li><b>Nombre: </b>{{factura.nombre_cliente}}</li>
-                    <li><b>RIF: </b>{{factura.rif_cliente}}</li>
-                    <li><b>Teléfono: </b>{{factura.tlf1_c}}<b>Fax:</b>{{factura.fax_c}}</li>
-                    <li><b>Dirección:</b> <p>{{factura.dire_c}}</p></li>
+                    <li><b>Nombre: </b>{{factura.detalle.nombre_cliente}}</li>
+                    <li><b>RIF: </b>{{factura.detalle.rif_cliente}}</li>
+                    <li><b>Teléfono: </b>{{factura.detalle.tlf1_c}}<b>Fax:</b>{{factura.detalle.fax_c}}</li>
+                    <li><b>Dirección:</b> <p>{{factura.detalle.dire_c}}</p></li>
                     <br>
                   </ul>
                 </div>
                 <div class="col-md-4">
                   <ul class="ul-presupuesto">
-                      <li ><b>Factura Nro:</b> {{factura.nro_factura}} <b>Control Nro: </b> {{factura.nro_control}}</li>
-                      <li><b>F. Emisión: </b>{{factura.f_emi}}</li>
-                      <li><b>F. Vencimiento: </b>{{factura.f_ven}}</li>
-                      <li><b>Vendedor: </b>{{factura.nombre_v}}</li>
-                      <li><b>Cond. de Pago: </b>{{factura.cond_pago}}</li>
+                      <li ><b>FACTURA Nro:</b> {{factura.detalle.nro_factura}}</li>
+                      <li><b>F. Emisión: </b>{{factura.detalle.f_emi}}</li>
+                      <li><b>F. Vencimiento: </b>{{factura.detalle.f_ven}}</li>
+                      <li><b>Vendedor: </b>{{factura.detalle.nombre_v}}</li>
+                      <li><b>Cond. de Pago: </b>{{factura.detalle.cond_pago}}</li>
                   </ul>
+                </div>
+                <div class="col-md-12 ">
+                  <!--<ul class=" ul-presupuesto">
+                    <li> <b>Proyecto:</b> {{factura.detalle.codigo_pro}} - {{factura.detalle.nombre_pro}} </li>
+                    <li><b>Etapa:</b> {{factura.detalle.letra_eta}}</li>
+                  </ul>-->
+
+                  <dl class="dl-horizontal">
+                      <dt>Proyecto: </dt> <dd> {{factura.detalle.codigo_pro}} - {{factura.detalle.nombre_pro}}</dd>
+                      <dt>Etapa: </dt> <dd>{{factura.detalle.letra_eta}}</dd>
+                  </dl>
                 </div>
               {{/if}}
 
@@ -885,7 +882,14 @@
             <div class="col-md-12 well col-pre-observ">
               <div class="row">
                 <div class="col-md-6">
-                  
+                  {{#unless editing}}
+                    <dl class="dl-horizontal">
+                      <dt>Atención: </dt> <dd> <span >{{factura.detalle.persona_cc}}</span></dd>
+                      <dt>Email: </dt> <dd><span>{{factura.detalle.email_cc}}</span></dd>
+                      <dt>Cargo: </dt> <dd> <span >{{factura.detalle.cargo_cc}}</span></dd>
+                      <dt>Departamento: </dt> <dd> <span >{{factura.detalle.departamento_cc}}</span></dd>
+                    </dl>
+                  {{/unless}}
                 </div>
                 <div class="col-md-6">
                   <dl class="dl-horizontal">
@@ -916,9 +920,7 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
         <button  {{action 'facturarEtapa'}} class="btn btn-primary">Guardar</button>
       {{else}}
-        <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
-        <button  {{action 'guardarPresupuesto' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
-        <button  {{action 'guardarPresupuesto' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
+        <button  {{action 'generarFacturaPDF'}} class="btn btn-default">PDF</button>
       {{/if}}
       </div>
     </div>
