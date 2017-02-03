@@ -1336,3 +1336,158 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Modal ACTA ENTREGA ETAPA-->
+<div class="modal fade " id="myModalActaEntrega" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Acta de Entrega</h4>
+      </div>
+      <div class="modal-body" id="modalActaEntrega">
+          
+        <div class="row">
+        <div class="col-md-6">Caracas,{{acta_entrega.fecha}}</div>
+        <div class="col-md-8"></div>
+
+
+          <div class="col-md-12">
+              <h2 class="text-center">ACTA DE ENTREGA</h2>
+
+          </div>
+
+
+          <div class="col-md-12">
+            <dl class="dl-horizontal">
+              <dt>Proyecto: </dt> <dd> <span >{{acta_entrega.codigo_pro}} <br> {{acta_entrega.nombre_pro}}</span></dd>
+              <dt>Etapa: </dt> <dd><span>{{acta_entrega.codigo_eta}} <br>  {{acta_entrega.nombre_eta}}</span></dd>
+            </dl>
+          </div>
+
+
+
+          <div class="col-md-12">
+            <p class="text-justify">Por medio de la presente hacemos constar la entreta de los siguientes trabajos utilizando los materiales y servicios a entera satisfacción del cliente, los mismos fueron instalados y se encuentran totalmente operativos.</p>
+          </div>
+
+
+          <div class="col-md-12">
+            <h5 class="text-center"><strong>Actividades</strong></h5>
+          </div>
+          <div class="col-md-1"></div>
+          <div class="col-md-10">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="col-md-3">Nro</th>
+                  <th class="col-md-19">Descripción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each acta_entrega.actividades as |actividad|}}
+                <tr>
+                    <td class="col-tabla">{{actividad.nro}}</td>
+                    <td class="col-tabla">{{actividad.desc}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+              </table>
+          </div>
+          <div class="col-md-1"></div>
+
+          <div class="col-md-12"></div>
+
+           <div class="col-md-12">
+            <h5 class="text-center"><strong>Materiales y/o Servicios</strong></h5>
+          </div>
+          <div class="col-md-1"></div>
+          <div class="col-md-10">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="col-md-3">Código</th>
+                  <th class="col-md-8">Descripción</th>
+                  <th class="col-md-1">Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each acta_entrega.elementos as |elemento|}}
+                <tr>
+                    <td class="col-tabla">{{elemento.codigo}}</td>
+                    <td class="col-tabla">{{elemento.desc}}</td>
+                    <td class="col-tabla">{{elemento.cantidad}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+              </table>
+          </div>
+          <div class="col-md-1"></div>
+
+
+
+          <div class="col-md-12">
+            <p  class="text-justify"><strong>NOTA:</strong>Este documento indica la recepción definitiva de los trabajos realizados a entera satisfacción de <strong>{{acta_entrega.nombre_cliente}}</strong> liberando cualquier fianza o retención generada como producto del fiel cumplimiento, presentada por la empresa <strong>SISTELRED, C.A</strong> y aceptados por el cliente.</p>
+          </div>
+
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Por el Cliente: <strong>{{acta_entrega.nombre_cliente}}</strong>
+              </div>
+              <div class="panel-body">
+                <p>Nombre:</p>
+                <p>Cargo:</p>
+                <p>Firma:</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Por <strong>SISTELRED, C.A</strong>
+              </div>
+              <div class="panel-body">
+                <p>Nombre:</p>
+                <p>Cargo:</p>
+                <p>Firma:</p>
+              </div>
+            </div>
+          </div>
+          
+
+
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'generarPDFActa' 'Entrega' 'modalActaEntrega'}} class="btn btn-primary">PDF</button>
+      </div>
+    </div>
+  </div>
+</div>

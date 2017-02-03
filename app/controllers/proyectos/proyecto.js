@@ -524,7 +524,9 @@ export default Ember.Controller.extend({
 	accionEtapa(etapa){
 		console.log(etapa);
 		if (etapa.accion === "Acta Entrega"){
-			console.log("implementar acta de entrega");
+			//console.log("implementar acta de entrega");
+			$("#myModalActaEntrega").modal('show');
+			this.prepararActaEntrega(etapa);
 		}else{
 			var method = "PATCH";
 			var url;
@@ -546,6 +548,66 @@ export default Ember.Controller.extend({
 			//console.log(data);
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 		}
+	},
+	prepararActaEntrega(etapa){
+		if (etapa.estatus==="Culminado"){
+			var acta_entrega = {};
+		var elementos = [];
+		var actividades = [];
+		var fecha;
+		var proyecto = this.get('proyecto');
+		var materiales_etapas = this.get('materiales_usados_etapas').toArray();
+		var aux;
+
+		//console.log(proyecto);
+		//console.log(etapa);
+		console.log(materiales_etapas);
+		acta_entrega.codigo_pro = proyecto.codigo;
+		acta_entrega.nombre_pro = proyecto.nombre;
+		acta_entrega.codigo_eta = etapa.letra;
+		acta_entrega.nombre_eta = etapa.nombre;
+		acta_entrega.nombre_cliente = proyecto.cliente.nombre;
+		acta_entrega.rif_c = proyecto.cliente.rif;
+		acta_entrega.fecha = moment(etapa.f_fin).format('LL');
+
+		$.each(etapa.actividades,function(i,actividad){
+			aux = {};
+			aux.nro  =actividad.nro;
+			aux.desc = actividad.desc;
+			actividades.push($.extend(true,{},aux));
+		});
+
+		$.each(etapa.reportes,function(i,reporte){
+			$.each(reporte.servicios,function(i,servicio){
+				aux = {};
+				aux.codigo = servicio.codigo;
+				aux.desc = servicio.desc;
+				aux.cantidad = servicio.cantidad;
+				elementos.push($.extend(true,{},aux));
+			});
+		});
+
+		$.each(materiales_etapas,function(i,material_etapa){
+			if (material_etapa.codigo === etapa.codigo){
+				$.each(material_etapa.materiales,function(i,material){
+					aux = {};
+					aux.codigo = material.codigo_mat;
+					aux.desc = material.desc;
+					aux.cantidad = material.cant;
+					elementos.push($.extend(true,{},aux));
+				});
+			}
+		});
+
+		acta_entrega.actividades = actividades;
+		acta_entrega.elementos = elementos;
+
+		this.set('acta_entrega',acta_entrega);
+		}else{
+			this.msgRespuesta("Error: ","La etapa no ha culmiado, no se puede generar su acta de entrega.",-1,this);
+		}
+		
+
 	},
 	/*funcion que prepara el contenido del modal de presupuesto, de acuerdo a si es una nueva solicitud o
 	es un presupuesto que se esta editanto*/
@@ -1181,6 +1243,36 @@ export default Ember.Controller.extend({
 		    },
 		});
 	},
+	generarPDFActa(nombre,modal){
+		$("#"+modal).css('background', '#fff');
+		function canvasSc(element){
+		  var clone = element.cloneNode(true);
+		  var style = clone.style;
+		  style.position = 'relative';
+		  style.top = window.innerHeight + 'px';
+		  //style.width =$("#"+tipo).width();
+		  style.left = 0;
+		  document.body.appendChild(clone);
+		  return clone;
+		}
+
+		var panel = document.getElementById(modal);
+		var clone = canvasSc(panel);
+		var nombrepdf = nombre;
+		//console.log($("#"+tipo).width());
+		html2canvas(clone, {
+		    onrendered: function(canvas) {
+		     document.body.removeChild(clone);
+		      var imgData = canvas.toDataURL(
+                    'image/jpeg');             
+                var doc = new jsPDF('p', 'mm', [320,480]);
+                var width = doc.internal.pageSize.width;    
+				var height = doc.internal.pageSize.height;
+                doc.addImage(imgData, 'jpeg', 0, 0);//,width,height);
+                doc.save(nombrepdf);
+		    },
+		});
+	},
 	actions: {
 		cerrarMsg:function(){
 			this.cerrarMsg();
@@ -1334,6 +1426,15 @@ export default Ember.Controller.extend({
 			var method = "POST";
 			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/etapa/' +8 +'/solicitud/';
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+		},
+		generarPDFActa:function(tipo,modal){
+			var nombre = nombre;
+			if(tipo==="Entrega"){
+				nombre = "acta entrega-"+this.get('proyecto.codigo') + '-'+this.get('etapa.letra') +'.pdf';
+			}else if (tipo==="Culminacion"){
+				nombre = "acta culminacion-" +this.get('proyecto.codigo') + '.pdf';
+			}
+			this.generarPDFActa(nombre,modal);
 		}
 	}
 });

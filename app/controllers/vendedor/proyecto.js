@@ -605,7 +605,7 @@ export default Ember.Controller.extend({
 		});
 	},
 	generarFacturaPDF(nombre,modal){
-		console.log("entra");
+		//console.log("entra");
 		$("#"+modal).css('background', '#fff');
 		function canvasSc(element){
 		  var clone = element.cloneNode(true);
