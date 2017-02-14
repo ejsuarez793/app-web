@@ -41,7 +41,7 @@
                   <div class="col-md-12 ">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                          <h3 class="panel-title">Detalles Proyecto <strong>{{proyecto.estatus}} </strong>
+                          <h3 class="panel-title">Detalles Proyecto <strong>{{proyecto.estatus}} {{proyecto.f_finalizada}} </strong>
 
                           </h3>
                         </div>
@@ -91,7 +91,7 @@
                           <div class="col-sm-9"></div>
                             <div class="col-sm-3">
                               <button class="btn btn-primary" {{action 'openModalGeneral'}} type="submit">Editar</button>
-                              <button class="btn btn-primary" {{action 'iniciarCulminarProyecto'}} type="submit">{{accion}}</button>
+                              <button id="accion" class="btn btn-primary" {{action 'accionProyecto'}} type="submit">{{proyecto.accion}}</button>
                             </div>
                           </div>
                         </div>
@@ -236,7 +236,6 @@
                           <div class="row">
                             <div class="col-sm-9"></div>
                             <div class="col-sm-3">
-                              <button class="btn btn-primary" {{action 'llenarReporteDetalle'}} type="submit">Llenar reporte detalle</button>
                               <button class="btn btn-primary" {{action 'openModalEtapa' null false}} type="submit">Crear Etapa</button>
                             </div>
                           </div>
@@ -282,7 +281,7 @@
                         <div class="panel-footer">
                         <div class="row">
                             <div class="col-sm-12">
-                              <button class="btn btn-primary pull-right" {{action 'generarPDF' 'disponibles'}} type="submit">Exportar PDF</button>
+                              <button class="btn btn-primary pull-right" id="exportar_mat_disponibles" {{action 'generarPDF' 'disponibles'}} type="submit">Exportar PDF</button>
                             </div>
                         </div>
                         </div>
@@ -322,7 +321,7 @@
                         <div class="panel-footer">
                          <div class="row">
                             <div class="col-sm-12">
-                              <button class="btn btn-primary pull-right" {{action 'generarPDF' 'usados'}} type="submit">Exportar PDF</button>
+                              <button class="btn btn-primary pull-right"   id="exportar_mat_usados" {{action 'generarPDF' 'usados'}} type="submit">Exportar PDF</button>
                             </div>
                         </div>
                         </div>
@@ -374,7 +373,7 @@
                         <div class="panel-footer">
                          <div class="row">
                             <div class="col-sm-12">
-                              <button class="btn btn-primary pull-right" {{action 'generarPDF' 'material_etapas'}} type="submit">Exportar PDF</button>
+                              <button class="btn btn-primary pull-right"  id="exportar_mat_etapas"  {{action 'generarPDF' 'material_etapas'}} type="submit">Exportar PDF</button>
                             </div>
                         </div>
                         </div>
@@ -399,22 +398,6 @@
                           <h4>
                             Solicitudes de material
                           </h4>
-                        </div>
-                        <div class="col-lg-3">
-                          <h6>
-                          <button class="btn btn-primary" {{action 'agregarMaterialSolicitud' }} type="submit">Agregar Material</button>
-</h6>
-                           <h6>
-                          <button class="btn btn-primary" {{action 'guardarSolicitud' }} type="submit">Guardar Solicitud</button>
-                          </h6>
-                          <div class="input-group">
-                {{input name="nombre" type="text" class="form-control" placeholder="Codigo material" value=prueba.codigo_mat}}
-                <span class="input-group-addon">{{fa-icon "user"}}</span>
-              </div>
-              <div class="input-group">
-                {{input name="nombre" type="text" class="form-control" placeholder="Cantidad Material" value=prueba.cant}}
-                <span class="input-group-addon">{{fa-icon "money"}}</span>
-              </div>
                         </div>
                       </div>
                     </div>
@@ -976,7 +959,6 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" {{action 'guardarReportesLeidos'}}>Marcar Leidos</button>
-        <button class="btn btn-primary" {{action 'crearReporte' proyecto.etapas}}>Guardar</button>
       </div>
     </div>
   </div>
@@ -1351,6 +1333,87 @@
 
 
 
+<!-- Modal ACTA ENTREGA CULMNACION PROYECTO-->
+<div class="modal fade " id="myModalActaCulminacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Acta de Culminación</h4>
+      </div>
+      <div class="modal-body" id="modalActaCulminacion">
+          
+        <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-8"></div>
+
+
+          <div class="col-md-12">
+              <h2 class="text-center">ACTA DE CULMINACIÓN</h2>
+
+          </div>
+
+          <div class="col-md-12">
+            <p>
+              Mediante la presente <strong>SISTELRED, C.A., RIF: J-30994445-2</strong> hace entrega al cliente <strong>{{acta_culminacion.nombre_cliente}}, RIF: {{acta_culminacion.rif_cliente}}</strong> el proyecto <strong>{{acta_culminacion.nombre_pro}}</strong> registrado bajo el código <strong>{{acta_culminacion.codigo_pro}}</strong>, de fecha {{acta_culminacion.f_ini}} y culminado el {{acta_culminacion.f_fin}}, cuyo objeto fue {{acta_culminacion.desc_pro}}, el cual se entrega a enteta satisfacción de ambas partes y dando por culminado el servicio prestado por parte de la empresa.
+
+            </p>
+            <p>Acta que se efectúa en la ciudad de Caracas, a los {{acta_culminacion.dias}} del mes de {{acta_culminacion.mes}} del año {{acta_culminacion.anio}}.</p>
+          </div>
+
+          <div class="col-md-12">
+            <p  class="text-justify"><small><strong>NOTA:</strong>Este documento indica la recepción definitiva de los trabajos realizados a entera satisfacción de <strong>{{acta_culminacion.nombre_cliente}}</strong> liberando cualquier fianza o retención generada como producto del fiel cumplimiento, presentada por la empresa <strong>SISTELRED, C.A</strong> y aceptados por el cliente.</small></p>
+          </div>
+
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Por el Cliente: <strong>{{acta_culminacion.nombre_cliente}}</strong>
+              </div>
+              <div class="panel-body">
+                <p class="text-center">
+                  <stong>Firma y Sello</stong>
+                </p>
+                <p>Nombre:</p>
+                <p>Cargo:</p>
+                <p>Firma:</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Por <strong>SISTELRED, C.A</strong>
+              </div>
+              <div class="panel-body">
+                <p class="text-center">
+                  <stong>Firma y Sello</stong>
+                </p>
+                <p>Nombre:</p>
+                <p>Cargo:</p>
+                <p>Firma:</p>
+              </div>
+            </div>
+          </div>
+          
+
+
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'generarPDFActa' 'Culminacion' 'modalActaCulminacion'}} class="btn btn-primary">PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 
 
 
@@ -1390,7 +1453,7 @@
 
 
           <div class="col-md-12">
-            <p class="text-justify">Por medio de la presente hacemos constar la entreta de los siguientes trabajos utilizando los materiales y servicios a entera satisfacción del cliente, los mismos fueron instalados y se encuentran totalmente operativos.</p>
+            <p class="text-justify">Por medio de la presente hacemos constar la entrega de los siguientes trabajos utilizando los materiales y servicios a entera satisfacción del cliente, los mismos fueron instalados y se encuentran totalmente operativos.</p>
           </div>
 
 
@@ -1449,7 +1512,7 @@
 
 
           <div class="col-md-12">
-            <p  class="text-justify"><strong>NOTA:</strong>Este documento indica la recepción definitiva de los trabajos realizados a entera satisfacción de <strong>{{acta_entrega.nombre_cliente}}</strong> liberando cualquier fianza o retención generada como producto del fiel cumplimiento, presentada por la empresa <strong>SISTELRED, C.A</strong> y aceptados por el cliente.</p>
+            <p  class="text-justify"><small><strong>NOTA:</strong>Este documento indica la recepción definitiva de los trabajos realizados a entera satisfacción de <strong>{{acta_entrega.nombre_cliente}}</strong> liberando cualquier fianza o retención generada como producto del fiel cumplimiento, presentada por la empresa <strong>SISTELRED, C.A</strong> y aceptados por el cliente.</small></p>
           </div>
 
           <div class="col-md-6">
@@ -1458,6 +1521,9 @@
                 Por el Cliente: <strong>{{acta_entrega.nombre_cliente}}</strong>
               </div>
               <div class="panel-body">
+                <p class="text-center">
+                  <stong>Firma y Sello</stong>
+                </p>
                 <p>Nombre:</p>
                 <p>Cargo:</p>
                 <p>Firma:</p>
@@ -1471,6 +1537,9 @@
                 Por <strong>SISTELRED, C.A</strong>
               </div>
               <div class="panel-body">
+                <p class="text-center">
+                  <stong>Firma y Sello</stong>
+                </p>
                 <p>Nombre:</p>
                 <p>Cargo:</p>
                 <p>Firma:</p>

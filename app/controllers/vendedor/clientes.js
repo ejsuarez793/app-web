@@ -205,7 +205,7 @@ export default Ember.Controller.extend({
 		_this.set('clientes',clientes);
 		_this.paginationInitialize(10);	
 	},
-	prepararModal(editing,cliente){
+	openModal(editing,cliente){
 		if (editing==='false'){
 			this.set('editing',false);
 			$("#rif").prop('disabled', false);
@@ -225,7 +225,25 @@ export default Ember.Controller.extend({
 
 		$("#myModal").modal('show');
 	},
-	salvar(method,url,data){
+	save(){
+		var registro = null;
+		var method = "";
+		var url = "";
+		if (!this.get('editing')){
+			method = "POST";
+			url = window.serverUrl + '/cliente/';
+		}else{
+			method = "PATCH";
+			url = window.serverUrl +'/cliente/' + this.get('registro.rif') +'/';
+		}
+
+		//agarro el dato del select y lo asigno a mi registro
+		var selects = document.getElementById("selectcond");
+		var  selectcond = selects.options[selects.selectedIndex].value;
+		registro = this.get('registro');
+		registro.cond_contrib = selectcond;
+
+		var data = registro;
 		this.validarCampos();
 		if ($("#formulario").valid()){
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
@@ -345,37 +363,31 @@ export default Ember.Controller.extend({
 	cerrarMsg(){
 		$("#alertMsg").hide();
 	},
+	resumen(){
+		console.log("implementar resumen");
+		var method = "GET";
+		var url = window.serverUrl + '/ventas/resumen/';
+	    this.getElements(method,url,this.setResumen,this);
+	},
+	setResumen(resumen, context){
+		console.log(resumen);
+	},
 	actions: {
 		cerrarMsg:function(){
 			this.cerrarMsg();
 		},
 		openModal: function(editing,cliente){
-			this.prepararModal(editing,cliente);
+			this.openModal(editing,cliente);
 		},
 
 		save: function(){
-			var registro = null;
-			var method = "";
-			var url = "";
-			if (!this.get('editing')){
-				method = "POST";
-				url = window.serverUrl + '/cliente/';
-			}else{
-				method = "PATCH";
-				url = window.serverUrl +'/cliente/' + this.get('registro.rif') +'/';
-			}
-
-			//agarro el dato del select y lo asigno a mi registro
-			var selects = document.getElementById("selectcond");
-			var  selectcond = selects.options[selects.selectedIndex].value;
-			registro = this.get('registro');
-			registro.cond_contrib = selectcond;
-
-			var data = registro;
-			this.salvar(method,url,data);
+			this.save();
 		},
 		ordenarPor: function(property) {
 			this.ordenarPor(property);
     	},
+    	resumen(){
+    		this.resumen();
+    	}
 	}
 });

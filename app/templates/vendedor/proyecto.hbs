@@ -30,7 +30,150 @@
 						  			<div class="panel-body">
 										
 						  				<div class="row">
-						  					<div class="col-sm-6">
+                        <div class="col-md-12">
+
+
+
+
+
+
+                          <div class="panel panel-default">
+                            <div class="panel-body">
+                            <div class="row">
+
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Codigo Proyecto </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.codigo disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Ubicación </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.ubicacion disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label>Nombre Proyecto </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.nombre disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+
+                              
+
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label>Descripción Proyecto </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{textarea type="text" class="form-control" value=proyecto.desc disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+
+
+
+
+
+                      <div class="col-md-12">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Cliente </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.cliente.nombre disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Rif Cliente </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.cliente.rif disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
+
+                      <div class="col-md-12">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Persona Contacto </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.contacto.nombre_cc disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Cargo Contacto </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.contacto.cargo_cc disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Teléfono Contacto </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.contacto.tlf_cc disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              
+
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Correo Contacto </label><small class="form-text text-muted"> </small>
+                                  <div class="input-group">
+                                    {{input type="text" class="form-control" value=proyecto.contacto.correo_cc disabled=true}}
+                                    <span class="input-group-addon">{{fa-icon "id-card-o"}}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+						  					<!--<div class="col-sm-6">
 						  						<h4>{{proyecto.nombre}}<small>{{proyecto.codigo}}</small></h4>
 						  						<h4><small>{{proyecto.ubicacion}}</small></h4>
 						  						<p>{{proyecto.desc}}</p>
@@ -40,7 +183,7 @@
 						  						<h4><small>{{proyecto.cliente.act_eco}}</small></h4>
 						  						<h4><small>{{proyecto.cliente.dire}}</small></h4>
 						  						<h4>Contacto   <small>Pedro Perez, pperez@gmail.com, 0141-5487487</small></h4>
-						  					</div>
+						  					</div>-->
 
 						  				</div>
 
@@ -297,7 +440,7 @@
 
 
 
-              {{#if proyecto.completado}}
+              {{#if proyecto.culminado}}
                 <div class="row">
                   <div class="col-md-12">
                     <div class="panel panel-default">
@@ -323,12 +466,99 @@
                     </div>
                 </div>
 
-                <div>
-                implementar ver facturas
+
+                <div class="col-md-12">
+                  <div class="panel panel-default height-150">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Facturar Etapa</h3>
+                    </div>
+                    <div class="panel-body">
+                      <div class="row">
+
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <label>Seleccione Etapa:</label><small class="form-text text-muted"></small>
+                            <div class="input-group ">
+                              <select class="form-control" name="etapa" id="select_etapa" onchange={{action 'selectEtapaFactura'}}>
+                                  <option disabled selected value="">Seleccione...</option>
+                                  {{#each proyecto.etapas as |etapa|}}
+                                    <option value="{{etapa.codigo}}">{{etapa.letra}}</option>
+                                  {{/each}}
+                                </select>
+                              <span class="input-group-addon">{{fa-icon "list-ol"}}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label>Nombre Etapa:</label><small class="form-text text-muted"> </small>
+                            <div class="input-group">
+                              {{input name="nombre_eta" id="nombre_eta" type="text" class="form-control" value=factura.etapa_nombre disabled=true}}
+                              <span class="input-group-addon">{{fa-icon "list-ol"}}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                      
+
+                        {{#if etapa.facturada}}
+
+
+                          <div class="col-md-2">
+                          <div class="form-group">
+                            <label>Ver Factura</label>
+                            <div class="input-group">
+                              <button class="btn btn-primary pull-right" type="submit" {{action 'consultarFactura'}}>Factura</button>
+                            </div>
+                          </div>
+                          </div>
+
+
+                          <div class="col-md-2">
+                          <div class="form-group">
+                            <label>Pago</label>
+                            <div class="input-group">
+                              <button class="btn btn-primary pull-right" type="submit" {{action 'openModalPagoFactura'}}>Pago</button>
+                            </div>
+                          </div>
+                          </div>
+
+
+                        {{else}}
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <label>Seleccione Presupuesto:</label><small class="form-text text-muted"></small>
+                              <div class="input-group ">
+                                <select class="form-control" name="presupuesto" id="select_presupuesto" onchange={{action 'selectPresupuestoFactura'}}>
+                                    <option disabled selected value="">Seleccione...</option>
+                                    {{#each proyecto.presupuestos as |presupuesto|}}
+                                      <option value="{{presupuesto.codigo}}">{{presupuesto.codigo}}</option>
+                                    {{/each}}
+                                  </select>
+                                <span class="input-group-addon">{{fa-icon "file-text"}}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-2">
+                          <div class="form-group">
+                            <label>Generar Factura</label>
+                            <div class="input-group">
+                              <button class="btn btn-primary pull-right" type="submit" {{action 'consultarFactura'}}>Generar</button>
+                            </div>
+                          </div>
+                          </div>
+                        {{/if}}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
+
                 {{#if proyecto.encuesta}}
-                   <div class="col-md-6">
+                   <div class="col-md-12">
                     <div class="panel panel-default height-150">
                       <div class="panel-heading">
                         <h3 class="panel-title">Encuesta Completada</h3>
@@ -341,7 +571,7 @@
                     </div>
                   </div>
                 {{else}}
-                  <div class="col-md-6">
+                  <div class="col-md-12">
                     <div class="panel panel-default height-150">
                       <div class="panel-heading">
                         <h3 class="panel-title">Llenar Encuesta</h3>

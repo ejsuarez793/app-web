@@ -435,7 +435,7 @@ export default Ember.Controller.extend({
 		});
 	},
 	setProyecto(proyecto,context){
-		//console.log(proyecto);
+		console.log(proyecto);
 		var _this = context;
 		_this.set('proyecto',proyecto);
 
@@ -454,6 +454,8 @@ export default Ember.Controller.extend({
 			proyecto.ejecucion=true;
 		}else if(proyecto.estatus==="Rechazado"){
 			proyecto.rechazado=true;
+		}else if (proyecto.estatus ==="Culminado"){
+			proyecto.culminado=true;
 		}
 	},
 	setFactura(response, context){
@@ -581,13 +583,19 @@ export default Ember.Controller.extend({
 		  var clone = element.cloneNode(true);
 		  var style = clone.style;
 		  style.position = 'relative';
-		  style.top = window.innerHeight + 'px';
-		  style.left = 0;
+		 // style.top = window.innerHeight + 'px';
+		  //style.left = 0;
 		  document.body.appendChild(clone);
 		  return clone;
 		}
 
 		var modalBody = document.getElementById('modalBody');
+		var originalStyle = modalBody.style; //copiamos el estilo original ya que una vez finalizado la generacion debemos devolverle al panel
+								 //su ancho y largo original
+
+		//modificamos el ancho y largo del modal
+		modalBody.style.width = '754px';
+		modalBody.style.height = '1054px';
 		var clone = canvasSc(modalBody);
 		var nombrepdf = "presupesto-"+codigo+".pdf";
 
@@ -596,13 +604,15 @@ export default Ember.Controller.extend({
 		     document.body.removeChild(clone);
 		      var imgData = canvas.toDataURL(
                     'image/jpeg');             
-                var doc = new jsPDF('1', 'pt',"letter");
+                var doc = new jsPDF('p', 'mm',[210, 297]);
                 var width = doc.internal.pageSize.width;    
-				//var height = doc.internal.pageSize.height;
-                doc.addImage(imgData, 'jpeg', 0, 0,width,width);
+				var height = doc.internal.pageSize.height;
+                doc.addImage(imgData, 'jpeg', 0, 0,width,height);
                 doc.save(nombrepdf);
 		    },
 		});
+
+		modalBody.style=originalStyle;
 	},
 	generarFacturaPDF(nombre,modal){
 		//console.log("entra");
@@ -611,13 +621,19 @@ export default Ember.Controller.extend({
 		  var clone = element.cloneNode(true);
 		  var style = clone.style;
 		  style.position = 'relative';
-		  style.top = window.innerHeight + 'px';
-		  style.left = 0;
+		  //style.top = window.innerHeight + 'px';
+		  //style.left = 0;
 		  document.body.appendChild(clone);
 		  return clone;
 		}
 
 		var modalBody = document.getElementById(modal);
+		var originalStyle = modalBody.style; //copiamos el estilo original ya que una vez finalizado la generacion debemos devolverle al panel
+								 			//su ancho y largo original
+
+		//modificamos el ancho y largo del modal
+		modalBody.style.width = '900px';
+		modalBody.style.height = '1054px';
 		var clone = canvasSc(modalBody);
 		var nombrepdf = nombre;
 
@@ -626,13 +642,15 @@ export default Ember.Controller.extend({
 		     document.body.removeChild(clone);
 		      var imgData = canvas.toDataURL(
                     'image/jpeg');             
-                var doc = new jsPDF('1', 'pt',"letter");
+                var doc = new jsPDF('p', 'mm',[239, 297]);
                 var width = doc.internal.pageSize.width;    
 				//var height = doc.internal.pageSize.height;
-                doc.addImage(imgData, 'jpeg', 0, 0,width,width);
+                doc.addImage(imgData, 'jpeg', 0, 0);//,width,width);
                 doc.save(nombrepdf);
 		    },
 		});
+
+		modalBody.style  = originalStyle;
 	},
 	procesarProyecto(proyecto,estatus){
 		var method;

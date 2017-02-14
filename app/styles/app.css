@@ -84,8 +84,13 @@ ul {
 .col-pre-observ{ height: 170px; }
 
 .jumbo-color{
-  background-color: #B0C4DE;
+ /* background-color: #B0C4DE;*/
   /*gainsboro*/
+  /*background-color: #328CBB;*/ /*AZUL MENCION HONORIFICA*/ 
+  /*background-color: #C5C1C0*/
+  /*background-color: #F5F5F5*/
+  background-color: #535353
+ 
 }
 
 textarea.form-control {
