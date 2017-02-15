@@ -17,6 +17,7 @@ export default Ember.Controller.extend({
 	filtro: null,
 	clientes:[],
 	cliente:{},
+	resumen:{},
 	msg: {},
           
 
@@ -29,6 +30,10 @@ export default Ember.Controller.extend({
 			var method = "GET";
 			var url = window.serverUrl + '/cliente/';
 		    this.getElements(method,url,this.setClientes,this);
+
+		    var method = "GET";
+			var url = window.serverUrl + '/ventas/resumen/';
+		    this.getElements(method,url,this.setResumen,this);
 						
 		}
 	},
@@ -363,14 +368,280 @@ export default Ember.Controller.extend({
 	cerrarMsg(){
 		$("#alertMsg").hide();
 	},
-	resumen(){
-		console.log("implementar resumen");
-		var method = "GET";
-		var url = window.serverUrl + '/ventas/resumen/';
-	    this.getElements(method,url,this.setResumen,this);
+	openModalResumen(){
+		//console.log("implementar resumen");
+		this.prepararResumen();
+		$("#myModalResumen").modal('show');
 	},
 	setResumen(resumen, context){
-		console.log(resumen);
+		//console.log(resumen);
+		context.set('resumen',resumen);
+		
+	},
+	prepararResumen(){
+		
+
+		var resumen = [{
+  "nro_proyectos": 992,
+  "monto_total": 3424.64,
+  "promedio_monto": 7152.97,
+  "nro_encuestas": 586,
+  "promedio_encuestas": 2.44,
+  "rif": "807-01-3490",
+  "nombre": "Shanghai Dainji University",
+  "act_eco": "Design Engineer"
+}, {
+  "nro_proyectos": 109,
+  "monto_total": 6701.09,
+  "promedio_monto": 7469.13,
+  "nro_encuestas": 423,
+  "promedio_encuestas": 3.49,
+  "rif": "195-69-5243",
+  "nombre": "Caritas University",
+  "act_eco": "Nurse"
+}, {
+  "nro_proyectos": 658,
+  "monto_total": 7475.57,
+  "promedio_monto": 388.37,
+  "nro_encuestas": 278,
+  "promedio_encuestas": 4.09,
+  "rif": "443-58-0544",
+  "nombre": " L.D.College of Engineering",
+  "act_eco": "Health Coach III"
+}, {
+  "nro_proyectos": 781,
+  "monto_total": 349.37,
+  "promedio_monto": 1718.3,
+  "nro_encuestas": 813,
+  "promedio_encuestas": 4.66,
+  "rif": "762-52-1048",
+  "nombre": "Seton Hall University",
+  "act_eco": "Database Administrator III"
+}, {
+  "nro_proyectos": 334,
+  "monto_total": 4277.34,
+  "promedio_monto": 8595.73,
+  "nro_encuestas": 831,
+  "promedio_encuestas": 4.76,
+  "rif": "306-77-5908",
+  "nombre": "University of Massachusetts at Dartmouth",
+  "act_eco": "Computer Systems Analyst III"
+}, {
+  "nro_proyectos": 820,
+  "monto_total": 8135.9,
+  "promedio_monto": 1450.97,
+  "nro_encuestas": 161,
+  "promedio_encuestas": 2.84,
+  "rif": "348-53-5245",
+  "nombre": "Bangabandhu Sheikh Mujibur Rahman Agricultural University",
+  "act_eco": "Research Assistant IV"
+}, {
+  "nro_proyectos": 833,
+  "monto_total": 7108.46,
+  "promedio_monto": 6187.37,
+  "nro_encuestas": 792,
+  "promedio_encuestas": 4.21,
+  "rif": "557-26-9257",
+  "nombre": "Copenhagen Business School",
+  "act_eco": "Librarian"
+}, {
+  "nro_proyectos": 362,
+  "monto_total": 2409.07,
+  "promedio_monto": 4730.48,
+  "nro_encuestas": 499,
+  "promedio_encuestas": 1.62,
+  "rif": "443-78-0247",
+  "nombre": "University of Gastronomic Sciences",
+  "act_eco": "Database Administrator II"
+}, {
+  "nro_proyectos": 377,
+  "monto_total": 3332.18,
+  "promedio_monto": 5694.48,
+  "nro_encuestas": 103,
+  "promedio_encuestas": 2.92,
+  "rif": "501-05-5713",
+  "nombre": "Saybrook Institute",
+  "act_eco": "Automation Specialist IV"
+}, {
+  "nro_proyectos": 867,
+  "monto_total": 925.88,
+  "promedio_monto": 6140.02,
+  "nro_encuestas": 328,
+  "promedio_encuestas": 4.4,
+  "rif": "991-12-4532",
+  "nombre": "Universidad Nacional de Córdoba",
+  "act_eco": "Social Worker"
+}, {
+  "nro_proyectos": 563,
+  "monto_total": 3773.78,
+  "promedio_monto": 9828.32,
+  "nro_encuestas": 869,
+  "promedio_encuestas": 4.83,
+  "rif": "791-65-7078",
+  "nombre": "Université du Québec en Outaouais",
+  "act_eco": "Database Administrator II"
+}, {
+  "nro_proyectos": 908,
+  "monto_total": 4002.79,
+  "promedio_monto": 4232.26,
+  "nro_encuestas": 664,
+  "promedio_encuestas": 3.56,
+  "rif": "713-89-3751",
+  "nombre": "Universitas Simalungun",
+  "act_eco": "Project Manager"
+}, {
+  "nro_proyectos": 332,
+  "monto_total": 4221.04,
+  "promedio_monto": 9636.53,
+  "nro_encuestas": 629,
+  "promedio_encuestas": 3.87,
+  "rif": "711-69-2941",
+  "nombre": "Université de Djibouti",
+  "act_eco": "Assistant Professor"
+}, {
+  "nro_proyectos": 338,
+  "monto_total": 2375.19,
+  "promedio_monto": 4817.47,
+  "nro_encuestas": 24,
+  "promedio_encuestas": 2.83,
+  "rif": "544-32-6845",
+  "nombre": "Darul Takzim Institute of Technology",
+  "act_eco": "Automation Specialist IV"
+}, {
+  "nro_proyectos": 886,
+  "monto_total": 7906.69,
+  "promedio_monto": 1271.89,
+  "nro_encuestas": 96,
+  "promedio_encuestas": 2.12,
+  "rif": "372-90-2138",
+  "nombre": "University of Indianapolis",
+  "act_eco": "Research Associate"
+}, {
+  "nro_proyectos": 878,
+  "monto_total": 7609.29,
+  "promedio_monto": 3246.84,
+  "nro_encuestas": 804,
+  "promedio_encuestas": 1.52,
+  "rif": "282-34-4196",
+  "nombre": "International University College of Technology Twintech (IUCTT)",
+  "act_eco": "Professor"
+}, {
+  "nro_proyectos": 764,
+  "monto_total": 5279.9,
+  "promedio_monto": 21.55,
+  "nro_encuestas": 622,
+  "promedio_encuestas": 4.66,
+  "rif": "473-68-3502",
+  "nombre": "Malaysia University of Science and Technology (MUST)",
+  "act_eco": "Automation Specialist III"
+}, {
+  "nro_proyectos": 345,
+  "monto_total": 6379.02,
+  "promedio_monto": 1592.32,
+  "nro_encuestas": 194,
+  "promedio_encuestas": 1.93,
+  "rif": "712-62-2630",
+  "nombre": "Duksung Women's University",
+  "act_eco": "Research Assistant I"
+}, {
+  "nro_proyectos": 871,
+  "monto_total": 9351.91,
+  "promedio_monto": 1757.79,
+  "nro_encuestas": 321,
+  "promedio_encuestas": 4.88,
+  "rif": "855-07-3695",
+  "nombre": "Kokugakuin University",
+  "act_eco": "Desktop Support Technician"
+}, {
+  "nro_proyectos": 564,
+  "monto_total": 8625.58,
+  "promedio_monto": 4392.34,
+  "nro_encuestas": 638,
+  "promedio_encuestas": 1.7,
+  "rif": "263-16-0153",
+  "nombre": "Universidad Nacional de Tucumán",
+  "act_eco": "Desktop Support Technician"
+}];
+
+		var mayores_montos = [];
+		var menores_montos = [];
+		var mayores_proyectos = [];
+		var menores_proyectos = [];
+		var mayores_encuestas = [];
+		var menores_encuestas = [];
+		var campos_ordenar = ['nro_proyectos','monto_total','promedio_encuestas'];
+		var aux_asc = [];
+		var aux_des = [];
+		var aux;
+		var numero = 5; //numero de elementos que se desean mostrar, en este caso un top 5 de clientes.
+
+		for (var campo in campos_ordenar) {
+		    if (campos_ordenar.hasOwnProperty(campo)) {
+		        aux = _.sortBy(resumen,campos_ordenar[campo]); //devuele un array ordenado ascendientemente
+		        aux_asc = _.take(aux,numero); //toma los primero 5 elementos del array, (van de menor a mayor)
+		        aux_des = _.reverse(_.takeRight(aux,numero)); //invierte el arreglo retornado por takeRight 
+		        											  //que son los ultimos 5 de menor a mayor
+
+		        if (campos_ordenar[campo]==="nro_proyectos"){
+		        	mayores_proyectos = $.extend(true,[],aux_des);
+		        	menores_proyectos = $.extend(true,[],aux_asc);
+		        }else if (campos_ordenar[campo]==="monto_total"){
+		        	mayores_montos = $.extend(true,[],aux_des);
+		        	menores_montos = $.extend(true,[],aux_asc);
+		        }else if (campos_ordenar[campo]==="promedio_encuestas"){
+		        	mayores_encuestas = $.extend(true,[],aux_des);
+		        	menores_encuestas = $.extend(true,[],aux_asc);
+		        }
+		    }
+		}
+		this.set('mayores_montos',mayores_montos);
+		this.set('menores_montos',menores_montos);
+		this.set('mayores_proyectos',mayores_proyectos);
+		this.set('menores_proyectos',menores_proyectos);
+		this.set('mayores_encuestas',mayores_encuestas);
+		this.set('menores_encuestas',menores_encuestas);
+		this.set('fecha_resumen',moment().format("LL"));
+		//console.log(resumen);
+		//console.log(_.sortBy(resumen,['nro_proyectos']));
+		//console.log(resumen);
+	},
+	generarPDF(){
+		$("#resumen").css('background', '#fff');
+
+		function canvasSc(element){
+		  var clone = element.cloneNode(true);
+		  var style = clone.style;
+		  style.position = 'relative';
+		 // style.top = window.innerHeight + 'px';
+		  //style.left = 0;
+		  document.body.appendChild(clone);
+		  return clone;
+		}
+
+		var modalBody = document.getElementById('resumen');
+		var originalStyle = modalBody.style; //copiamos el estilo original ya que una vez finalizado la generacion debemos devolverle al panel
+								 //su ancho y largo original
+
+		//modificamos el ancho y largo del modal
+		modalBody.style.width = '754px';
+		modalBody.style.height = '1054px';
+		var clone = canvasSc(modalBody);
+		var nombrepdf = "Resumen clientes Sistelred.pdf";
+
+		html2canvas(clone, {
+		    onrendered: function(canvas) {
+		     document.body.removeChild(clone);
+		      var imgData = canvas.toDataURL(
+                    'image/jpeg');             
+                var doc = new jsPDF('p', 'mm',[210, 297]);
+                var width = doc.internal.pageSize.width;    
+				var height = doc.internal.pageSize.height;
+                doc.addImage(imgData, 'jpeg', 0, 0,width,height);
+                doc.save(nombrepdf);
+		    },
+		});
+
+		modalBody.style=originalStyle;
 	},
 	actions: {
 		cerrarMsg:function(){
@@ -386,8 +657,11 @@ export default Ember.Controller.extend({
 		ordenarPor: function(property) {
 			this.ordenarPor(property);
     	},
-    	resumen(){
-    		this.resumen();
+    	openModalResumen:function(){
+    		this.openModalResumen();
+    	},
+    	generarPDF:function(){
+    		this.generarPDF();
     	}
 	}
 });

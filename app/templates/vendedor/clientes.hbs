@@ -41,7 +41,7 @@
 
           <div class="col-lg-1 ">
             <h2>
-              <button class="btn btn-primary" {{action 'resumen'}}type="submit">Resumen</button>
+              <button class="btn btn-primary" {{action 'openModalResumen'}}type="submit">Resumen</button>
             </h2>
           </div>
 
@@ -210,6 +210,252 @@
   </div>
 </div>
 
+</div>
+
+
+
+
+
+<!-- Modal Resumen-->
+<div class="modal fade " id="myModalResumen" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Resumen Clientes</h4>
+      </div>
+      <div class="modal-body" id="resumen">
+
+            <div class="row">
+            		<div class="col-md-12">
+            			<h3 class="text-center"><strong>RESUMEN CLIENTES SISTELRED, C.A</strong></h3>
+            			<h3 class="text-center"><small>{{fecha_resumen}}</small></h3>
+            		</div>
+            		<!-- MAYOR NRO DE PROYECTOS -->
+		            <div class="col-md-12">
+		            	<div class="panel panel-default">
+						  <div class="panel-body">
+						    <h4 class="text-center"><strong> Mayor número de proyectos</strong></h4>
+						  </div>
+						</div>
+				    	<div class="table-responsive">
+				        	<table class="table table-bordered table-condensed table-hover ">  
+				            	<thead>
+				                	<tr>
+				                    	<th class="col-md-2">Rif</th>
+				                    	<th class="col-md-3">Nombre</th>
+				                    	<th class="col-md-3">Act. Eco</th>
+				                    	<th class="col-md-2">Nro Proyectos</th>
+				                    	<th class="col-md-2">Promedio Monto</th>
+				                    </tr>
+				                </thead>
+				                <tbody  class="text-center">
+				                    {{#each mayores_proyectos as |cliente|}}
+				                    	<tr>
+				                    		<td class="col-tabla">{{cliente.rif}}</td>
+				                    		<td class="col-tabla">{{cliente.nombre}}</td>
+				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
+				                    		<td class="col-tabla"><strong class="text-success">{{cliente.nro_proyectos}}</strong></td>
+				                    		<td class="col-tabla">{{cliente.promedio_monto}}</td>
+				                    		
+				                    	</tr>
+				                    {{/each}}
+				                </tbody>
+				            </table>
+				        </div>
+				    </div>
+
+
+
+
+				    <!-- MENOR NRO DE PROYECTOS -->
+				    <div class="col-md-12">
+				    	<div class="panel panel-default">
+						  <div class="panel-body">
+						    <h4 class="text-center"><strong> Menor número de proyectos</strong></h4>
+						  </div>
+						</div>
+				    	<div class="table-responsive">
+				        	<table class="table table-bordered table-condensed table-hover ">  
+				            	<thead>
+				                	<tr>
+				                    	<th class="col-md-2">Rif</th>
+				                    	<th class="col-md-3">Nombre</th>
+				                    	<th class="col-md-3">Act. Eco</th>
+				                    	<th class="col-md-2">Nro Proyectos</th>
+				                    	<th class="col-md-2">Promedio Monto</th>
+				                    </tr>
+				                </thead>
+				                <tbody  class="text-center">
+				                    {{#each menores_proyectos as |cliente|}}
+				                    	<tr>
+				                    		<td class="col-tabla">{{cliente.rif}}</td>
+				                    		<td class="col-tabla">{{cliente.nombre}}</td>
+				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
+				                    		<td class="col-tabla"><strong class="text-danger">{{cliente.nro_proyectos}}</strong></td>
+				                    		<td class="col-tabla">{{cliente.promedio_monto}}</td>
+				                    		
+				                    	</tr>
+				                    {{/each}}
+				                </tbody>
+				            </table>
+				        </div>
+				    </div>
+
+
+
+				    <!-- MAYOR MONTO TOTAL DE PROYECTOS -->
+				    <div class="col-md-12">
+				    	<div class="panel panel-default">
+						  <div class="panel-body">
+						    <h4 class="text-center"><strong>Mayor monto total en proyectos</strong></h4>
+						  </div>
+						</div>
+				    	<div class="table-responsive">
+				        	<table class="table table-bordered table-condensed table-hover ">  
+				            	<thead>
+				                	<tr>
+				                    	<th class="col-md-2">Rif</th>
+				                    	<th class="col-md-3">Nombre</th>
+				                    	<th class="col-md-3">Act. Eco</th>
+				                    	<th class="col-md-2">Nro Proyectos</th>
+				                    	<th class="col-md-2">Monto Total</th>
+				                    </tr>
+				                </thead>
+				                <tbody  class="text-center">
+				                    {{#each mayores_montos as |cliente|}}
+				                    	<tr>
+				                    		<td class="col-tabla">{{cliente.rif}}</td>
+				                    		<td class="col-tabla">{{cliente.nombre}}</td>
+				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
+				                    		<td class="col-tabla">{{cliente.nro_proyectos}}</td>
+				                    		<td class="col-tabla"><strong class="text-success">{{cliente.monto_total}}</strong></td>
+				                    		
+				                    	</tr>
+				                    {{/each}}
+				                </tbody>
+				            </table>
+				        </div>
+				    </div>
+
+
+				    <!-- MENOR MONTO TOTAL DE PROYECTOS -->
+				    <div class="col-md-12">
+				    	<div class="panel panel-default">
+						  <div class="panel-body">
+						    <h4 class="text-center"><strong>Menor monto total en proyectos</strong></h4>
+						  </div>
+						</div>
+				    	<div class="table-responsive">
+				        	<table class="table table-bordered table-condensed table-hover ">  
+				            	<thead>
+				                	<tr>
+				                    	<th class="col-md-2">Rif</th>
+				                    	<th class="col-md-3">Nombre</th>
+				                    	<th class="col-md-3">Act. Eco</th>
+				                    	<th class="col-md-2">Nro Proyectos</th>
+				                    	<th class="col-md-2">Monto Total</th>
+				                    </tr>
+				                </thead>
+				                <tbody  class="text-center">
+				                    {{#each menores_montos as |cliente|}}
+				                    	<tr>
+				                    		<td class="col-tabla">{{cliente.rif}}</td>
+				                    		<td class="col-tabla">{{cliente.nombre}}</td>
+				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
+				                    		<td class="col-tabla">{{cliente.nro_proyectos}}</td>
+				                    		<td class="col-tabla"><strong class="text-danger">{{cliente.monto_total}}</strong></td>
+				                    		
+				                    	</tr>
+				                    {{/each}}
+				                </tbody>
+				            </table>
+				        </div>
+				    </div>
+
+
+
+
+				    <!-- MAYORES PROMEDIOS EN ENCUESTAS DE PROYECTOS -->
+				    <div class="col-md-12">
+				    	<div class="panel panel-default">
+						  <div class="panel-body">
+						    <h4 class="text-center"><strong>Mayor promedio en encuestas</strong></h4>
+						  </div>
+						</div>
+				    	<div class="table-responsive">
+				        	<table class="table table-bordered table-condensed table-hover ">  
+				            	<thead>
+				                	<tr>
+				                    	<th class="col-md-2">Rif</th>
+				                    	<th class="col-md-3">Nombre</th>
+				                    	<th class="col-md-3">Act. Eco</th>
+				                    	<th class="col-md-2">Nro Encuestas</th>
+				                    	<th class="col-md-2">Promedio Encuestas</th>
+				                    </tr>
+				                </thead>
+				                <tbody  class="text-center">
+				                    {{#each mayores_encuestas as |cliente|}}
+				                    	<tr>
+				                    		<td class="col-tabla">{{cliente.rif}}</td>
+				                    		<td class="col-tabla">{{cliente.nombre}}</td>
+				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
+				                    		<td class="col-tabla">{{cliente.nro_encuestas}}</td>
+				                    		<td class="col-tabla"><strong class="text-success">{{cliente.promedio_encuestas}}</strong> /5</td>
+				                    		
+				                    	</tr>
+				                    {{/each}}
+				                </tbody>
+				            </table>
+				        </div>
+				    </div>
+
+
+				    <!-- MENORES PROMEDIOS EN ENCUESTAS DE PROYECTOS -->
+				    <div class="col-md-12">
+				    	<div class="panel panel-default">
+						  <div class="panel-body">
+						    <h4 class="text-center"><strong>Menor promedio en encuestas</strong></h4>
+						  </div>
+						</div>
+				    	<div class="table-responsive">
+				        	<table class="table table-bordered table-condensed table-hover ">  
+				            	<thead>
+				                	<tr>
+				                    	<th class="col-md-2">Rif</th>
+				                    	<th class="col-md-3">Nombre</th>
+				                    	<th class="col-md-3">Act. Eco</th>
+				                    	<th class="col-md-2">Nro Encuestas</th>
+				                    	<th class="col-md-2">Promedio Encuestas</th>
+				                    </tr>
+				                </thead>
+				                <tbody  class="text-center">
+				                    {{#each menores_encuestas as |cliente|}}
+				                    	<tr>
+				                    		<td class="col-tabla">{{cliente.rif}}</td>
+				                    		<td class="col-tabla">{{cliente.nombre}}</td>
+				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
+				                    		<td class="col-tabla">{{cliente.nro_encuestas}}</td>
+				                    		<td class="col-tabla"><strong class="text-danger">{{cliente.promedio_encuestas}}</strong> /5</td>
+				                    		
+				                    	</tr>
+				                    {{/each}}
+				                </tbody>
+				            </table>
+				        </div>
+				    </div>
+
+
+
+              </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" {{action 'generarPDF'}}>PDF</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 

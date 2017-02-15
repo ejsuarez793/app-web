@@ -764,7 +764,9 @@ export default Ember.Controller.extend({
 		//console.log(codigo_eta);
 	},
 	selectPresupuestoFactura(){
+
 		this.set('cod_pre',$("#select_presupuesto").val());
+		//this.consultarFactura();
 	},
 	
 	consultarFactura(){
@@ -802,10 +804,12 @@ export default Ember.Controller.extend({
 		data.email_cc = factura.email_cc
 		data.cond_pago = $("#select_cond_pago").val();
 		data.pagada = false;
+		data.monto_total = factura.total;
 		url = window.serverUrl + '/ventas/factura/' + this.get('etapa.codigo') + '/';
 		this.validarFactura();
 		if ($("#formulario_factura").valid()){
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+			$("myModalFactura").modal('hide');
 		}
 	},
 	openModalFactura(editing){
@@ -866,11 +870,12 @@ export default Ember.Controller.extend({
 				});
 			}
 		});
-		console.log(materiales);
+		//console.log(materiales);
 		//console.log("iplementar");
 		//console.log(editing);
 	},
 	openModalPagoFactura(){
+
 		$("#myModalPagoFactura").modal('show');
 	},
 	guardarPagoFactura(){
@@ -885,6 +890,7 @@ export default Ember.Controller.extend({
 		this.validarPagoFactura();
 		if ($("#formulario_pago").valid()){
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+			$("#myModalPagoFactura").modal('hide');
 		}
 	},
 	actions:{

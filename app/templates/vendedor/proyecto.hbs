@@ -1171,7 +1171,28 @@
       <div class="modal-body">
       <div class="row">
 
-              
+              {{#if factura.detalle.pagada}}
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Banco Destino: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input  type="text" class="form-control" value=factura.detalle.banco_dest disabled=true}}
+                        <span class="input-group-addon">{{fa-icon "institution"}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                    <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Nro Referencia: </label><small class="form-text text-muted"></small>
+                      <div class="input-group">
+                        {{input type="text" class="form-control" value=factura.detalle.nro_ref disabled=true}}
+                        <span class="input-group-addon">{{fa-icon "credit-card"}}</span>
+                      </div>
+                    </div>
+                  </div>
+              {{else}}
               <form id="formulario_pago">
 
                   <div class="col-md-12">
@@ -1195,7 +1216,7 @@
                   </div>
 
               </form>
-             
+              {{/if}}
 
       </div>
       </div>
