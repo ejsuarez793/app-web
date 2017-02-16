@@ -15,7 +15,7 @@ export default Ember.Controller.extend({
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1);
 		} 
 		var method = "GET";
-		var url = window.serverUrl + '/proveedor/';
+		var url = window.serverUrl + '/almacen/proveedor/';
 	    this.getElements(method,url,this.setProveedores,this);
 	},
 	validarCampos: function(){
@@ -292,10 +292,10 @@ export default Ember.Controller.extend({
 		var proveedor = this.get('proveedor');
 		if (!this.get('editing')){
 			method = "POST";
-			url = window.serverUrl + '/proveedor/';
+			url = window.serverUrl + '/almacen/proveedor/';
 		}else{
 			method = "PATCH";
-			url = window.serverUrl +'/proveedor/' + proveedor.rif +'/';
+			url = window.serverUrl +'/almacen/proveedor/' + proveedor.rif +'/';
 		}
 		var data = proveedor;
 		this.validarCampos();

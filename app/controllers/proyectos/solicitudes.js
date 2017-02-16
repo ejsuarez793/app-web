@@ -16,10 +16,10 @@ export default Ember.Controller.extend({
 
 		var method = 'GET';
 
-		var url = window.serverUrl + /solicitud/;
+		var url = window.serverUrl + '/ventas/solicitud/';
 		this.getElements(method,url,this.asignarSolicitudes,this);
 
-	    url = window.serverUrl + '/tecnicos/';
+	    url = window.serverUrl + '/coordinador/tecnicos/';
 	    this.getElements(method,url,this.asignarTecnicos,this);
 	},
 	validarCampos: function(){
@@ -356,7 +356,13 @@ export default Ember.Controller.extend({
     	});
 
 	},
+	cerrarMsg(){
+		$("#alertMsg").hide();
+	},
 	actions: {
+		cerrarMsg:function(){
+			this.cerrarMsg();
+		},
 		openModal: function(solicitud){
 			this.openModal(solicitud);
 		},
@@ -370,8 +376,9 @@ export default Ember.Controller.extend({
 				//console.log(data);
 
 				var method = 'PUT';
-				var url = window.serverUrl + '/solicitud/procesar/';
+				var url = window.serverUrl + '/coordinador/solicitud/procesar/';
 				this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+				$("#myModal").modal('hide');
 			}
 		}
 	}

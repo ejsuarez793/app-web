@@ -45,10 +45,10 @@ export default Ember.Controller.extend({
 		    url = window.serverUrl + '/proyecto/' + this.get('codigo') + '/tecnico/';
 		    this.getElements(method,url,this.setTecnicos,this);
 
-		    url = window.serverUrl + '/material/';
+		    url = window.serverUrl + '/almacen/material/';
 		    this.getElements(method,url,this.setMateriales,this);
 
-		    url = window.serverUrl + '/servicio/';
+		    url = window.serverUrl + '/coordinador/servicio/';
 		    this.getElements(method,url,this.setServicios,this);
 
 		    this.set('presupuesto.fecha',moment().format("DD/MM/YYYY"));//esta no es tan necesaria, ya que para mostrar esta fecha_f

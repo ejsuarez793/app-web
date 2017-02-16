@@ -28,7 +28,7 @@ export default Ember.Controller.extend({
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1); 
 			
 			var method = "GET";
-			var url = window.serverUrl + '/cliente/';
+			var url = window.serverUrl + '/ventas/cliente/';
 		    this.getElements(method,url,this.setClientes,this);
 
 		    method = "GET";
@@ -236,10 +236,10 @@ export default Ember.Controller.extend({
 		var url = "";
 		if (!this.get('editing')){
 			method = "POST";
-			url = window.serverUrl + '/cliente/';
+			url = window.serverUrl + '/ventas/cliente/';
 		}else{
 			method = "PATCH";
-			url = window.serverUrl +'/cliente/' + this.get('registro.rif') +'/';
+			url = window.serverUrl +'/ventas/cliente/' + this.get('registro.rif') +'/';
 		}
 
 		//agarro el dato del select y lo asigno a mi registro

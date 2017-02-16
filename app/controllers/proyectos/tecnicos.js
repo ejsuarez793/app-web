@@ -12,7 +12,7 @@ export default Ember.Controller.extend({
 		} 
 		//console.log("epale");
 		var method = "GET";
-		var url = window.serverUrl + '/tecnicos/';
+		var url = window.serverUrl + '/coordinador/tecnicos/';
 	    this.getElements(method,url,this.setTecnicos,this);
 	},
 	getElements(method,url,callback,context){

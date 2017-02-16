@@ -18,10 +18,10 @@ export default Ember.Controller.extend({
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1);
 		} 
 		var method = "GET";
-		var url = window.serverUrl + '/material/';
+		var url = window.serverUrl + '/almacen/material/';
 	    this.getElements(method,url,this.asignarMateriales,this);
 
-	    url = window.serverUrl + '/proveedor/';
+	    url = window.serverUrl + '/almacen/proveedor/';
 	    this.getElements(method,url,this.setProveedores,this);
 	},
 	validarCampos: function(){
@@ -406,10 +406,10 @@ export default Ember.Controller.extend({
 		var url = "";
 		if (!this.get('editing')){
 			method = "POST";
-			url = window.serverUrl + '/material/';
+			url = window.serverUrl + '/almacen/material/';
 		}else{
 			method = "PATCH";
-			url = window.serverUrl +'/material/' + material.codigo +'/';
+			url = window.serverUrl +'/almacen/material/' + material.codigo +'/';
 		}
 		if (material.serial==null || material.serial==="" || material.serial===undefined){
 			this.set('material.serial',null);

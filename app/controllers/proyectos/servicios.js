@@ -15,7 +15,7 @@ export default Ember.Controller.extend({
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1);
 		} 
 		var method = "GET";
-		var url = window.serverUrl + '/servicio/';
+		var url = window.serverUrl + '/coordinador/servicio/';
 	    this.getElements(method,url,this.asignarServicios,this);
 	},
 	validarCampos: function(){
@@ -280,16 +280,17 @@ export default Ember.Controller.extend({
 			var url = "";
 			if (!this.get('editing')){
 				 method = "POST";
-				url = window.serverUrl + '/servicio/';
+				url = window.serverUrl + '/coordinador/servicio/';
 			}else{
 				method = "PATCH";
-				url = window.serverUrl +'/servicio/' + servicio.codigo +'/';
+				url = window.serverUrl +'/coordinador/servicio/' + servicio.codigo +'/';
 			}
 
 			var data = servicio;
 			this.validarCampos();
 			if ($("#formulario").valid()){
 				this.llamadaServidor(method,url,data);
+				$("#myModal").modal('hide');
 			}
 			$('#modal').modal('hide');
 			//this.salvar(method,url,data);

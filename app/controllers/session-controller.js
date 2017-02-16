@@ -87,7 +87,7 @@ export default Ember.Controller.extend({
 
     },
     getCurrent(){
-        var url = window.serverUrl + '/users/current/';
+        var url = window.serverUrl + '/usuario/actual/';
         var method = "GET";
 
          $.ajax( {
@@ -171,7 +171,7 @@ export default Ember.Controller.extend({
             data.username = username;
             data.password = password;
             var method = "POST";
-            var url = window.serverUrl + /api-token-auth/;
+            var url = window.serverUrl + /login/;
             this.validarCampos();
             if ($("#loginForm").valid()){
                 this.llamadaServidor(method,url,data,this.msgRespuesta,this);

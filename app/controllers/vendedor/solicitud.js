@@ -31,10 +31,10 @@ export default Ember.Controller.extend({
 		if (!((Cookies.get('token')===undefined) || (Cookies.getJSON('current')===undefined))){
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1); 
 			var method = 'GET';
-		    var url = window.serverUrl + /cliente/;
+		    var url = window.serverUrl + '/ventas/cliente/';
 		    this.getElements(method,url,this.asignarClientes,this);
 
-		    url = window.serverUrl + /solicitud/;
+		    url = window.serverUrl + '/ventas/solicitud/';
 		    this.getElements(method,url,this.asignarSolicitudes,this);					
 		}
 
@@ -387,7 +387,7 @@ export default Ember.Controller.extend({
 			var data = this.get('solicitud');
 			data.rif_c = $("#rif_c").val();
 			var method = 'POST';
-			var url = window.serverUrl + '/solicitud/';
+			var url = window.serverUrl + '/ventas/solicitud/';
 			this.validarCampos();
 			if ($("#formulario").valid()){
 				this.llamadaServidor(method,url,data,this.msgRespuesta,this);

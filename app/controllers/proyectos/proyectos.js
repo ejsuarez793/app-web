@@ -189,52 +189,6 @@ export default Ember.Controller.extend({
 			this.set('proyectos',aux);
 
     	},
-    	llenarRI: function(){
-    		//console.log(this.get('reporteini').toString());
 
-    		/*var data ={
-	    		'codigo_pro': '', 
-			    'persona_a': '',
-			    'cargo_a': '',
-			    'desc': '',
-			    'observ': '',
-			    'factibilidad': '', 
-			    'riesgos': '', 
-			    'complejidad': '', 
-			    'completado': '', 
-			    'nombre_t': '', 
-			}*/
-
-			var data ={
-				'ci_tecnico': '208034',
-	    		'codigo_pro': this.get('reporteini').toString(), 
-			    'persona_a': 'Miguel Perez',
-			    'cargo_a': 'Vigilante',
-			    'desc': 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibu',
-			    'observ': 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibu',
-			    'factibilidad': '5', 
-			    'riesgos': 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 
-			    'complejidad': '10', 
-			    'completado': 'true', 
-			    'nombre_t': 'Enrique Suarez', 
-			};
-
-			var url = window.serverUrl + /proyecto/ + this.get('reporteini').toString() + '/reporteInicial/';
-			$.ajax({
-				type: "POST",
-				url: url,
-				headers:{
-					Authorization: "Token "+ Cookies.get('token'),
-				},
-					contentType: "application/json; charset=utf-8",
-					dataType: "json",
-					data: JSON.stringify(data),
-			})    
-			.done(function(response){ console.log(response);/*callback(response, context);*/ })    
-			.fail(function(response) { console.log(response); }); 
-
-			//console.log(data);
-
-    	}
 	},
 });
