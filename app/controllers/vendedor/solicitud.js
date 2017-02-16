@@ -249,6 +249,9 @@ export default Ember.Controller.extend({
 	},
 	asignarSolicitudes(solicitudes,context){
 		var _this = context;
+		$.each(solicitudes,function(i,solicitud){
+			solicitud.fecha_mostrar = moment(solicitud.f_sol).format('L');
+		});
 		_this.set('solicitudes',solicitudes);
 		_this.paginationInitialize(10);
 	},

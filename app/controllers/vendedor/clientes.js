@@ -31,8 +31,8 @@ export default Ember.Controller.extend({
 			var url = window.serverUrl + '/cliente/';
 		    this.getElements(method,url,this.setClientes,this);
 
-		    var method = "GET";
-			var url = window.serverUrl + '/ventas/resumen/';
+		    method = "GET";
+			url = window.serverUrl + '/ventas/resumen/';
 		    this.getElements(method,url,this.setResumen,this);
 						
 		}

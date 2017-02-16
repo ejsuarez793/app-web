@@ -304,6 +304,9 @@ export default Ember.Controller.extend({
 			$.each(materiales,function(i,material){
 				if(codigo === material.codigo){
 					var cantidad = parseInt($(input_cantidad+codigo).val());
+					if (material.serial !== null && cantidad >0){// si el material tiene serial, la cantidad seleciconada ajuro sera 1
+						cantidad = 1;
+					}
 					//console.log(cantidad);
 					//console.log(material.cantidad_sin_seleccion);
 					if (!isNaN(cantidad) && cantidad <= material.cantidad_sin_seleccion){

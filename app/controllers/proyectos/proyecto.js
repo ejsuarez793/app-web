@@ -53,7 +53,10 @@ export default Ember.Controller.extend({
 
 		    this.set('presupuesto.fecha',moment().format("DD/MM/YYYY"));//esta no es tan necesaria, ya que para mostrar esta fecha_f
 		    this.set('presupuesto.fecha_m',moment().format("LL"));
+
+		    
 		}
+		$("#link_proyectos").addClass('active');
 	},
 	validarPG(){
 		$.validator.addMethod("maxlength", function (value, element, len) {
@@ -243,6 +246,7 @@ export default Ember.Controller.extend({
 
 	},
 	setProyecto(proyecto,context){
+		//console.log(proyecto);
 		var _this = context;
 		var no_definida = "(Fecha no definida)";
 		proyecto.f_inicio = no_definida;
@@ -250,14 +254,14 @@ export default Ember.Controller.extend({
 		proyecto.t_faltante = no_definida;
 		proyecto.f_finalizada = "";
 
-		if (proyecto.f_ini !=null && proyecto.f_ini!=undefined){
+		if (proyecto.f_ini !==null && proyecto.f_ini!==undefined){
 			proyecto.f_inicio = moment(proyecto.f_ini).format('LL');
 		}
-		if (proyecto.f_est !=null && proyecto.f_est != undefined){
+		if (proyecto.f_est !==null && proyecto.f_est !== undefined){
 			proyecto.f_estimada = moment(proyecto.f_est).format('LL');
 			proyecto.t_faltante = moment(proyecto.f_est, "YYYY-MM-DD").fromNow();
 		}
-		if (proyecto.f_fin !=null && proyecto.f_fin != undefined){
+		if (proyecto.f_fin !==null && proyecto.f_fin !== undefined){
 			proyecto.f_finalizada = moment(proyecto.f_fin).format('LL');
 		}
 
@@ -275,6 +279,7 @@ export default Ember.Controller.extend({
 			$("#accion").prop('disabled',true);
 		}
 		$.each(proyecto.etapas,function(i,etapa){
+			etapa.f_est_mostrar = moment(etapa.f_est).format('L');
 			if(etapa.estatus==="Pendiente"){
 				etapa.accion="Iniciar";
 			}else if(etapa.estatus ==="Ejecucion"){
@@ -282,6 +287,15 @@ export default Ember.Controller.extend({
 			}else if (etapa.estatus ==="Culminado"){
 				etapa.accion = "Acta Entrega";
 			}
+		});
+
+		$.each(proyecto.solicitudes,function(i,solicitud){
+			solicitud.f_sol_mostrar = moment(solicitud.f_sol).format('L');
+		});
+
+		$.each(proyecto.presupuestos,function(i,presupuesto){
+			presupuesto.fecha_m =  moment(presupuesto.fecha).format('LL');
+			presupuesto.fecha_mostrar = moment(presupuesto.fecha).format('L');
 		});
 		_this.set('proyecto',proyecto);
 		console.log(proyecto);
@@ -454,16 +468,15 @@ export default Ember.Controller.extend({
 			});
 		});
 
-		var propValue;
+		
 		var materiales_x_etapa = [];
 		for(var propName in usados_efectivamente) {
-		    //propValue = nyc[propName]
 		    $.each(this.get('proyecto.etapas'),function(i,etapa){
 		    	//console.log(etapa);
 		    	if (etapa.codigo === parseInt(propName)){
 		    		//console.log(etapa.nombre);
 		    		aux = $.extend(true,{},etapa); 
-		    		aux['materiales'] = []
+		    		aux['materiales'] = [];
 		    		$.each(usados_efectivamente[propName],function(i,mat){
 		    			if (mat.cant>0){
 		    				aux['materiales'].push(mat);
@@ -529,7 +542,7 @@ export default Ember.Controller.extend({
 		url = window.serverUrl + '/proyecto/' + proyecto.codigo + '/';
 		data = $.extend(true,{},proyecto);
 
-		if (proyecto.accion == "Generar Acta"){
+		if (proyecto.accion === "Generar Acta"){
 			this.prepararActaCulminacion();
 		}else{
 			if(estatus === "Aprobado"){
@@ -538,7 +551,7 @@ export default Ember.Controller.extend({
 				data.accion = "Iniciar";
 				this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 			}else if(estatus=== "Ejecucion"){
-				data.f_fin = moment().format("YYYY-MM-DD");;
+				data.f_fin = moment().format("YYYY-MM-DD");
 				data.estatus = "Culminado";
 				data.accion = "Culminar";
 				//console.log("ejecucion");
@@ -567,7 +580,7 @@ export default Ember.Controller.extend({
 				data.estatus = "Ejecucion";
 				data.accion = "Iniciar";
 			}else if(estatus=== "Ejecucion"){
-				data.f_fin = moment().format("YYYY-MM-DD");;
+				data.f_fin = moment().format("YYYY-MM-DD");
 				data.estatus = "Culminado";
 				data.accion = "Culminar";
 			}else{
@@ -582,14 +595,14 @@ export default Ember.Controller.extend({
 			var acta_entrega = {};
 		var elementos = [];
 		var actividades = [];
-		var fecha;
+		//var fecha;
 		var proyecto = this.get('proyecto');
 		var materiales_etapas = this.get('materiales_usados_etapas').toArray();
 		var aux;
 
 		//console.log(proyecto);
 		//console.log(etapa);
-		console.log(materiales_etapas);
+		//console.log(materiales_etapas);
 		acta_entrega.codigo_pro = proyecto.codigo;
 		acta_entrega.nombre_pro = proyecto.nombre;
 		acta_entrega.codigo_eta = etapa.letra;
@@ -667,7 +680,7 @@ export default Ember.Controller.extend({
 			codigo:'',
 			codigo_pro:'',
 			fecha: '',
-			fecha_m:moment().format("LL"),
+			fecha_mostrar:moment().format("LL"),
 			validez_o: '5',
 			descuento: '50',
 			observ: 'Observaciones del presupuesto, a ser llenado por un agente de ventas.',
@@ -680,6 +693,7 @@ export default Ember.Controller.extend({
 			cond_p: 'Precio sujeto a cambios sin previo aviso, dependerá de la alta rotación de inventario y disponibilidad.-\nEstos precios no incluyen transporte fuera del área metropolitana de Caracas.-\nEstos precios incluyen el Impuesto al Valor Agregado (IVA).-\n',
 			t_ent: 'Previa planificación con el cliente final.-',
 		};
+		//console.log(presupuesto);
 		if (!editing){
 			this.set('editing',false);
 			var cod_presupuestos = [];
@@ -702,7 +716,7 @@ export default Ember.Controller.extend({
 		}else{
 			this.set('editing',true);
 			presupuesto = $.extend(true, {}, presupuesto);
-			presupuesto.fecha_m = moment(presupuesto.fecha).format("LL");
+			presupuesto.fecha_mostrar = moment(presupuesto.fecha).format("LL");
 			var presupuesto_servicios =presupuesto.servicios;
 			var presupuesto_materiales = presupuesto.materiales;
 			this.set('ecs',[]);
@@ -736,6 +750,7 @@ export default Ember.Controller.extend({
 				ecs.pushObject(material);
 			});
 			this.set('presupuesto',presupuesto);
+			
 			$('#myModalPresupuesto').on('shown.bs.modal', function () {
 	  			// cuando se muestra el modal se calcula el precio total de cada elemento y el monto total
 	  			//ya que depende de que se renderize los td de la tabla
@@ -1200,7 +1215,7 @@ export default Ember.Controller.extend({
 			url = window.serverUrl + /proyecto/ + this.get('proyecto.codigo') +'/etapa/' +this.get('etapa.codigo')+'/actividad/';
 	        this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 	        this.init();
-		}else if(data.length==0){
+		}else if(data.length===0){
 			this.msgRespuesta("Error: ","No hay ninguna actividad definida.",-1,this);
 		}else if(this.get('etapa.codigo_rd')===null){
 			this.msgRespuesta("Error: ","No se pueden definir actividades si no hay un reporte de detalle completado.",-1,this);
@@ -1212,7 +1227,7 @@ export default Ember.Controller.extend({
 	},
 	agregarTecnico(){
 		var checkbox = "#tabla_tecnicos_ss input:checked";
-		var cedulas_t = []
+		var cedulas_t = [];
 		var tecnicos = $.extend(true,[],this.get('tecnicos').toArray());
 		$(checkbox).each(function() {
 			cedulas_t.push($(this).val());
@@ -1229,7 +1244,7 @@ export default Ember.Controller.extend({
 	},
 	eliminarTecnicosSeleccionados(){
 		var checkbox = "#tabla_tecnicos input:checked";
-		var cedulas_t = []
+		var cedulas_t = [];
 		var tecnicos = $.extend(true,[],this.get('tecnicos').toArray());
 		$(checkbox).each(function() {
 			cedulas_t.push($(this).val());
@@ -1253,7 +1268,7 @@ export default Ember.Controller.extend({
 		var tecnicos = this.get('tecnicos');
 
 		$.each(tecnicos, function(i,tecnico){
-			if (tecnico.mostrar_asociado==true){
+			if (tecnico.mostrar_asociado===true){
 				data.push(tecnico);
 			}
 		});
@@ -1285,8 +1300,8 @@ export default Ember.Controller.extend({
 		      var imgData = canvas.toDataURL(
                     'image/jpeg');             
                 var doc = new jsPDF('p', 'mm', [320,480]);
-                var width = doc.internal.pageSize.width;    
-				var height = doc.internal.pageSize.height;
+                //var width = doc.internal.pageSize.width;    
+				//var height = doc.internal.pageSize.height;
                 doc.addImage(imgData, 'jpeg', 0, 0);//,width,height);
                 doc.save(nombrepdf);
 		    },
@@ -1325,8 +1340,8 @@ export default Ember.Controller.extend({
 		      var imgData = canvas.toDataURL(
                     'image/jpeg');             
                 var doc = new jsPDF('p', 'mm', [210, 297]);
-                var width = doc.internal.pageSize.width;    
-				var height = doc.internal.pageSize.height;
+                //var width = doc.internal.pageSize.width;    
+				//var height = doc.internal.pageSize.height;
                 doc.addImage(imgData, 'jpeg', 0, 0);
                 doc.save(nombrepdf);
 		    },

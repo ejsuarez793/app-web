@@ -410,7 +410,7 @@ export default Ember.Controller.extend({
 				//data: data,
 		})    
 		.done(function(response){ callback(response, context); })    
-		.fail(function(response) { console.log(response); context.msgRespuesta("Error: ",response.responseText,-1,context) }); 
+		.fail(function(response) { console.log(response); context.msgRespuesta("Error: ",response.responseText,-1,context); }); 
 	},
 	llamadaServidor(method,url,data,callback,context){
 		$.ajax({
@@ -460,6 +460,8 @@ export default Ember.Controller.extend({
 	},
 	setFactura(response, context){
 		//console.log(response);
+		response.detalle.fecha_emi_mostrar = moment(response.detalle.fecha_emi).format('L');
+		response.detalle.fecha_ven_mostrar = moment(response.detalle.fecha_ven).format('L');
 		context.set('factura',response);
 		if (response.detalle.facturada!==undefined || response.detalle.facturada!==null){
 			if (response.detalle.facturada===true){
@@ -523,8 +525,9 @@ export default Ember.Controller.extend({
 		}else{
 			this.set('editing', true);
 		}
-	//	if (!editing){
+	//	if (!editing)
 		pe = $.extend(true,pe,presupuesto);
+		pe.fecha_mostrar = moment(pe.fecha).format('LL');
 			this.set('presupuesto',pe);
 			this.set('pe',pe);
 			//this.set('pe',presupuesto);
@@ -643,7 +646,7 @@ export default Ember.Controller.extend({
 		      var imgData = canvas.toDataURL(
                     'image/jpeg');             
                 var doc = new jsPDF('p', 'mm',[239, 297]);
-                var width = doc.internal.pageSize.width;    
+                //var width = doc.internal.pageSize.width;    
 				//var height = doc.internal.pageSize.height;
                 doc.addImage(imgData, 'jpeg', 0, 0);//,width,width);
                 doc.save(nombrepdf);
@@ -772,7 +775,7 @@ export default Ember.Controller.extend({
 	consultarFactura(){
 		var method;
 		var url;
-		var data = {};
+		//var data = {};
 		method = "GET";
 		var codigo_eta = this.get('etapa.codigo');
 		var codigo_pre =this.get('cod_pre');
@@ -792,16 +795,16 @@ export default Ember.Controller.extend({
 		var method = "POST";
 		var url;
 		var data = {};
-		data.nro_factura = factura.nro_factura
-		data.nro_control = factura.nro_control 
-		data.codigo_pre = factura.codigo_pre
-		data.codigo_eta = factura.codigo_eta
-		data.f_emi = factura.f_emi
-		data.f_ven  = factura.f_ven
-		data.persona_cc = factura.persona_cc
-		data.cargo_cc = factura.cargo_cc
-		data.departamento_cc = factura.departamento_cc
-		data.email_cc = factura.email_cc
+		data.nro_factura = factura.nro_factura;
+		data.nro_control = factura.nro_control;
+		data.codigo_pre = factura.codigo_pre;
+		data.codigo_eta = factura.codigo_eta;
+		data.f_emi = factura.f_emi;
+		data.f_ven  = factura.f_ven;
+		data.persona_cc = factura.persona_cc;
+		data.cargo_cc = factura.cargo_cc;
+		data.departamento_cc = factura.departamento_cc;
+		data.email_cc = factura.email_cc;
 		data.cond_pago = $("#select_cond_pago").val();
 		data.pagada = false;
 		data.monto_total = factura.total;
@@ -815,7 +818,7 @@ export default Ember.Controller.extend({
 	openModalFactura(editing){
 		this.set('editing',editing);
 		$("#myModalFactura").modal('show');
-		var factura = {
+		/*var factura = {
 			nombre_cliente:'',
 			rif_cliente:'',
 			tlf1_c:'',
@@ -838,7 +841,7 @@ export default Ember.Controller.extend({
 			nro_ref:'',
 			codigo_pre:'',
 			codigo_eta:'',
-		};
+		};*/
 		var servicios = [];
 		var materiales = [];
 		var etapa = this.get('etapa');

@@ -168,7 +168,7 @@ export default Ember.Controller.extend({
     	});
 	},
 	openModal(solicitud){
-		var aux;
+		//var aux;
 
 		this.set('proceso',{});
 		$("#nombre_t").val('');

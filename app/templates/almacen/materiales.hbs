@@ -50,7 +50,7 @@
         <div class="row ">
 		{{almacen-sidebar-component}}
 			<div class="col-md-10">
-		    <table class="table table-bordered table-hover " id="tabla">	
+		    <table class="table table-bordered table-hover table-condensed" id="tabla">	
         		<thead class="header-tabla">
 	        		<tr>
 					    <th {{action "ordenarPor" "codigo"}}>Codigo <span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
@@ -102,6 +102,8 @@
 	    	<div role="tabpanel" class="tab-pane active" id="material">
 	      	<form  id="formulario">
 	      		<div class="row">
+
+
 	      			<div class="col-md-6">
 						<div class="form-group">
 							<label>Codigo</label><small class="form-text text-muted">* </small>
@@ -117,48 +119,55 @@
 					<div class="form-group">
 						<label>Serial</label><small class="form-text text-muted"> </small>
 						<div class="input-group input-group">
-						  {{input name="serial" type="text" class="form-control" placeholder="Serial del material" value=material.serial}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  {{input name="serial" id="serial" type="text" class="form-control" placeholder="Serial del material" value=material.serial}}
+						  <span class="input-group-addon">{{fa-icon "user"}}</span>
 						</div>
 					</div>
 					</div>
+
+					<div class="col-md-12"></div>
 
 					<div class="col-md-6">
 					<div class="form-group">
 						<label>Nombre</label><small class="form-text text-muted">* </small>
 						<div class="input-group input-group">
 						  {{input name="nombre" type="text" class="form-control" placeholder="Nombre del material" value=material.nombre}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  <span class="input-group-addon">{{fa-icon "bars"}}</span>
 						</div>
 					</div>
 					</div>
 
-					<div class="col-md-6">
-					<div class="form-group">
-						<label>Descripción</label><small class="form-text text-muted"></small>
-						<div class="input-group input-group">
-						  {{input name="desc" type="text" class="form-control" placeholder="Descripción del material" value=material.desc}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
-						</div>
-					</div>
-					</div>
 
 					<div class="col-md-6">
 					<div class="form-group">
 						<label>Presentación</label><small class="form-text text-muted"> </small>
 						<div class="input-group input-group">
 						  {{input name="presen" type="text" class="form-control" placeholder="Presentación del material" value=material.presen}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  <span class="input-group-addon">{{fa-icon "bars"}}</span>
 						</div>
 					</div>
 					</div>
+
+					<div class="col-md-12"></div>
+
+					<div class="col-md-12">
+					<div class="form-group">
+						<label>Descripción</label><small class="form-text text-muted"></small>
+						<div class="input-group input-group">
+						  {{input name="desc" type="text" class="form-control" placeholder="Descripción del material" value=material.desc}}
+						  <span class="input-group-addon">{{fa-icon "bars"}}</span>
+						</div>
+					</div>
+					</div>
+
+					<div class="col-md-12"></div>
 
 					<div class="col-md-6">
 					<div class="form-group">
 						<label>Color</label><small class="form-text text-muted"> </small>
 						<div class="input-group input-group">
 						  {{input name="color" type="text" class="form-control" placeholder="Color del material" value=material.color}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  <span class="input-group-addon">{{fa-icon "paint-brush"}}</span>
 						</div>
 					</div>
 					</div>
@@ -173,22 +182,23 @@
 					</div>
 					</div>
 
-					<div class="col-md-6">
+					<div class="col-md-12"></div>
+					<!--<div class="col-md-6">
 					<div class="form-group">
 						<label>Cantidad</label><small class="form-text text-muted">* </small>
 						<div class="input-group input-group">
-						  {{input name="cantidad" type="text" class="form-control" placeholder="Cantidad de material" value=material.cantidad}}
+						  {{input name="cantidad" id="cantidad" type="number" class="form-control" placeholder="Cantidad de material" value=material.cantidad}}
 						  <span class="input-group-addon">{{fa-icon "money"}}</span>
 						</div>
 					</div>
-					</div>
+					</div>-->
 
 					<div class="col-md-6">
 					<div class="form-group">
 						<label>Marca</label><small class="form-text text-muted">* </small>
 						<div class="input-group input-group">
 						  {{input name="marca" type="text" class="form-control" placeholder="Marca del material" value=material.marca}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  <span class="input-group-addon">{{fa-icon "bars"}}</span>
 						</div>
 					</div>
 					</div>
@@ -198,17 +208,19 @@
 						<label>Modelo</label><small class="form-text text-muted"> </small>
 						<div class="input-group input-group">
 						  {{input name="modelo" type="text" class="form-control" placeholder="Modelo del material" value=material.modelo}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  <span class="input-group-addon">{{fa-icon "bars"}}</span>
 						</div>
 					</div>
 					</div>
+
+					<div class="col-md-12"></div>
 
 					<div class="col-md-4">
 					<div class="form-group">
 						<label>Alto</label><small class="form-text text-muted"> </small>
 						<div class="input-group input-group">
 						  {{input name="alto" type="text" class="form-control" placeholder="Alto del material" value=material.alto}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  <span class="input-group-addon">{{fa-icon "arrows-v"}}</span>
 						</div>
 					</div>
 					</div>
@@ -218,7 +230,7 @@
 						<label>Largo</label><small class="form-text text-muted"></small>
 						<div class="input-group input-group">
 						  {{input name="largo" type="text" class="form-control" placeholder="Largo del material" value=material.largo}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  <span class="input-group-addon">{{fa-icon "expand"}}</span>
 						</div>
 					</div>
 					</div>
@@ -228,10 +240,12 @@
 						<label>Ancho</label><small class="form-text text-muted"> </small>
 						<div class="input-group input-group">
 						  {{input name="ancho" type="text" class="form-control" placeholder="Ancho del material" value=material.ancho}}
-						  <span class="input-group-addon">{{fa-icon "money"}}</span>
+						  <span class="input-group-addon">{{fa-icon "arrows-h"}}</span>
 						</div>
 					</div>
 					</div>
+
+					<div class="col-md-12"></div>
 		
 				</div>
 			</form>
@@ -239,7 +253,7 @@
 			<div role="tabpanel" class="tab-pane" id="proveedores"> 
 				<div class="row">
 		        <div class="col-md-12">
-		       		<table class="table table-bordered table-hover">	
+		       		<table class="table table-bordered table-hover table-condensed">	
 	        			<thead class="header-tabla">
 	        				<tr>
 					    		<th>Rif</th>
@@ -372,7 +386,7 @@
 					    <h3 class="panel-title">Proveedores</h3>
 					  </div>
 					  <div class="panel-body">
-					  		<table class="table table-bordered table-hover">	
+					  		<table class="table table-bordered table-hover table-condensed">	
 	        					<thead class="header-tabla">
 	        						<tr>
 							    		<th>Rif</th>
@@ -423,7 +437,7 @@
           
 	        <div class="row">
 	        <div class="col-md-12">
-	       		<table class="table table-bordered table-hover">	
+	       		<table class="table table-bordered table-hover table-condensed">	
         			<thead class="header-tabla">
         				<tr>
 				    		<th>Rif</th>

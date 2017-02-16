@@ -304,7 +304,7 @@
 	                </div>
 	                <div class="panel-body">
 	                {{#if movimiento.eg}}
-		                 <table class="table table-bordered table-hover " id="tabla">  
+		                 <table class="table table-bordered table-hover table-condensed " id="tabla">  
 		                    <thead class="header-tabla">
 		                      <tr>
 		                        <th class="col-md-2">Código</th>
@@ -335,7 +335,7 @@
 	                	{{#if movimiento.ni}}
 	                		<p class="col-tabla"><strong>*Nota:</strong> Si algun material no tiene registrado en su lista de proveedores el proveedor seleccionado, se agregará automaticamente dicho proveedor a la lista.</p>
 	                	{{/if}}
-	                	<table class="table table-bordered table-hover " id="tabla">  
+	                	<table class="table table-bordered table-hover table-condensed" id="tabla">  
 		                    <thead class="header-tabla">
 		                      <tr>
 		                        <th class="col-md-2">Código</th>
@@ -403,7 +403,7 @@
         <div class="row">
         <div class="col-md-12">
         {{#if movimiento.re}}
-            <table class="table table-bordered table-hover">  
+            <table class="table table-bordered table-hover table-condensed">  
               <thead class="header-tabla">
                 <tr>
                   <th class="col-md-1">Código</th>
@@ -425,8 +425,11 @@
                   <td class="col-tabla">{{#if material.serial}} {{material.serial}}{{else}}N/A{{/if}}</td>
                   <td class="col-tabla">{{material.cantidad_sin_seleccion}}</td>
                   <td>
-                  	
-                  	<input type="number" class="form-control input-sm" id="cant_sel_{{material.codigo}}" min="0" max="{{material.cantidad}}">
+                  	{{#if material.serial}} 
+                  		<input type="number" class="form-control input-sm" id="cant_sel_{{material.codigo}}" min="0" max="1">
+                  	{{else}}
+                  		<input type="number" class="form-control input-sm" id="cant_sel_{{material.codigo}}" min="0" max="{{material.cantidad}}">
+                  	{{/if}}
 
                   </td>
                   <td><input type="checkbox" value={{material.codigo}}></td>
@@ -436,7 +439,7 @@
               </tbody>
             </table>
         {{else if movimiento.ni}}
-        	<table class="table table-bordered table-hover">  
+        	<table class="table table-bordered table-hover table-condensed">  
               <thead class="header-tabla">
                 <tr>
                   <th class="col-md-1">Código</th>

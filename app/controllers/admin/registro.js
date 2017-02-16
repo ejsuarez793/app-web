@@ -236,8 +236,8 @@ export default Ember.Controller.extend({
             registro = this.get('registro');
             registro.cargo = selectedCargo;
             //var data = $.extend(true,{},registro);
-            var method = "POST"
-            var url = window.serverUrl + '/usuarios/'
+            var method = "POST";
+            var url = window.serverUrl + '/usuarios/';
             this.validarCampos();
             if ($("#formulario").valid()){
             	var data = {
@@ -259,7 +259,7 @@ export default Ember.Controller.extend({
                         cargo: registro.cargo,
                     }
                 };
-            	console.log("valido");
+            	//console.log("valido");
             	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
             }
 			//console.log("implementar");

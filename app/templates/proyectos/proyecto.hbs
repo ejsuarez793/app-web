@@ -120,7 +120,7 @@
                         <div class="panel-body">
                            <div class="row">
                               <div class="col-md-12">
-                                <table class="table table-bordered table-hover " id="tabla_tecnicos">  
+                                <table class="table table-bordered table-hover table-condensed" id="tabla_tecnicos">  
                                   <thead class="header-tabla">
                                     <tr>
                                       <th class="col-md-2">C.I</th>
@@ -182,7 +182,7 @@
                         
                           <div class="row">
                             <div class="col-sm-12">
-                               <table class="table table-bordered table-hover " id="tabla">  
+                               <table class="table table-bordered table-hover table-condensed" id="tabla">  
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-1">Código</th>
@@ -203,7 +203,7 @@
                                     <td class="col-tabla"><{{etapa.nombre}}</td>
                                     <td class="col-tabla">{{etapa.estatus}}</td>
                                     <td class="col-tabla">
-                                      {{etapa.f_est}}
+                                      {{etapa.f_est_mostrar}}
                                     </td>
                                     <td >
                                     {{#if etapa.codigo_rd}}
@@ -255,7 +255,7 @@
                        <div class="panel-body">
                             <div class="row">
                               <div class="col-md-12">
-                                <table class="table table-bordered table-hover">  
+                                <table class="table table-bordered table-hover table-condensed">  
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
@@ -295,7 +295,7 @@
                        <div class="panel-body">
                             <div class="row">
                               <div class="col-md-12">
-                                <table class="table table-bordered table-hover">  
+                                <table class="table table-bordered table-hover table-condensed">  
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
@@ -343,7 +343,7 @@
                              <div class="panel-body">
                                  <div class="row">
                               <div class="col-md-12">
-                                <table class="table table-bordered table-hover">  
+                                <table class="table table-bordered table-hover table-condensed">  
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
@@ -407,7 +407,7 @@
                         
 
                       <div class="col-md-12">
-                      <table class="table table-bordered table-hover " id="tabla">  
+                      <table class="table table-bordered table-hover table-condensed" id="tabla">  
                         <thead class="header-tabla">
                           <tr>
                             <th class="col-md-2">Técnico</th>
@@ -422,7 +422,7 @@
                           {{#each proyecto.solicitudes as |solicitud|}}
                           <tr>
                             <td class="col-tabla">{{solicitud.nombre_t}}, VE-{{solicitud.ci_tecnico}}</td>
-                            <td class="col-tabla"><{{solicitud.f_sol}}</td>
+                            <td class="col-tabla"><{{solicitud.f_sol_mostrar}}</td>
                              <td class="col-tabla">{{solicitud.letra_eta}}</td>
                              <td class="col-tabla">{{#if solicitud.autorizado}} Autorizada {{else}} No Autorizada{{/if}}</td>
                             <td class="col-tabla">
@@ -465,7 +465,7 @@
                         
 
                       <div class="col-md-12">
-                      <table class="table table-bordered table-hover " id="tabla">  
+                      <table class="table table-bordered table-hover table-condensed" id="tabla">  
                         <thead class="header-tabla">
                           <tr>
                             <th class="col-md-2" {{action "ordenarPor" "codigo" true}}>Código<span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
@@ -480,7 +480,7 @@
                           <tr>
                             <td class="col-tabla">{{presupuesto.codigo}}</td>
                             <td class="col-tabla"><{{presupuesto.desc}}</td>
-                            <td class="col-tabla">{{presupuesto.fecha}}</td>
+                            <td class="col-tabla">{{presupuesto.fecha_mostrar}}</td>
                             <td class="col-tabla">{{presupuesto.estatus}}</td>
                             <td ><button {{action 'openModalPresupuesto' true presupuesto}} class="btn btn-default btn-xs">Abrir</button></td>
                           </tr>
@@ -613,7 +613,7 @@
           <form >
             <div class="row">
 
-                <table class="table table-bordered table-hover " id="tabla_tecnicos_ss">  
+                <table class="table table-bordered table-hover table-condensed" id="tabla_tecnicos_ss">  
                   <thead class="header-tabla">
                     <tr>
                       <th class="col-md-2">C.I</th>
@@ -748,7 +748,7 @@
           
         <div class="row">
         <div class="col-md-12">
-            <table class="table table-bordered table-hover">  
+            <table class="table table-bordered table-hover table-condensed">  
               <thead class="header-tabla">
                 <tr>
                   <th>Código</th>
@@ -777,7 +777,7 @@
         {{#if disponibilidad_material.sin_disponibilidad}}
         <div class="col-md-1"></div>
         <div class="col-md-10">
-          <table class="table">
+          <table class="table table-condensed">
           <thead>
             <tr>
               <th>Código</th>
@@ -921,7 +921,7 @@
                     <div class="row">
                       <div class="col-md-1"></div>
                       <div class="col-md-10">
-                        <table class="table">
+                        <table class="table table-condensed">
                         <thead>
                           <tr>
                             <th>Código</th>
@@ -1113,7 +1113,7 @@
             </div>
             <div class="col-md-12 well">
                <div class="col-md-12">
-               <table class="table table-bordered table-hover " id="tabla">  
+               <table class="table table-bordered table-hover table-condensed" id="tabla">  
                   <thead class="header-tabla">
                     <tr>
                       <th class="col-md-1" {{action "ordenarPor" "codigo" false}}>Código<span id="th-codigo1" class="glyphicon glyphicon-chevron-down"></span></th>
@@ -1230,7 +1230,7 @@
           
         <div class="row">
         <div class="col-md-12">
-            <table class="table table-bordered table-hover">  
+            <table class="table table-bordered table-hover table-condensed">  
               <thead class="header-tabla">
                 <tr>
                   <th>Código</th>
@@ -1287,7 +1287,7 @@
           
         <div class="row">
         <div class="col-md-12">
-            <table class="table table-bordered table-hover">  
+            <table class="table table-bordered table-hover table-condensed">  
               <thead class="header-tabla">
                 <tr>
                   <th>Código</th>
@@ -1462,7 +1462,7 @@
           </div>
           <div class="col-md-1"></div>
           <div class="col-md-10">
-            <table class="table">
+            <table class="table table-condensed">
               <thead>
                 <tr>
                   <th class="col-md-3">Nro</th>
@@ -1488,7 +1488,7 @@
           </div>
           <div class="col-md-1"></div>
           <div class="col-md-10">
-            <table class="table">
+            <table class="table table-condensed">
               <thead>
                 <tr>
                   <th class="col-md-3">Código</th>

@@ -34,6 +34,15 @@ export default Ember.Controller.extend({
 		}, 'Código no válido');
 
 
+		/*$.validator.addMethod('serialCantidad', function(value, element) {
+	        return ($("#serial").val !== '' && parseInt($("#cantidad").val()) !== 1);
+	    }, "Si es un material con serial, la cantidad debe ser 1.");*/ //nunca funciono por sia acaso
+
+		$.validator.addMethod('positivo',
+		    function (value) { 
+		        return Number(value) >= 0;
+		    }, 'Números positivos solamente.');
+
 		$("#formulario").validate({
 			rules:{
 				codigo:{
@@ -67,10 +76,12 @@ export default Ember.Controller.extend({
 					required:true,
 					number: true,
 				},
-				cantidad:{
+				/*cantidad:{
 					required:true,
 					number: true,
-				},
+					positivo:true,
+					serialCantidad:true,
+				},*/
 				marca:{
 					required:true,
 					maxlength:50,
@@ -113,10 +124,10 @@ export default Ember.Controller.extend({
 					required:'Este campo es requerido',
 					number: 'Por favor solo números',
 				},
-				cantidad:{
+				/*cantidad:{
 					required:'Este campo es requerido',
 					number: 'Por favor solo números',
-				},
+				},*/
 				marca:{
 					required:'Este campo es requerido',
 					maxlength:'Longitud máxima de 50 caracteres',
@@ -338,6 +349,7 @@ export default Ember.Controller.extend({
 		if (editing==='false'){
 			this.set('editing',false);
 			$("#codigo").prop('disabled', false);
+			$("#serial").prop('disabled', false);
 			this.set('material', {});
 			this.set('pcs',[]);
 			this.set('pss',this.get('proveedores').toArray());
@@ -346,6 +358,7 @@ export default Ember.Controller.extend({
 			this.ordenarMaterialProveedores(material);
 			var aux =  $.extend(true, {}, material);
 			$("#codigo").prop('disabled', true);
+			$("#serial").prop('disabled', true);
 			this.set('material',aux);
 			aux =  $.extend(true, [], material.proveedores);
 			this.set('pcs',aux);

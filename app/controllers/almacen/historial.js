@@ -96,6 +96,9 @@ export default Ember.Controller.extend({
 	},
 	setMovimientos(response,context){
 		var _this = context;
+		$.each(response.data.movimientos,function(i,movimiento){
+			movimiento.fecha_mostrar = moment(movimiento.fecha).format('L');
+		});
 		_this.set('movimientos',response.data.movimientos);
 		_this.msgRespuesta("Exito: ", response.msg,1,context);
 		//console.log(response.data.movimientos);

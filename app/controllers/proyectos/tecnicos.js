@@ -38,7 +38,7 @@ export default Ember.Controller.extend({
 		}
 		$.each(tecnicos,function(i,tecnico){
 			if (tecnico.proyectos.length > 0){
-				tecnico.disponible = "No disponible"
+				tecnico.disponible = "No disponible";
 			}else{
 				tecnico.disponible = "Disponible";
 			}
