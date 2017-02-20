@@ -659,8 +659,8 @@ export default Ember.Controller.extend({
 		var method;
 		var url;
 		var data = {};
-		method = "PATCH";
-		url = window.serverUrl + /proyecto/ + proyecto.codigo + '/estatus/';
+		method = "PUT";
+		url = window.serverUrl + /proyecto/ + proyecto.codigo + '/';
 		data.codigo=proyecto.codigo;
 		data.estatus=estatus;
 		if(proyecto.presupuestos===undefined || proyecto.presupuestos===null || proyecto.presupuestos.length===0){

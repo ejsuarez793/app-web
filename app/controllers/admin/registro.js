@@ -52,7 +52,7 @@ export default Ember.Controller.extend({
                  number: true,
                  nowhitespace: true,
                  remote: {
-                    url: "http://localhost:8000/validar/trabajador/",
+                    url: window.serverUrl + "/validar/trabajador/",
                     type: "GET",
                     data: {
                       ci: function() {
@@ -237,7 +237,7 @@ export default Ember.Controller.extend({
             registro.cargo = selectedCargo;
             //var data = $.extend(true,{},registro);
             var method = "POST";
-            var url = window.serverUrl + '/usuarios/';
+            var url = window.serverUrl + '/admin/usuario/';
             this.validarCampos();
             if ($("#formulario").valid()){
             	var data = {
