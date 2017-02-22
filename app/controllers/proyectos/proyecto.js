@@ -16,8 +16,12 @@ export default Ember.Controller.extend({
 	reporte_detalle: '',
 	disponibilidad_material: {},//usado para chequear la disponibilidad de materiales en la solicitud y luego para poder aprobar
 
-	prueba: {}, //usado en la prueba de crear solicidut borrar despues
-	solicitud_material_prueba: [],
+	//prueba: {}, //usado en la prueba de crear solicidut borrar despues
+	//solicitud_material_prueba: [],
+
+	presupuesto_agregar_servicio:false,
+	presupuesto_agregar_material:false,
+
 
  	//3 arreglos usados para generar el listado de materiales usados (total y por etapas) y disponibles
 	materiales_disponibles : [],
@@ -246,7 +250,7 @@ export default Ember.Controller.extend({
 
 	},
 	setProyecto(proyecto,context){
-		//console.log(proyecto);
+		console.log(proyecto);
 		var _this = context;
 		var no_definida = "(Fecha no definida)";
 		proyecto.f_inicio = no_definida;
@@ -298,7 +302,7 @@ export default Ember.Controller.extend({
 			presupuesto.fecha_mostrar = moment(presupuesto.fecha).format('L');
 		});
 		_this.set('proyecto',proyecto);
-		console.log(proyecto);
+		//console.log(proyecto);
 		var method = "GET";
 		var url = window.serverUrl + '/proyecto/' + _this.get('proyecto.codigo') + '/materiales/' ;
 		_this.getElements(method,url,_this.setDesglose,_this);
@@ -682,11 +686,11 @@ export default Ember.Controller.extend({
 			fecha: '',
 			fecha_mostrar:moment().format("LL"),
 			validez_o: '5',
-			descuento: '50',
+			descuento: '0',
 			observ: 'Observaciones del presupuesto, a ser llenado por un agente de ventas.',
 			desc: 'Descripción del presupuesto, a ser llenado por un agente de ventas.',
-			atencion_n: 'a ser llenadopor un agente de ventas.',
-			atencion_e: 'a ser llenado por un agente de ventas.',
+			atencion_n: 'a ser llenado por un agente de ventas.',
+			atencion_e: 'llenar@enventas.com',
 			materiales: [],
 			servicios:[],
 			cond_g:'Del fabricante.-',
@@ -709,52 +713,103 @@ export default Ember.Controller.extend({
 				}
 				nuevo_p.codigo =np_cod;
 				this.set('presupuesto',nuevo_p);
-				this.set('ecs',[]);
+
+				var servicios = $.extend(true,[],this.get('servicios').toArray());
+				var materiales = $.extend(true,[],this.get('materiales').toArray());
+				//console.log(materiales);
+				//var elementos = [];
+				$.each(servicios,function(i,elemento){
+					/*elemento['cantidad_seleccion'] = 0;
+					elemento['cantidad_sin_seleccion'] = Number.MAX_VALUE;*/
+					elemento['mostrar_seleccion'] = false;
+					elemento['mostrar_sin_seleccion'] = true;
+					elemento['tipo'] = "Servicio";
+					elemento['cantidad'] = 0;
+					//elementos.push($.extend(true,{},elemento));
+				});
+
+				$.each(materiales,function(i,elemento){
+					/*elemento['cantidad_seleccion'] = 0;
+					elemento['cantidad_sin_seleccion'] = elemento['cantidad'];*/
+					elemento['desc_mostrar'] = elemento['nombre'] + " " + elemento['desc'] +" "+ elemento['marca'];
+					
+					elemento['mostrar_seleccion'] = false;
+					elemento['mostrar_sin_seleccion'] = true;
+					elemento['cantidad'] = 0;
+					elemento['tipo'] = "Material"
+					//elementos.push($.extend(true,{},elemento)); 
+				});
+				//console.log(this.get('materiales'));
+				//this.set('ecs',[]);
+				this.set('servicios',servicios);
+				this.set('materiales',materiales);
+				//this.set('elementos',elementos);
 			}else{
-				console.log("El proyecto tiene mas de 26 presupuestos no se puede crear más");
+				this.msgRespuesta("Error","El proyecto tiene mas de 26 presupuestos no se puede crear más",-1,this);
 			}
 		}else{
 			this.set('editing',true);
 			presupuesto = $.extend(true, {}, presupuesto);
 			presupuesto.fecha_mostrar = moment(presupuesto.fecha).format("LL");
+			var _this = this;
 			var presupuesto_servicios =presupuesto.servicios;
 			var presupuesto_materiales = presupuesto.materiales;
-			this.set('ecs',[]);
-			var ecs = this.get('ecs');
-			var servicios = this.get('servicios').toArray();
-			var materiales = this.get('materiales').toArray();
-			var _this = this;
-			//a continuacion se asignan a los elementos con seleccion 'ecs' los servicios y materiales que posee el presupuesto
-			$.each(presupuesto_servicios,function(i,servicio){
-				servicio.tag="servicio";
-				servicio.codigo = servicio.codigo_ser;
-				servicio.precio_act = servicio.precio_venta;
-				servicio.precio_total = servicio.precio_venta * servicio.cantidad;
-				$.each(servicios,function(i,s){
-					if (servicio.codigo=== s.codigo){
-						servicio.desc = s.desc;
+			var servicios = $.extend(true,[],this.get('servicios').toArray());
+			var materiales = $.extend(true,[],this.get('materiales').toArray());
+			var flag = false;
+			$.each(servicios,function(i,elemento){
+				flag = false;
+				$.each(presupuesto_servicios,function(i,ps){
+					if (elemento.codigo === ps.codigo_ser){
+						elemento['mostrar_seleccion'] = true;
+						elemento['mostrar_sin_seleccion'] = false;
+						elemento['tipo'] = "Servicio";
+						elemento['cantidad'] = ps.cantidad;
+						flag = true;
+						//console.log(elemento.codigo);
 					}
 				});
-				ecs.pushObject(servicio);
+				if (flag === false){
+					elemento['mostrar_seleccion'] = false;
+					elemento['mostrar_sin_seleccion'] = true;
+					elemento['tipo'] = "Servicio";
+					elemento['cantidad'] = 0;
+				}
 			});
-			$.each(presupuesto_materiales,function(i,material){
-				material.tag="material";
-				material.codigo = material.codigo_mat;
-				material.precio_act = material.precio_venta;
-				material.precio_total = material.precio_venta * material.cantidad;
-				$.each(materiales,function(i,m){
-					if (material.codigo=== m.codigo){
-						material.desc = m.desc;
+
+			$.each(materiales,function(i,elemento){
+				flag = false;
+				$.each(presupuesto_materiales,function(i,pm){
+					if (elemento.codigo === pm.codigo_mat){
+						elemento['mostrar_seleccion'] = true;
+						elemento['desc_mostrar'] = elemento['nombre'] + " " + elemento['desc'] +" "+ elemento['marca'];
+						elemento['mostrar_sin_seleccion'] = false;
+						elemento['tipo'] = "Material";
+						elemento['cantidad'] = pm.cantidad;
+						flag = true;
+
 					}
 				});
-				ecs.pushObject(material);
+				if (flag === false){
+					elemento['mostrar_seleccion'] = false;
+					elemento['desc_mostrar'] = elemento['nombre'] + " " + elemento['desc'] +" "+ elemento['marca'];
+					elemento['mostrar_sin_seleccion'] = true;
+					elemento['tipo'] = "Material";
+					elemento['cantidad'] = 0;
+				}
 			});
+			//console.log(materiales);
+			this.set('materiales',materiales);
+			this.set('servicios',servicios);
 			this.set('presupuesto',presupuesto);
 			
 			$('#myModalPresupuesto').on('shown.bs.modal', function () {
 	  			// cuando se muestra el modal se calcula el precio total de cada elemento y el monto total
 	  			//ya que depende de que se renderize los td de la tabla
-	  			$.each(_this.get('ecs').toArray(),function(i,elemento){
+	  			$.each(_this.get('materiales').toArray(),function(i,elemento){
+					_this.calcularPrecioTotal(elemento.codigo);
+				});
+				$.each(_this.get('servicios').toArray(),function(i,elemento){
 					_this.calcularPrecioTotal(elemento.codigo);
 				});
 	  			_this.calcularMontoTotal();
@@ -797,136 +852,102 @@ export default Ember.Controller.extend({
 		$("#myModalSolicitudes").modal('hide');
 	},
 	/*
-		agregarElementos: funcion que permite agregar los materiales o servicios que fueron seleccionados y los incorpora
+		agregarElementosPresupuesto: funcion que permite agregar los materiales o servicios que fueron seleccionados y los incorpora
 		a elementos con seleccion 'ecs' y los elimina de servicios sin seleccion o materiales sin seleccion segun
 		sea el caso
 	*/
-	agregarElementos(tipo_e){
-		var checkbox='';
-		var elementos=[];
-		var elementos_cs =this.get('ecs');
-		var elementos_ss=[];
-		var modal = '';
-		var tag = '';
-
-		var cod_cs = [];
-		if (tipo_e === 'servicio'){
-			checkbox = '#myModalServicios input:checked';
-			elementos = this.get('servicios').toArray();
-			elementos_ss = this.get('sss');
-			modal = "#myModalServicios";
-			tag  = 'servicio';
-		}else if(tipo_e === 'material'){
-			checkbox = '#myModalMateriales input:checked';
-			elementos = this.get('materiales').toArray();
-			elementos_ss = this.get('mss');
-			modal = "#myModalMateriales";
-			tag  = 'material';
+	agregarElementosPresupuesto(){
+		var checkbox = "#myModalPresupuestoAgregarMS input:checked";
+		var modal = "#myModalPresupuestoAgregarMS";
+		var elementos; //pendiente
+		var tipo_e;
+		var codigo;
+		if (this.get('presupuesto_agregar_material') === true){
+			elementos = $.extend(true,[],this.get('materiales').toArray());
+		}else if (this.get('presupuesto_agregar_servicio') === true){
+			elementos = $.extend(true,[],this.get('servicios').toArray());
 		}
-
-		//guardamos los codigos de los elementos seleccionados/checkeados en un arreglo
 		$(checkbox).each(function() {
-		    cod_cs.push($(this).val());
-		});
+			codigo = $(this).val();
+			$.each(elementos,function(i,elemento){
+				if(codigo === elemento.codigo){
+					elemento.mostrar_sin_seleccion = false;
+					elemento.mostrar_seleccion = true;
+					elemento.precio_venta = elemento.precio_act;
 
-		//verificamos el total de elementos, y si su codigo esta en el array de codigos lo
-		//agregamos al arreglo elementos con seleccion o ecs
-		var aux =  $.extend(true, {}, elementos);
-		$.each(aux, function(i,elemento){
-			if ($.inArray(elemento.codigo, cod_cs) !== -1){
-				elemento.tag = tag;
-				//if (tag ==='servicio'){
-				elemento.cantidad = 0;
-				//}
-				elemento.precio_venta = elemento.precio_act;
-				elemento.precio_total = elemento.cantidad * elemento.precio_act;
-				elementos_cs.pushObject(elemento);
-			}
+				}
+			});
+			//console.log(codigo + ": "+ $(input_cantidad+codigo).val());
 		});
-
-		//luego verificamos el arreglo de elementos sin seleccion (sss o mss)  y si el codigo de un
-		//elemento se encuentra en codigos con seleccion cod_cs lo retiramos
-		$.each(elementos_ss.toArray(),function(i,elemento_ss){
-			if($.inArray(elemento_ss.codigo, cod_cs) !== -1){
-				elementos_ss.removeObject(elemento_ss);
-			}
-		});
+		if (this.get('presupuesto_agregar_material') === true){
+			this.set('materiales',elementos);
+		}else if (this.get('presupuesto_agregar_servicio') === true){
+			this.set('servicios',elementos);
+		}
 		$(modal).modal('hide');
 	},
-	/*
-		prepararModalElementos: prepara el modal donde aparecen los materiales o servicios que se pueden agregar al presupuesto
-		los cuales son todos aquellos elementos (materiales o servicios) que no se encuentran ya incluidos en el presupuesto.
-	*/
-	prepararModalElementos(tipo_e){
-		var elementos = [];
-		var elementos_cs = this.get('ecs').toArray();
-		var aux = [];
-		var elementos_ss = [];
-		var modal = '';
-		var ss = '';
-		if (tipo_e==='servicio'){
-			elementos = this.get('servicios').toArray();
-			ss = 'sss';
-			modal = "#myModalServicios";
-		}else if(tipo_e==='material'){
-			elementos = this.get('materiales').toArray();
-			ss = 'mss';
-			modal = "#myModalMateriales";
-		}
-		this.set(ss,[]);
-		elementos_ss = this.get(ss);
-		aux =  $.extend(true, [], elementos);
-		this.prepararSinSeleccion(aux,elementos_cs,elementos_ss);
-		$(modal).modal('show');
-	},
-	/*
-		prepararSinSeleccion: verifica uno a uno todos los elementos (materiales o servicios) para verificar que no se encuentran
-		incluidos en los elementos con seleccion (elementos_cs), si no estan inluidos se añaden a los elementos sin seleccion 
-		(elementos_ss).
-	*/
-	prepararSinSeleccion(elementos,elementos_cs,elementos_ss){
-		var flag = false;
-		$.each(elementos,function(i, elemento){
-			flag=false;
-			$.each(elementos_cs, function(i,elemento_cs){
-				if (elemento.codigo === elemento_cs.codigo){
-					flag=true;
-				}
 
-			});
-			if (flag===false){
-				elementos_ss.pushObject(elemento);
-			}
-		});
-	},
 	/*
-		eliminarElementos: cuando el usuario selecciona del presupuesto elementos, y clickea el boton de eliminar seleccionados
+		eliminarElementosPresupuesto: cuando el usuario selecciona del presupuesto elementos, y clickea el boton de eliminar seleccionados
 		esta función es llamada. Se encarga de eliminarlos de los elementos con selección 'ecs' y de añadirlos a su respectivo
 		arreglo de sin selección segun el tipo de elemento.
 	*/
-	eliminarElementos(){
+	eliminarElementosPresupuesto(){
 		var checkbox = '#myModalPresupuesto input:checked';
-		var elementos_cs = this.get('ecs');
-		var servicios = this.get('sss');
-		var materiales = this.get('mss');
-		var codigo = '';
-		//console.clear();
+		var elementos; //pendiente
+		var tipo_e;
+		var codigo;
+		var	materiales = $.extend(true,[],this.get('materiales').toArray());
+		var	servicios = $.extend(true,[],this.get('servicios').toArray());
+		
 		$(checkbox).each(function() {
 			codigo = $(this).val();
-			$.each(elementos_cs.toArray(), function(i,elemento_cs){
-				if (elemento_cs.codigo === codigo){
-					if (elemento_cs.tag === 'servicio'){
-						servicios.pushObject(elemento_cs);
-					}else if(elemento_cs.tag === 'material'){
-						materiales.pushObject(elemento_cs);
-					}
-					elementos_cs.removeObject(elemento_cs);
+			$.each(materiales,function(i,material){
+				if(codigo === material.codigo){
+					material.mostrar_sin_seleccion = true;
+					material.mostrar_seleccion = false;
+
 				}
 			});
 
+			$.each(servicios,function(i,servicio){
+				if(codigo === servicio.codigo){
+					servicio.mostrar_sin_seleccion = true;
+					servicio.mostrar_seleccion = false;
+
+				}
+			});
+
+			//console.log(codigo + ": "+ $(input_cantidad+codigo).val());
 		});
-		this.calcularMontoTotal();
+		this.set('materiales',materiales);
+		this.set('servicios',servicios);
+
 	},
+
+
+	/*
+		openModalPresupuestoAgregarMS: prepara el modal donde aparecen los materiales o servicios que se pueden agregar al presupuesto
+		los cuales son todos aquellos elementos (materiales o servicios) que no se encuentran ya incluidos en el presupuesto.
+	*/
+	openModalPresupuestoAgregarMS(tipo_e){
+		//var elementos;
+		if (tipo_e === "material"){
+			this.set('presupuesto_agregar_material',true);
+			this.set('presupuesto_agregar_servicio',false);
+			//elementos = $.extend(true,[],this.get('materiales').toArray());
+		}else if(tipo_e === "servicio"){
+			this.set('presupuesto_agregar_servicio',true);
+			this.set('presupuesto_agregar_material',false);
+			//elementos = $.extend(true,[],this.get('servicios').toArray());
+		}
+		//this.set('elementos',elementos);
+		//console.log(this.get('elementos'));
+		
+		$("#myModalPresupuestoAgregarMS").modal('show');
+	},
+	
+	
 	/*
 		calcularPrecioTotal: calcula la columna de precio total, se una fila del presupuesto, se le pasa el código del elemento
 		para que pueda referenciar a los td input correspondientes.
@@ -935,24 +956,41 @@ export default Ember.Controller.extend({
 		var cant = "#cantidad_"+codigo;
 		var pu = "#pu_"+codigo;
 		var pt = "#pt_"+codigo;
-		var ecs = this.get('ecs').toArray();
+		var cantidad;
+		//var ecs = this.get('ecs').toArray();
 		//console.log($(cant).val() + " * " + $(pu).val());
 		//console.log("hola");
 		var precio_total =$(cant).val() * $(pu).val();
 		$(pt).text(precio_total);
 
-		var aux = $.extend(true, [], ecs.toArray());
+		var materiales = $.extend(true, [], this.get('materiales').toArray());
+		var servicios = $.extend(true, [], this.get('servicios').toArray());
 		
-		$.each(aux.toArray(),function(i,elemento){
+		$.each(servicios.toArray(),function(i,elemento){
 			//console.log(elemento);
-			if (elemento.codigo === codigo){
-				elemento.cantidad = $(cant).val();
-				elemento.precio_venta = $(pu).val();
+			if (elemento.codigo === codigo && elemento.mostrar_seleccion===true){
+				//console.log(elemento.cantidad);
+				//console.log(elemento.precio_venta)
+				cantidad = parseInt($(cant).val());
+				elemento.cantidad = cantidad;
+				elemento.precio_venta = parseFloat($(pu).val());
 				elemento.precio_act = elemento.precio_venta;
 				elemento.precio_total = elemento.cantidad * elemento.precio_venta;
 			}
 		});
-		this.set('ecs',aux);
+
+		$.each(materiales.toArray(),function(i,elemento){
+			//console.log(elemento);
+			if (elemento.codigo === codigo && elemento.mostrar_seleccion===true){
+				elemento.cantidad =  parseInt($(cant).val());
+				elemento.precio_venta =  parseFloat($(pu).val());
+				elemento.precio_act = elemento.precio_venta;
+				elemento.precio_total = elemento.cantidad * elemento.precio_venta;
+			}
+		});
+
+		this.set('materiales',materiales);
+		this.set('servicios',servicios);
 		this.calcularMontoTotal();
 	},
 	/*
@@ -967,19 +1005,29 @@ export default Ember.Controller.extend({
 		var cont = 0.0;
 		var pt = 0.0;
 
-		var elementos_cs = this.get('ecs');
+		var materiales = $.extend(true, [], this.get('materiales').toArray());
+		var servicios = $.extend(true, [], this.get('servicios').toArray());
 
-		var cod_cs = [];
+		var codigos = [];
 		//agregamos los codigos a un arreglo donde le agregamos "pt_" al inicio, para poder referenciar
 		//la td en el precio total
-		$.each(elementos_cs.toArray(),function(i,elemento_cs){
-			cod_cs.push("pt_"+elemento_cs.codigo);
+		$.each(materiales,function(i,elemento){
+			if (elemento.mostrar_seleccion===true){
+				codigos.push("pt_"+elemento.codigo);
+			}
+		});
+		$.each(servicios,function(i,elemento){
+			if (elemento.mostrar_seleccion===true){
+				codigos.push("pt_"+elemento.codigo);
+			}
 		});
 
 		$("td[name='precio_total']").each(function(){
-			if($.inArray($(this).attr('id'), cod_cs) !== -1){
+			if($.inArray($(this).attr('id'), codigos) !== -1){
 				pt = parseFloat($(this).text());
-				cont += pt;
+				if (!isNaN(pt)){
+					cont += pt;
+				}
 			}
 		});
 
@@ -989,11 +1037,11 @@ export default Ember.Controller.extend({
 		iva = subtotalfinal * (0.12);
 		total = subtotalfinal + iva;
 
-		$("#subtotal1").text(subtotal1);
-		$("#descuento").text(descuento);
-		$("#subtotalfinal").text(subtotalfinal);
-		$("#iva").text(iva);
-		$("#total").text(total);
+		$("#subtotal1").text( numeral(subtotal1).format('0,0.00') );
+		$("#descuento").text(numeral(descuento).format('0,0.00'));
+		$("#subtotalfinal").text(numeral(subtotalfinal).format('0,0.00'));
+		$("#iva").text(numeral(iva).format('0,0.00'));
+		$("#total").text(numeral(total).format('0,0.00'));
 
 	},
 	/*
@@ -1003,7 +1051,8 @@ export default Ember.Controller.extend({
 	prepararPresupuesto(){
 		var presupuesto = this.get('presupuesto');
 		var proyecto = this.get('proyecto');
-		var ecs = this.get('ecs').toArray();
+		var materiales = this.get('materiales').toArray();
+		var servicios = this.get('servicios').toArray();
 		var aux = {
 			codigo: '',
 			cantidad: '',
@@ -1014,13 +1063,20 @@ export default Ember.Controller.extend({
 		presupuesto.fecha = moment().format("YYYY-MM-DD");
 		presupuesto.servicios = [];
 		presupuesto.materiales = [];
-		$.each(ecs,function(i,elemento){
-			aux.codigo = elemento.codigo;
-			aux.cantidad = elemento.cantidad;
-			aux.precio_venta = elemento.precio_venta;
-			if (elemento.tag === 'servicio'){
+		$.each(servicios,function(i,elemento){
+			if (elemento.mostrar_seleccion){
+				aux.codigo = elemento.codigo;
+				aux.cantidad = elemento.cantidad;
+				aux.precio_venta = elemento.precio_venta;
 				presupuesto.servicios.push($.extend(true, {}, aux));
-			}else if(elemento.tag === 'material'){
+			}
+		});
+
+		$.each(materiales,function(i,elemento){
+			if (elemento.mostrar_seleccion){
+				aux.codigo = elemento.codigo;
+				aux.cantidad = elemento.cantidad;
+				aux.precio_venta = elemento.precio_venta;
 				presupuesto.materiales.push($.extend(true, {}, aux));
 			}
 		});
@@ -1411,15 +1467,15 @@ export default Ember.Controller.extend({
 		eliminarActividad: function(actividad){
 			this.eliminarActividad(actividad);
 		},
-		openModalAgregarMS: function(){
+		openModalPresupuestoAgregarMS: function(){
 			var seleccion = $("#anadir").val();
-			this.prepararModalElementos(seleccion);
+			this.openModalPresupuestoAgregarMS(seleccion);
 		},
-		agregarElementos: function(tipo_e){
-			this.agregarElementos(tipo_e);
+		agregarElementosPresupuesto: function(){
+			this.agregarElementosPresupuesto();
 		},
-		eliminarElementos: function(){
-			this.eliminarElementos();
+		eliminarElementosPresupuesto: function(){
+			this.eliminarElementosPresupuesto();
 		},
 		calcularPrecioTotal: function(codigo){
 			this.calcularPrecioTotal(codigo);

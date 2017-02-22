@@ -1116,28 +1116,46 @@
                <table class="table table-bordered table-hover table-condensed" id="tabla">  
                   <thead class="header-tabla">
                     <tr>
-                      <th class="col-md-1" {{action "ordenarPor" "codigo" false}}>Código<span id="th-codigo1" class="glyphicon glyphicon-chevron-down"></span></th>
-                      <th>Descripción</th>
+                      <th class="col-md-1">Código</th>
+                      <th class="col-md-5">Descripción</th>
                       <th class="col-md-1">Cantidad</th>
                       <th class="col-md-2">Precio Unitario</th>
-                      <th class="col-md-2" {{action "ordenarPor" "precio_total"}}>Precio Total</th>
+                      <th class="col-md-2">Precio Total</th>
                       <th class="col-md-1">Selección</th>
                     </tr>
                   </thead>
                   <tbody id="tbody" class="text-center">
-                    {{#each ecs as |elemento|}}
-                    <tr >
-                      <td class="col-tabla">{{elemento.codigo}}</td>
-                      <td class="col-tabla"><{{elemento.desc}}</td>
-                      <td class="col-tabla">
-                        <input type="number" class="form-control input-sm" id="cantidad_{{elemento.codigo}}" value="{{elemento.cantidad}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
-                      </td>
-                      <td class="col-tabla">
-                        <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
-                      </td>
-                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total}}</td>
-                      <td><input type="checkbox" value={{elemento.codigo}}></td>
-                    </tr>
+                    {{#each materiales as |elemento|}}
+                     {{#if elemento.mostrar_seleccion}}
+                        <tr>
+                          <td class="col-tabla">{{elemento.codigo}}</td>
+                          <td class="col-tabla"><{{elemento.desc_mostrar}}</td>
+                          <td class="col-tabla">
+                            <input type="number" class="form-control input-sm" id="cantidad_{{elemento.codigo}}" value="{{elemento.cantidad}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                          </td>
+                          <td class="col-tabla">
+                            <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                          </td>
+                          <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total}}</td>
+                          <td><input type="checkbox" value={{elemento.codigo}}></td>
+                        </tr>
+                      {{/if}}
+                    {{/each}}
+                    {{#each servicios as |elemento|}}
+                     {{#if elemento.mostrar_seleccion}}
+                        <tr>
+                          <td class="col-tabla">{{elemento.codigo}}</td>
+                          <td class="col-tabla"><{{elemento.desc}}</td>
+                          <td class="col-tabla">
+                            <input type="number" class="form-control input-sm" id="cantidad_{{elemento.codigo}}" value="{{elemento.cantidad}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                          </td>
+                          <td class="col-tabla">
+                            <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                          </td>
+                          <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total}}</td>
+                          <td><input type="checkbox" value={{elemento.codigo}}></td>
+                        </tr>
+                      {{/if}}
                     {{/each}}
                   </tbody>
                 </table>
@@ -1157,9 +1175,9 @@
                 </div>
                 <div class="col-lg-7 ">
                   <h2>
-                    <button class="btn btn-default" {{action 'eliminarElementos'}}>Eliminar Seleccionados</button>
-                    <button class="btn btn-primary" {{action 'openModalAgregarMS'}}>Añadir</button>
-                    <button class="btn btn-primary" {{action 'calcularMontoTotal'}}>Calcular Total</button>
+                    <button class="btn btn-default" {{action 'eliminarElementosPresupuesto'}}>Eliminar Seleccionados</button>
+                    <button class="btn btn-primary" {{action 'openModalPresupuestoAgregarMS'}}>Añadir</button>
+                   <!-- <button class="btn btn-primary" {{action 'calcularMontoTotal'}}>Calcular Total</button>-->
                   </h2>
                 </div>
 
@@ -1216,10 +1234,67 @@
   </div>
 </div>
 
+<!-- Modal Presupuestos Elementos Agregar-->
+<div class="modal fade " id="myModalPresupuestoAgregarMS" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Agregar {{#if presupuesto_agregar_material}} Material{{else if presupuesto_agregar_servicio}}Servicio{{/if}}</h4>
+      </div>
+      <div class="modal-body">
+          
+        <div class="row">
+        <div class="col-md-12">
 
+            <table class="table table-bordered table-hover table-condensed">  
+              <thead class="header-tabla">
+                <tr>
+                  <th class="col-sm-1">Código</th>
+                  <th class="col-sm-10">Descripción</th>
+                  <th class="col-sm-1">Seleccionar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#if presupuesto_agregar_material}}
+                  {{#each materiales as |material|}}
+                    {{#if material.mostrar_sin_seleccion}}
+                      <tr>
+                        <td class="col-tabla">{{material.codigo}}</td>
+                        <td class="col-tabla">{{material.desc_mostrar}}</td>
+                        <td><input type="checkbox" value={{material.codigo}}></td>
+                      </tr>
+                    {{/if}}
+                  {{/each}}
+                {{else if presupuesto_agregar_servicio}}
+                  {{#each servicios as |servicio|}}
+                    {{#if servicio.mostrar_sin_seleccion}}
+                      <tr>
+                        <td class="col-tabla">{{servicio.codigo}}</td>
+                        <td class="col-tabla">{{servicio.desc}}</td>
+                        <td><input type="checkbox" value={{servicio.codigo}}></td>
+                      </tr>
+                    {{/if}}
+                  {{/each}}
+                {{/if}}
+                
+              </tbody>
+            </table>
+
+        </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'agregarElementosPresupuesto'}} class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal MATERIALES-->
-<div class="modal fade " id="myModalMateriales" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<!--<div class="modal fade " id="myModalMateriales" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -1269,14 +1344,14 @@
       </div>
     </div>
   </div>
-</div>
+</div>-->
 
 
 
 
 
 <!-- Modal SERVICIOS-->
-<div class="modal fade " id="myModalServicios" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<!--<div class="modal fade " id="myModalServicios" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -1317,7 +1392,7 @@
       </div>
     </div>
   </div>
-</div>
+</div>-->
 
 
 
@@ -1354,8 +1429,8 @@
           </div>
 
           <div class="col-md-12">
-            <p>
-              Mediante la presente <strong>SISTELRED, C.A., RIF: J-30994445-2</strong> hace entrega al cliente <strong>{{acta_culminacion.nombre_cliente}}, RIF: {{acta_culminacion.rif_cliente}}</strong> el proyecto <strong>{{acta_culminacion.nombre_pro}}</strong> registrado bajo el código <strong>{{acta_culminacion.codigo_pro}}</strong>, de fecha {{acta_culminacion.f_ini}} y culminado el {{acta_culminacion.f_fin}}, cuyo objeto fue {{acta_culminacion.desc_pro}}, el cual se entrega a enteta satisfacción de ambas partes y dando por culminado el servicio prestado por parte de la empresa.
+            <p class="text-justify">
+              Mediante la presente <strong>SISTELRED, C.A., RIF: J-30994445-2</strong> hace entrega al cliente <strong>{{acta_culminacion.nombre_cliente}}, RIF: {{acta_culminacion.rif_cliente}}</strong> el proyecto <strong>{{acta_culminacion.nombre_pro}}</strong> registrado bajo el código <strong>{{acta_culminacion.codigo_pro}}</strong>, de fecha {{acta_culminacion.f_ini}} y culminado el {{acta_culminacion.f_fin}}, cuyo objeto fue {{acta_culminacion.desc_pro}}, el cual se entrega a entera satisfacción de ambas partes y dando por culminado el servicio prestado por parte de la empresa.
 
             </p>
             <p>Acta que se efectúa en la ciudad de Caracas, a los {{acta_culminacion.dias}} del mes de {{acta_culminacion.mes}} del año {{acta_culminacion.anio}}.</p>

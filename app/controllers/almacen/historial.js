@@ -168,14 +168,15 @@ export default Ember.Controller.extend({
 		$("#alertMsg").hide();
 	},
 	openModalDetalleMovimiento(movimiento){
-		console.log(movimiento);
-		movimiento.fecha_mostrar = moment(movimiento.fecha).format('LL');
-		if (movimiento.tipo === "Ingreso"){
-			movimiento.ingreso = true;
+		var mov = $.extend(true,{},movimiento);
+		//console.log(movimiento);
+		mov.fecha_mostrar = moment(movimiento.fecha).format('LL');
+		if (mov.tipo === "Ingreso"){
+			mov.ingreso = true;
 		}else{
-			movimiento.ingreso = false;
+			mov.ingreso = false;
 		}
-		this.set('movimiento',movimiento);
+		this.set('movimiento',mov);
 		$("#myModalMovimiento").modal('show');
 	},
 	actions:{

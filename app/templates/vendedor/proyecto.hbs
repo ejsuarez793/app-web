@@ -674,7 +674,7 @@
           <div class="row">
 
             <div class="col-md-12 well">
-            <div class="col-md-8">
+            <div class="col-md-7">
               <ul class="ul-presupuesto">
                 <li><b>Sistelred, C.A</b></li>
                 <li><b>Rif J-30994445-2</b></li>
@@ -683,7 +683,7 @@
                 <br>
               </ul>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
             <ul class="ul-presupuesto">
                 <li ><b>Cotización Nro:</b> {{presupuesto.codigo}}</li>
             </ul>
@@ -742,21 +742,30 @@
                <table class="table table-bordered table-hover table-condensed" id="tabla">  
                   <thead class="header-tabla">
                     <tr>
-                      <th class="col-md-1" {{action "ordenarPor" "codigo" false}}>Código<span id="th-codigo1" class="glyphicon glyphicon-chevron-down"></span></th>
+                      <th class="col-md-1" >Código</th>
                       <th>Descripción</th>
                       <th class="col-md-1">Cantidad</th>
                       <th class="col-md-2">Precio Unitario</th>
-                      <th class="col-md-2" {{action "ordenarPor" "precio_total"}}>Precio Total</th>
+                      <th class="col-md-2">Precio Total</th>
                     </tr>
                   </thead>
                   <tbody id="tbody" class="text-center">
-                    {{#each ecs as |elemento|}}
+                    {{#each presupuesto.materiales as |elemento|}}
                     <tr >
-                      <td class="col-tabla">{{elemento.codigo}}</td>
+                      <td class="col-tabla">{{elemento.codigo_mat}}</td>
                       <td class="col-tabla"><{{elemento.desc}}</td>
                       <td class="col-tabla">{{elemento.cantidad}} </td>
                       <td class="col-tabla"> {{elemento.precio_venta}}</td>
-                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}">{{elemento.precio_total}}</td>
+                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo_mat}}">{{elemento.precio_total}}</td>
+                    </tr>
+                    {{/each}}
+                    {{#each presupuesto.servicios as |elemento|}}
+                    <tr >
+                      <td class="col-tabla">{{elemento.codigo_ser}}</td>
+                      <td class="col-tabla"><{{elemento.desc}}</td>
+                      <td class="col-tabla">{{elemento.cantidad}} </td>
+                      <td class="col-tabla"> {{elemento.precio_venta}}</td>
+                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo_ser}}">{{elemento.precio_total}}</td>
                     </tr>
                     {{/each}}
                   </tbody>
@@ -765,24 +774,45 @@
 
             </div>
 
-            <div class="col-md-6 well col-pre-observ">
+            {{#if editing}}
+            <div class="col-md-6 well col-pre-observ-edit">
               <ul class="ul-presupuesto">
                 <li ><b>Observaciones </b></li>
                 <li>
                   <p>
                   
-                  {{#if editing}}
+                 
                     <div class="form-group">
                     {{textarea name="observ" id="observ" type="text" class="form-control" placeholder="Observaciones Presupuesto" value=pe.observ}}
                     </div>
-                  {{else}}
-                    {{presupuesto.observ}}
-                  {{/if}}
                   </p>
                 </li>
               </ul>
             </div>
+            {{else}}
             <div class="col-md-6 well col-pre-observ">
+              <ul class="ul-presupuesto">
+                <li ><b>Observaciones </b></li>
+                <li>
+                  <p>
+                  {{presupuesto.observ}}
+                  </p>
+                </li>
+              </ul>
+            </div>
+            {{/if}}
+            {{#if editing}}
+              <div class="col-md-6 well col-pre-observ-edit">
+                 <dl class="dl-horizontal">
+                      <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
+                      <dt>Descuento ({{presupuesto.descuento}}%):</dt> <dd>Bs. <span id="descuento">0.0</span></dd>
+                      <dt>Subtotal Final:</dt> <dd>Bs. <span id="subtotalfinal">0.0</span></dd>
+                      <dt>I.V.A (12%):</dt> <dd>Bs. <span id="iva">0.0</span></dd>
+                      <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
+                  </dl>
+              </div>
+            {{else}}
+              <div class="col-md-6 well col-pre-observ">
                <dl class="dl-horizontal">
                     <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
                     <dt>Descuento ({{presupuesto.descuento}}%):</dt> <dd>Bs. <span id="descuento">0.0</span></dd>
@@ -791,6 +821,7 @@
                     <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
                 </dl>
             </div>
+            {{/if}}
              <div class="col-md-12 well">
               <ul class="ul-presupuesto">
               <div class="row">

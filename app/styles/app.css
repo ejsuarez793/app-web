@@ -81,7 +81,15 @@ ul {
 
 .modal { overflow: auto !important; }
 
-.col-pre-observ{ height: 170px; }
+.col-pre-observ{ 
+  /*height: 170px;*/
+    height:130px;
+ }
+ .col-pre-observ-edit{ 
+
+    height:170px;
+ }
+
 
 .jumbo-color{
  /* background-color: #B0C4DE;*/

@@ -483,18 +483,27 @@ export default Ember.Controller.extend({
 		var total; /*= parseFloat($("#total").text())*/
 		var cont = 0.0;
 		var pt = 0.0;
-
-		var elementos_cs = this.get('ecs');
-
-		var cod_cs = [];
 		//agregamos los codigos a un arreglo donde le agregamos "pt_" al inicio, para poder referenciar
 		//la td en el precio total
-		$.each(elementos_cs.toArray(),function(i,elemento_cs){
-			cod_cs.push("pt_"+elemento_cs.codigo);
+		var materiales = $.extend(true, [], this.get('presupuesto.materiales').toArray());
+		var servicios = $.extend(true, [], this.get('presupuesto.servicios').toArray());
+
+		var codigos = [];
+		//agregamos los codigos a un arreglo donde le agregamos "pt_" al inicio, para poder referenciar
+		//la td en el precio total
+		$.each(materiales,function(i,elemento){
+			if (elemento.mostrar_seleccion===true){
+				codigos.push("pt_"+elemento.codigo);
+			}
+		});
+		$.each(servicios,function(i,elemento){
+			if (elemento.mostrar_seleccion===true){
+				codigos.push("pt_"+elemento.codigo);
+			}
 		});
 
 		$("td[name='precio_total']").each(function(){
-			if($.inArray($(this).attr('id'), cod_cs) !== -1){
+			if($.inArray($(this).attr('id'), codigos) !== -1){
 				pt = parseFloat($(this).text());
 				cont += pt;
 			}
@@ -506,11 +515,13 @@ export default Ember.Controller.extend({
 		iva = subtotalfinal * (0.12);
 		total = subtotalfinal + iva;
 
-		$("#subtotal1").text(subtotal1);
-		$("#descuento").text(descuento);
-		$("#subtotalfinal").text(subtotalfinal);
-		$("#iva").text(iva);
-		$("#total").text(total);
+		
+		$("#subtotal1").text( numeral(subtotal1).format('0,0.00') );
+		$("#descuento").text(numeral(descuento).format('0,0.00'));
+		$("#subtotalfinal").text(numeral(subtotalfinal).format('0,0.00'));
+		$("#iva").text(numeral(iva).format('0,0.00'));
+		$("#total").text(numeral(total).format('0,0.00'));
+
 
 	},
 	openModalPresupuesto(presupuesto, editing){
@@ -528,12 +539,20 @@ export default Ember.Controller.extend({
 	//	if (!editing)
 		pe = $.extend(true,pe,presupuesto);
 		pe.fecha_mostrar = moment(pe.fecha).format('LL');
+
+
+		$.each(pe.materiales ,function(i,elemento){
+			elemento.precio_total = elemento.cantidad * elemento.precio_venta;
+		});
+		$.each(pe.servicios ,function(i,elemento){
+			elemento.precio_total = elemento.cantidad * elemento.precio_venta;
+		});
 			this.set('presupuesto',pe);
 			this.set('pe',pe);
 			//this.set('pe',presupuesto);
-			materiales = presupuesto.materiales;
-			servicios = presupuesto.servicios;
-			$.each(materiales, function(i,material){
+			
+
+			/*$.each(materiales, function(i,material){
 				aux = {};
 				aux.codigo = material.codigo_mat;
 				aux.desc = material.desc;
@@ -551,7 +570,7 @@ export default Ember.Controller.extend({
 				aux.precio_total =  servicio.precio_venta * servicio.cantidad;
 				ecs.pushObject(aux);
 			});
-			this.set('ecs',ecs);
+			this.set('ecs',ecs);*/
 			$('#myModalPresupuesto').on('shown.bs.modal', function () {
 
 	  			_this.calcularMontoTotal();
@@ -572,6 +591,7 @@ export default Ember.Controller.extend({
 		$.extend(true,data,this.get('pe'));
 		data.estatus = estatus;
 		data.ci_vendedor = Cookies.getJSON('current').ci;
+		console.log(data);
 		this.validarCampos();
         if ($("#formulario").valid()){
         	//console.log(Cookies.getJSON('current').ci);
@@ -600,7 +620,7 @@ export default Ember.Controller.extend({
 		modalBody.style.width = '754px';
 		modalBody.style.height = '1054px';
 		var clone = canvasSc(modalBody);
-		var nombrepdf = "presupesto-"+codigo+".pdf";
+		var nombrepdf = "presupuesto-"+codigo+".pdf";
 
 		html2canvas(clone, {
 		    onrendered: function(canvas) {
@@ -663,7 +683,7 @@ export default Ember.Controller.extend({
 		url = window.serverUrl + /proyecto/ + proyecto.codigo + '/';
 		data.codigo=proyecto.codigo;
 		data.estatus=estatus;
-		if(proyecto.presupuestos===undefined || proyecto.presupuestos===null || proyecto.presupuestos.length===0){
+		if((proyecto.presupuestos===undefined || proyecto.presupuestos===null || proyecto.presupuestos.length===0) && estatus==="Aprobado"){
 			this.msgRespuesta("Error ", "No se puede completar la acción al no poseer presupuestos.",-1,this);
 		}else{
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);

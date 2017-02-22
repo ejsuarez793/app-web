@@ -43,7 +43,7 @@ export default Ember.Controller.extend({
 		});
 
 		$.validator.addMethod('rifValido', function(value, element){
-				return this.optional(element) ||   value.length <= 15 && /[J]\-\d+\-\d/.test(value);
+				return this.optional(element) ||   value.length <= 15 && /([J]|[G]|[V])\-\d+\-\d/.test(value);
 		}, 'Rif no válido');
 
 		$("#formulario").validate({
@@ -252,6 +252,7 @@ export default Ember.Controller.extend({
 		this.validarCampos();
 		if ($("#formulario").valid()){
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+			$("#myModal").modal('hide');
 
 		}
 	},
@@ -379,9 +380,9 @@ export default Ember.Controller.extend({
 		
 	},
 	prepararResumen(){
-		
+		var resumen = this.get('resumen').toArray();
 
-		var resumen = [{
+		/*var resumen = [{
   "nro_proyectos": 992,
   "monto_total": 3424.64,
   "promedio_monto": 7152.97,
@@ -561,7 +562,7 @@ export default Ember.Controller.extend({
   "rif": "263-16-0153",
   "nombre": "Universidad Nacional de Tucumán",
   "act_eco": "Desktop Support Technician"
-}];
+}];*/
 
 		var mayores_montos = [];
 		var menores_montos = [];
@@ -573,7 +574,7 @@ export default Ember.Controller.extend({
 		var aux_asc = [];
 		var aux_des = [];
 		var aux;
-		var numero = 5; //numero de elementos que se desean mostrar, en este caso un top 5 de clientes.
+		var numero = 1; //numero de elementos que se desean mostrar, en este caso un top 5 de clientes.
 
 		for (var campo in campos_ordenar) {
 		    if (campos_ordenar.hasOwnProperty(campo)) {

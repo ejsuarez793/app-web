@@ -113,6 +113,9 @@ export default Ember.Controller.extend({
                 this.transitionToRoute('/admin/registro/');
                 //console.log(response);
             }
+            else if(response.cargo ==='t'){
+                this.msgRespuesta("Error: ","El usuario es un técnico, favor usar la aplicación móvil",-1,this);
+            }
             document.getElementById("loginForm").reset();
         })    
         .fail(function(response) { console.log(response); }); 
