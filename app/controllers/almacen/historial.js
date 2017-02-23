@@ -179,12 +179,109 @@ export default Ember.Controller.extend({
 		this.set('movimiento',mov);
 		$("#myModalMovimiento").modal('show');
 	},
+	openModalGenerarActa(movimiento){
+		var fecha = new Date();
+		var nombre_meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+		var acta_movimiento = {}
+		acta_movimiento = $.extend(true,{},movimiento);
+		acta_movimiento.dias = fecha.getDate();
+		acta_movimiento.mes =  nombre_meses[fecha.getMonth()];
+		acta_movimiento.anio = fecha.getFullYear();
+		acta_movimiento.fecha_mostrar = moment(acta_movimiento.fecha).format('LL');
+
+		console.log(movimiento);
+
+		if (movimiento.tipo == "Egreso"){
+			acta_movimiento.nombre_tipo = "ENTREGA DE MATERIAL";
+			acta_movimiento.egreso = true;
+		}else if (movimiento.tipo == "Retorno"){
+			acta_movimiento.nombre_tipo = "RETORNO DE MATERIAL";
+			acta_movimiento.retorno = true;
+		}else if (movimiento.tipo == "Ingreso"){
+			acta_movimiento.nombre_tipo = "INGRESO DE MATERIAL";
+			acta_movimiento.ingreso = true;
+		}
+
+
+		this.set('acta_movimiento',acta_movimiento);
+		$("#myModalActaMovimiento").modal('show');
+	},
+	consultar(){
+		var url;
+		var method = "GET";
+		var tipo_consulta = this.get('tipo_consulta');
+		if (tipo_consulta==="mes"){
+			//console.log(this.get('consulta.mes'));
+			this.validarConsultaMes();
+			if ($("#formulario_mes").valid()){
+				url = window.serverUrl + '/almacen/consulta/'+tipo_consulta+'/' + this.get('consulta.mes_consulta') + '/'+this.get('consulta.mes_consulta')+'/';
+				this.getElements(method,url,this.setMovimientos,this);	
+			}
+		}else if(tipo_consulta==="rango"){
+			this.validarConsultaRango();
+			if ($("#formulario_rango").valid()){
+				//console.log("rango");
+				//console.log(this.get('consulta'));	
+				url = window.serverUrl + '/almacen/consulta/'+tipo_consulta+'/' + this.get('consulta.desde') + '/'+this.get('consulta.hasta')+'/';
+				//console.log(url);
+				this.getElements(method,url,this.setMovimientos,this);
+			}
+		}else{
+			this.msgRespuesta('Error: ',"Seleccione un tipo de consulta.",-1,this);
+		}
+	},
+	generarPDFActa(nombre,modal){
+		$("#"+modal).css('background', '#fff');
+		function canvasSc(element){
+			//console.log(element.style);
+		  var clone = element.cloneNode(true);
+		  var style = clone.style;
+		  style.position = 'relative';
+		  //style.top = window.innerHeight + 'px';
+		  //style.width =element.style.width;//'794 px';
+		  //style.height =element.style.height;// '1054 px';
+		  //style.width = '600 px';
+		  style.left = 0;
+		  document.body.appendChild(clone);
+		  return clone;
+		}
+
+		var panel = document.getElementById(modal);
+		var originalStyle = panel.style; //copiamos el estilo original ya que una vez finalizado la generacion debemos devolverle al panel
+								 //su ancho y largo original
+
+		//modificamos el ancho y largo del modal
+		panel.style.width = '794px';
+		panel.style.height = '1054px';
+		//console.log(panel);
+		var clone = canvasSc(panel);
+		var nombrepdf = nombre;
+		//console.log($("#"+tipo).width());
+		html2canvas(clone, {
+		    onrendered: function(canvas) {
+		     document.body.removeChild(clone);
+		      var imgData = canvas.toDataURL(
+                    'image/jpeg');             
+                var doc = new jsPDF('p', 'mm', [210, 297]);
+                //var width = doc.internal.pageSize.width;    
+				//var height = doc.internal.pageSize.height;
+                doc.addImage(imgData, 'jpeg', 0, 0);
+                doc.save(nombrepdf);
+		    },
+		});
+
+		//por ultimo importante, devolvemos el estilo original del panel, para que no afecte en la pagina web
+		panel.style = originalStyle;
+	},
 	actions:{
 		cerrarMsgAlert:function(){
 			this.cerrarMsgAlert();
 		},
 		openModalDetalleMovimiento(movimiento){
 			this.openModalDetalleMovimiento(movimiento);
+		},
+		openModalGenerarActa(movimiento){
+			this.openModalGenerarActa(movimiento);
 		},
 		selectTipoConsulta:function(){
 			this.selectTipoConsulta();
@@ -196,28 +293,19 @@ export default Ember.Controller.extend({
 			this.filtrarMovimientos();
 		},
 		consultar:function(){
-			var url;
-			var method = "GET";
-			var tipo_consulta = this.get('tipo_consulta');
-			if (tipo_consulta==="mes"){
-				//console.log(this.get('consulta.mes'));
-				this.validarConsultaMes();
-				if ($("#formulario_mes").valid()){
-					url = window.serverUrl + '/almacen/consulta/'+tipo_consulta+'/' + this.get('consulta.mes_consulta') + '/'+this.get('consulta.mes_consulta')+'/';
-					this.getElements(method,url,this.setMovimientos,this);	
-				}
-			}else if(tipo_consulta==="rango"){
-				this.validarConsultaRango();
-				if ($("#formulario_rango").valid()){
-					//console.log("rango");
-					//console.log(this.get('consulta'));	
-					url = window.serverUrl + '/almacen/consulta/'+tipo_consulta+'/' + this.get('consulta.desde') + '/'+this.get('consulta.hasta')+'/';
-					//console.log(url);
-					this.getElements(method,url,this.setMovimientos,this);
-				}
-			}else{
-				this.msgRespuesta('Error: ',"Seleccione un tipo de consulta.",-1,this);
-			}
+			this.consultar();
 		},
+		generarPDFActa:function(modal){
+			var nombre = nombre;
+			var movimiento = this.get('acta_movimiento');
+			if (movimiento.tipo == "Egreso"){
+				nombre = "ACTA DE ENTREGA DE MATERIAL-CODIGO "+movimiento.codigo;
+			}else if (movimiento.tipo == "Retorno"){
+				nombre = "ACTA DE RETORNO DE MATERIAL "+movimiento.codigo;;
+			}else if (movimiento.tipo == "Ingreso"){
+				nombre = "ACTA DE INGRESO DE MATERIAL "+movimiento.codigo;;
+			}
+			this.generarPDFActa(nombre,modal);
+		}
 	}
 });
