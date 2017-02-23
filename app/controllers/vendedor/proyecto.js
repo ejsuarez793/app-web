@@ -462,6 +462,10 @@ export default Ember.Controller.extend({
 		//console.log(response);
 		response.detalle.fecha_emi_mostrar = moment(response.detalle.fecha_emi).format('L');
 		response.detalle.fecha_ven_mostrar = moment(response.detalle.fecha_ven).format('L');
+		$.each(response.elementos,function(i,elemento){
+			elemento.precio_unitario_mostrar = numeral(elemento.precio_unitario).format('0,0.00');
+			elemento.precio_total_mostrar = numeral(elemento.precio_total).format('0,0.00');
+		})
 		context.set('factura',response);
 		if (response.detalle.facturada!==undefined || response.detalle.facturada!==null){
 			if (response.detalle.facturada===true){
@@ -488,20 +492,17 @@ export default Ember.Controller.extend({
 		var materiales = $.extend(true, [], this.get('presupuesto.materiales').toArray());
 		var servicios = $.extend(true, [], this.get('presupuesto.servicios').toArray());
 
+		//console.log(this.get('presupuesto'));
 		var codigos = [];
 		//agregamos los codigos a un arreglo donde le agregamos "pt_" al inicio, para poder referenciar
 		//la td en el precio total
 		$.each(materiales,function(i,elemento){
-			if (elemento.mostrar_seleccion===true){
-				codigos.push("pt_"+elemento.codigo);
-			}
+			codigos.push("pt_"+elemento.codigo_mat);
 		});
 		$.each(servicios,function(i,elemento){
-			if (elemento.mostrar_seleccion===true){
-				codigos.push("pt_"+elemento.codigo);
-			}
+			codigos.push("pt_"+elemento.codigo_ser);
 		});
-
+		console.log(codigos);
 		$("td[name='precio_total']").each(function(){
 			if($.inArray($(this).attr('id'), codigos) !== -1){
 				pt = parseFloat($(this).text());
@@ -536,41 +537,24 @@ export default Ember.Controller.extend({
 		}else{
 			this.set('editing', true);
 		}
-	//	if (!editing)
 		pe = $.extend(true,pe,presupuesto);
 		pe.fecha_mostrar = moment(pe.fecha).format('LL');
 
 
 		$.each(pe.materiales ,function(i,elemento){
 			elemento.precio_total = elemento.cantidad * elemento.precio_venta;
+			elemento.precio_venta_mostrar = numeral(elemento.precio_venta).format('0,0.00');
+			elemento.precio_total_mostrar = numeral(elemento.precio_total).format('0,0.00');
 		});
 		$.each(pe.servicios ,function(i,elemento){
 			elemento.precio_total = elemento.cantidad * elemento.precio_venta;
+			elemento.precio_venta_mostrar = numeral(elemento.precio_venta).format('0,0.00');
+			elemento.precio_total_mostrar = numeral(elemento.precio_total).format('0,0.00');
 		});
 			this.set('presupuesto',pe);
 			this.set('pe',pe);
 			//this.set('pe',presupuesto);
 			
-
-			/*$.each(materiales, function(i,material){
-				aux = {};
-				aux.codigo = material.codigo_mat;
-				aux.desc = material.desc;
-				aux.cantidad = material.cantidad;
-				aux.precio_venta = material.precio_venta;
-				aux.precio_total =  material.precio_venta * material.cantidad;
-				ecs.pushObject(aux);
-			});
-			$.each(servicios, function(i,servicio){
-				aux = {};
-				aux.codigo = servicio.codigo_ser;
-				aux.desc = servicio.desc;
-				aux.cantidad = servicio.cantidad;
-				aux.precio_venta = servicio.precio_venta;
-				aux.precio_total =  servicio.precio_venta * servicio.cantidad;
-				ecs.pushObject(aux);
-			});
-			this.set('ecs',ecs);*/
 			$('#myModalPresupuesto').on('shown.bs.modal', function () {
 
 	  			_this.calcularMontoTotal();
@@ -578,9 +562,6 @@ export default Ember.Controller.extend({
 			});
 
 			$("#myModalPresupuesto").modal('show');
-		//}else if (editing){
-			//console.log("editando");
-		//}
 	},
 	guardarPresupuesto(presupuesto, estatus){
 		var method;
@@ -591,7 +572,7 @@ export default Ember.Controller.extend({
 		$.extend(true,data,this.get('pe'));
 		data.estatus = estatus;
 		data.ci_vendedor = Cookies.getJSON('current').ci;
-		console.log(data);
+		//console.log(data);
 		this.validarCampos();
         if ($("#formulario").valid()){
         	//console.log(Cookies.getJSON('current').ci);
@@ -692,13 +673,6 @@ export default Ember.Controller.extend({
 	msgRespuesta(tipo,desc,estatus,context){
 		var clases = ['alert-danger','alert-warning','alert-success'];
 		var _this = context;
-		/*if (estatus==-1){
-			console.log(estatus);
-		}else if (estatus==0){
-			console.log(estatus);
-		}else if(estatus==1){
-			console.log(estatus);
-		}*/
 		_this.set('msg.tipo',tipo);
 		_this.set('msg.desc',desc);
 		$.each(clases,function(i/*,clase*/){
@@ -835,33 +809,33 @@ export default Ember.Controller.extend({
 			$("myModalFactura").modal('hide');
 		}
 	},
-	openModalFactura(editing){
+	/*openModalFactura(editing){
 		this.set('editing',editing);
 		$("#myModalFactura").modal('show');
-		/*var factura = {
-			nombre_cliente:'',
-			rif_cliente:'',
-			tlf1_c:'',
-			tlf2_c:'',
-			fax_c:'',
-			dire_c:'',
-			nro_factura:'',
-			nro_control:'',
-			f_emi:'',
-			f_ven:'',
-			nombre_v:'',
-			cond_pago: '',
-			persona_cc:'',
-			email_cc:'',
-			cargo_cc:'',
-			departamento_cc:'',
-			elementos:[],
-			pagada:false,
-			banco_dest:'',
-			nro_ref:'',
-			codigo_pre:'',
-			codigo_eta:'',
-		};*/
+		//var factura = {
+		//	nombre_cliente:'',
+		//	rif_cliente:'',
+		//	tlf1_c:'',
+		//	tlf2_c:'',
+		//	fax_c:'',
+		//	dire_c:'',
+		//	nro_factura:'',
+		//	nro_control:'',
+		//	f_emi:'',
+		//	f_ven:'',
+		//	nombre_v:'',
+		//	cond_pago: '',
+		//	persona_cc:'',
+		//	email_cc:'',
+		//	cargo_cc:'',
+		//	departamento_cc:'',
+		//	elementos:[],
+		//	pagada:false,
+		//	banco_dest:'',
+		//	nro_ref:'',
+		//	codigo_pre:'',
+		//	codigo_eta:'',
+		//};
 		var servicios = [];
 		var materiales = [];
 		var etapa = this.get('etapa');
@@ -884,7 +858,7 @@ export default Ember.Controller.extend({
 				}
 			});
 		});
-		//console.log(this.get('materiales_usados_etapas'));
+
 		$.each(this.get('materiales_usados_etapas').toArray(),function(i,mue){
 			if (mue.codigo===etapa.codigo){
 				$.each(mue.materiales,function(i,material){
@@ -893,10 +867,8 @@ export default Ember.Controller.extend({
 				});
 			}
 		});
-		//console.log(materiales);
-		//console.log("iplementar");
-		//console.log(editing);
-	},
+
+	},*/
 	openModalPagoFactura(){
 
 		$("#myModalPagoFactura").modal('show');
@@ -950,9 +922,9 @@ export default Ember.Controller.extend({
 		selectPresupuestoFactura(){
 			this.selectPresupuestoFactura();
 		},
-		openModalFactura(editing){
+		/*openModalFactura(editing){
 			this.openModalFactura(editing);
-		},
+		},*/
 		consultarFactura(){
 			this.consultarFactura();
 		},

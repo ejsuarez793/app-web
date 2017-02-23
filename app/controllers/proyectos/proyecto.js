@@ -22,7 +22,7 @@ export default Ember.Controller.extend({
 	presupuesto_agregar_servicio:false,
 	presupuesto_agregar_material:false,
 
-
+	generar_acta_inicio:false, //se utiliza para mostrar el boton de generar acta de inicio
  	//3 arreglos usados para generar el listado de materiales usados (total y por etapas) y disponibles
 	materiales_disponibles : [],
 	materiales_usados_etapas: [],
@@ -273,11 +273,14 @@ export default Ember.Controller.extend({
 			proyecto.accion = "Proyecto Preventa";
 			$("#accion").prop('disabled',true);
 		}else if(proyecto.estatus === "Aprobado"){
+			
 			proyecto.accion = "Iniciar Proyecto";
 		}else if(proyecto.estatus === "Ejecucion"){
+			_this.set('generar_acta_inicio',true);
 			proyecto.accion = "Culminar";
 		}else if(proyecto.estatus === "Culminado"){
-			proyecto.accion = "Generar Acta";
+			_this.set('generar_acta_inicio',true);
+			proyecto.accion = "Acta Culminacion";
 		}else if(proyecto.estatus === "Rechazado"){
 			proyecto.accion = "Proyecto Rechazado";
 			$("#accion").prop('disabled',true);
@@ -546,7 +549,7 @@ export default Ember.Controller.extend({
 		url = window.serverUrl + '/proyecto/' + proyecto.codigo + '/';
 		data = $.extend(true,{},proyecto);
 
-		if (proyecto.accion === "Generar Acta"){
+		if (proyecto.accion === "Acta Culminacion"){
 			this.prepararActaCulminacion();
 		}else{
 			if(estatus === "Aprobado"){
@@ -637,7 +640,8 @@ export default Ember.Controller.extend({
 				$.each(material_etapa.materiales,function(i,material){
 					aux = {};
 					aux.codigo = material.codigo_mat;
-					aux.desc = material.desc;
+					aux.desc = material.nombre + " " + material.desc + " " +material.marca;
+					console.log(material);
 					aux.cantidad = material.cant;
 					elementos.push($.extend(true,{},aux));
 				});
@@ -1108,6 +1112,27 @@ export default Ember.Controller.extend({
 		}
 		$("#myModalPresupuesto").modal('hide');
 	},
+	openModalActaInicio(){
+		var acta_inicio ={};
+		var proyecto = this.get('proyecto');
+		var fecha = new Date();
+		var nombre_meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+		acta_inicio.nombre_cliente = proyecto.cliente.nombre;
+		acta_inicio.rif_cliente = proyecto.cliente.rif;
+		acta_inicio.nombre_pro = proyecto.nombre;
+		acta_inicio.codigo_pro = proyecto.codigo;
+		acta_inicio.desc_pro = proyecto.desc;
+		acta_inicio.f_ini = moment(proyecto.f_ini).format("LL");
+		//acta_inicio.f_fin = moment(proyecto.f_fin).format("LL");
+		acta_inicio.dias = fecha.getDate();
+		acta_inicio.mes =  nombre_meses[fecha.getMonth()];
+		acta_inicio.anio = fecha.getFullYear();
+		acta_inicio.codigo_presupuesto = proyecto.presupuestos[0].codigo;
+
+		this.set('acta_inicio',acta_inicio);
+		$("#myModalActaInicio").modal('show');
+	},
 	openModalGeneral(){
 		this.set('pg.nombre',this.get('proyecto.nombre'));
 		this.set('pg.desc',this.get('proyecto.desc'));
@@ -1422,6 +1447,9 @@ export default Ember.Controller.extend({
 		ordenarPor: function(property,presupuestos) {
 			this.ordenarPor(property,presupuestos);
     	},
+    	openModalActaInicio(){
+    		this.openModalActaInicio();
+    	},
     	openModalGeneral:function(){
     		this.openModalGeneral();
     	},
@@ -1437,9 +1465,11 @@ export default Ember.Controller.extend({
     	guardarTecnicos:function(){
     		this.guardarTecnicos();
     	},
+
     	openModalEtapa:function(etapa,editing){
     		this.openModalEtapa(etapa,editing);
     	},
+
 		openModalPresupuesto: function(editing,presupuesto){
 			this.prepararModalPresupuesto(editing,presupuesto);
 		},
@@ -1508,6 +1538,8 @@ export default Ember.Controller.extend({
 				nombre = "acta entrega-"+this.get('proyecto.codigo') + '-'+this.get('etapa.letra') +'.pdf';
 			}else if (tipo==="Culminacion"){
 				nombre = "acta culminacion-" +this.get('proyecto.codigo') + '.pdf';
+			}else if (tipo ==="Inicio"){
+				nombre =  "acta inicio-" +this.get('proyecto.codigo') + '.pdf';
 			}
 			this.generarPDFActa(nombre,modal);
 		}

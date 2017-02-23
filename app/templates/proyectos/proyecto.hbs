@@ -88,7 +88,12 @@
                         </div>
                         <div class="panel-footer">
                           <div class="row">
-                          <div class="col-sm-9"></div>
+                          <div class="col-sm-7"></div>
+                          <div class="col-sm-2">
+                            {{#if generar_acta_inicio}}
+                              <button id="accion" class="btn btn-primary" {{action 'openModalActaInicio'}} type="submit">Acta Inicio</button>
+                            {{/if}}
+                          </div>
                             <div class="col-sm-3">
                               <button class="btn btn-primary" {{action 'openModalGeneral'}} type="submit">Editar</button>
                               <button id="accion" class="btn btn-primary" {{action 'accionProyecto'}} type="submit">{{proyecto.accion}}</button>
@@ -1293,112 +1298,90 @@
   </div>
 </div>
 
-<!-- Modal MATERIALES-->
-<!--<div class="modal fade " id="myModalMateriales" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
+
+
+<!-- Modal ACTA ENTREGA INICIO-->
+<div class="modal fade " id="myModalActaInicio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Materiales</h4>
+        <h4 class="modal-title" id="myModalLabel">Acta de Inicio</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="modalActaInicio">
           
         <div class="row">
-        <div class="col-md-12">
-            <table class="table table-bordered table-hover table-condensed">  
-              <thead class="header-tabla">
-                <tr>
-                  <th>Código</th>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
-                  <th>Características</th>
-                  <th>Marca / Modelo</th>
-                  <th>Seleccionar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {{#each mss as |material|}}
-                <tr>
-                  <td class="col-tabla">{{material.codigo}}</td>
-                  <td class="col-tabla">{{material.nombre}}</td>
-                  <td class="col-tabla">{{material.desc}}</td>
-                  <td class="col-tabla">
+        <div class="col-md-6"></div>
+        <div class="col-md-8"></div>
 
-                    <strong>Color:  </strong> {{material.color}} <br>
-                    <strong>Serial: </strong> {{material.serial}} <br>
 
-                  </td>
-                  <td class="col-tabla">{{material.marca}} / {{material.modelo}}</td>
-                  <td><input type="checkbox" value={{material.codigo}}></td>
-                </tr>
-                {{/each}}
-              </tbody>
-            </table>
-        </div>
+          <div class="col-md-12">
+              <h2 class="text-center">ACTA DE INICIO</h2>
+
+          </div>
+          <br>
+          <br>
+          <br>
+          <br>
+          <div class="col-md-12">
+            <p class="text-justify">
+              Entre <strong>SISTELRED, C.A., RIF: J-30994445-2</strong> y el cliente <strong>{{acta_inicio.nombre_cliente}}, RIF: {{acta_inicio.rif_cliente}}</strong> se da inicio al proyecto <strong>{{acta_inicio.nombre_pro}}</strong> registrado bajo el código <strong>{{acta_inicio.codigo_pro}}</strong>, de fecha {{acta_inicio.f_ini}}, cuyo objeto se define como {{acta_inicio.desc_pro}}, el cual se regirá según el presupuesto Nro <strong>{{acta_inicio.codigo_presupuesto}}.</strong>
+
+            </p>
+            <br>
+            <p>Acta que se efectúa en la ciudad de Caracas, a los {{acta_inicio.dias}} del mes de {{acta_inicio.mes}} del año {{acta_inicio.anio}}.</p>
+          </div>
+
+          <br>
+          <br>
+          <br>
+          <br>
+
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Por el Cliente: <strong>{{acta_inicio.nombre_cliente}}</strong>
+              </div>
+              <div class="panel-body">
+                <p class="text-center">
+                  <stong>Firma y Sello</stong>
+                </p>
+                <p>Nombre:</p>
+                <p>Cargo:</p>
+                <p>Firma:</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Por <strong>SISTELRED, C.A</strong>
+              </div>
+              <div class="panel-body">
+                <p class="text-center">
+                  <stong>Firma y Sello</stong>
+                </p>
+                <p>Nombre:</p>
+                <p>Cargo:</p>
+                <p>Firma:</p>
+              </div>
+            </div>
+          </div>
+          
+
+
+
         </div>
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button  {{action 'agregarElementos' 'material'}} class="btn btn-primary">Guardar</button>
+        <button  {{action 'generarPDFActa' 'Inicio' 'modalActaInicio'}} class="btn btn-primary">PDF</button>
       </div>
     </div>
   </div>
-</div>-->
-
-
-
-
-
-<!-- Modal SERVICIOS-->
-<!--<div class="modal fade " id="myModalServicios" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Servicios</h4>
-      </div>
-      <div class="modal-body">
-          
-        <div class="row">
-        <div class="col-md-12">
-            <table class="table table-bordered table-hover table-condensed">  
-              <thead class="header-tabla">
-                <tr>
-                  <th>Código</th>
-                  <th>Descripción</th>
-                  <th>Precio act</th>
-                  <th>Seleccionar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {{#each sss as |servicio|}}
-                <tr>
-                  <td class="col-tabla">{{servicio.codigo}}</td>
-                  <td class="col-tabla">{{servicio.desc}}</td>
-                  <td class="col-tabla">{{servicio.precio_act}}</td>
-                  <td><input type="checkbox" value={{servicio.codigo}}></td>
-                </tr>
-                {{/each}}
-              </tbody>
-            </table>
-        </div>
-        </div>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button  {{action 'agregarElementos' 'servicio'}} class="btn btn-primary">Guardar</button>
-      </div>
-    </div>
-  </div>
-</div>-->
-
-
-
-
-
-
+</div>
 
 
 
