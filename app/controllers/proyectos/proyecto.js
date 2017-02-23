@@ -250,7 +250,7 @@ export default Ember.Controller.extend({
 
 	},
 	setProyecto(proyecto,context){
-		console.log(proyecto);
+		//console.log(proyecto);
 		var _this = context;
 		var no_definida = "(Fecha no definida)";
 		proyecto.f_inicio = no_definida;
@@ -355,7 +355,7 @@ export default Ember.Controller.extend({
 		_this.set('materiales',materiales);
 	},
 	setDesglose(desglose,context){
-		//console.log(desglose);
+		console.log(desglose);
 		context.set('desglose',desglose);
 		context.listadoMateriales();
 	},
@@ -680,7 +680,7 @@ export default Ember.Controller.extend({
 	},
 	/*funcion que prepara el contenido del modal de presupuesto, de acuerdo a si es una nueva solicitud o
 	es un presupuesto que se esta editanto*/
-	prepararModalPresupuesto(editing,presupuesto){
+	openModalPresupuesto(editing,presupuesto){
 		var proyecto = this.get('proyecto');
 		var cont = 0;
 		var arrayLetras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']; //array de letras para colocar al final del nuevo presupuesto
@@ -1104,8 +1104,8 @@ export default Ember.Controller.extend({
 			url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo')+'/presupuesto/';
 		}
 		data = this.get('presupuesto');
-		if(data.estatus === "Aprobado"){
-			this.msgRespuesta("Error: ","Presupuesto ya aprobado no se puede editar.",-1,this);
+		if(data.estatus === "Aprobado" || data.estatus === "Cerrado"){
+			this.msgRespuesta("Error: ","Presupuesto ya aprobado o cerrado, no se puede editar.",-1,this);
 		}else{
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 			this.init();
@@ -1471,7 +1471,7 @@ export default Ember.Controller.extend({
     	},
 
 		openModalPresupuesto: function(editing,presupuesto){
-			this.prepararModalPresupuesto(editing,presupuesto);
+			this.openModalPresupuesto(editing,presupuesto);
 		},
 		openModalSolicitud: function(solicitud){
 			this.openModalSolicitud(solicitud);

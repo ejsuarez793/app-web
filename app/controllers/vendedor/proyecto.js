@@ -410,7 +410,7 @@ export default Ember.Controller.extend({
 				//data: data,
 		})    
 		.done(function(response){ callback(response, context); })    
-		.fail(function(response) { console.log(response); context.msgRespuesta("Error: ",response.responseText,-1,context); }); 
+		.fail(function(response) { context.msgRespuesta("Error: ",response.responseText,-1,context); }); 
 	},
 	llamadaServidor(method,url,data,callback,context){
 		$.ajax({
@@ -425,22 +425,22 @@ export default Ember.Controller.extend({
 				data: JSON.stringify(data),
 		})    
 		.done(function(response) {
-			console.log(response);
+			//console.log(response);
 			context.init();
 			callback('Exito: ',response.msg,1,context);
 		})    
 		.fail(function(response) { 
-			console.log(response);
+			//console.log(response);
 			callback('Error: ',response.responseText,-1,context);
 		});
 	},
 	setProyecto(proyecto,context){
-		console.log(proyecto);
+		//console.log(proyecto);
 		var _this = context;
 		_this.set('proyecto',proyecto);
 
 		$.each(proyecto.presupuestos,function(i,presupuesto){
-			if (presupuesto.estatus ==="Aprobado"){
+			if (presupuesto.estatus === "Aprobado" || presupuesto.estatus === "Cerrado" || proyecto.estatus === "Culminado" || proyecto.estatus === "Rechazado"){
 				presupuesto.noAprobado = false;
 			}else{
 				presupuesto.noAprobado = true;
@@ -502,7 +502,7 @@ export default Ember.Controller.extend({
 		$.each(servicios,function(i,elemento){
 			codigos.push("pt_"+elemento.codigo_ser);
 		});
-		console.log(codigos);
+		//console.log(codigos);
 		$("td[name='precio_total']").each(function(){
 			if($.inArray($(this).attr('id'), codigos) !== -1){
 				pt = parseFloat($(this).text());
@@ -806,8 +806,11 @@ export default Ember.Controller.extend({
 		this.validarFactura();
 		if ($("#formulario_factura").valid()){
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
-			$("myModalFactura").modal('hide');
+			$("#myModalFactura").modal('hide');
+			this.init();
+			//location.reload();
 		}
+
 	},
 	/*openModalFactura(editing){
 		this.set('editing',editing);
@@ -880,7 +883,7 @@ export default Ember.Controller.extend({
 		var data = {};
 		data= $.extend(true,{},pago);
 		data.pagada=true;
-		console.log(data);
+		//console.log(data);
 		url = window.serverUrl + '/ventas/factura/' + this.get('etapa.codigo') + '/';
 		this.validarPagoFactura();
 		if ($("#formulario_pago").valid()){
@@ -938,7 +941,7 @@ export default Ember.Controller.extend({
 			this.guardarPagoFactura();
 		},
 		generarFacturaPDF(){
-			console.log("epale");
+			//console.log("epale");
 			var nombre = "facturaNro-"+this.get('factura.detalle.nro_factura')+'.pdf';
 			this.generarFacturaPDF(nombre,"modalBodyFactura");
 		}

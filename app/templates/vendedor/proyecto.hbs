@@ -900,6 +900,7 @@
       {{else}}
         <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
         <button  {{action 'guardarPresupuesto' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
+        <button  {{action 'guardarPresupuesto' presupuesto 'Cerrado'}} class="btn btn-default">Cerrar</button>
         <button  {{action 'guardarPresupuesto' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
       {{/if}}
       </div>
