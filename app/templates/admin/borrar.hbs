@@ -69,6 +69,39 @@
 
 								<div class="col-md-12"></div>
 							</div>
+
+
+
+							<div class="row">
+								{{#if respuesta.error}}
+									{{#each respuesta.listas as |errores|}}
+										<div class="col-md-12">
+											<p class="text-center"><strong class="text-danger">{{errores.msg}}</strong></p>
+										</div>
+
+										<div class="col-md-1"></div>
+								        <div class="col-md-10">
+								       
+								            <table class="table table-condensed">
+								              	<thead>
+									                <tr>
+									                  <th >Descripción</th>
+									                </tr>
+								              	</thead>
+									              <tbody>
+									                {{#each errores.lista as |error|}}
+									                <tr>
+									                    <td class="col-tabla">{{error}}</td>
+									                </tr>
+									                {{/each}}
+									              </tbody>
+								            </table>
+								       
+								        </div>
+								        <div class="col-md-1"></div>
+								    {{/each}}
+						        {{/if}}
+							</div>
 						</form>
                 	</div>
 	                <div class="panel-footer">

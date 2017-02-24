@@ -4,6 +4,7 @@ export default Ember.Controller.extend({
 	tipo:"",
 	codigo:"",
 	msg:{},
+	respuesta:{},
 	validar: function(tipo){
 
     	$("#form_borrar").validate(
@@ -58,12 +59,20 @@ export default Ember.Controller.extend({
 		})    
 		.done(function(response) {
 			//console.log(response);
-			context.init();
+			//context.init();
+			
+			//console.log(response.responseJSON);
 			callback('Exito: ',response.msg,1,context);
 		})    
 		.fail(function(response) { 
 			console.log(response);
-			callback('Error: ',response.responseText,-1,context);
+			if (response.status==404){
+				callback('Error: ',response.responseJSON.msg,-1,context);
+			}else{
+				callback('Error: ',"No se puede borrar el elemento.",-1,context);
+				context.set('respuesta',response.responseJSON);
+			}
+			
 		});
 	},
 	msgRespuesta(tipo,desc,estatus,context){
@@ -97,8 +106,10 @@ export default Ember.Controller.extend({
 			var data = {}
 			this.validar();
 			if ($("#form_borrar").valid()){
-				console.log("borrando ..");
+				//console.log("borrando ..");
+				this.set('respuesta',{});
 				this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+
 			}
 		},
 		selectNuevoTipo:function(){
