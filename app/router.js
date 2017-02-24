@@ -39,6 +39,7 @@ Router.map(function() {
   this.route('admin', function() {
     this.route('registro');
     this.route('gestion');
+    this.route('borrar');
   });
 });
 

@@ -1,0 +1,93 @@
+{{logged-header-component currentName=currentName }}
+ <div class="container-fluid">
+        <div class="row">
+        
+          <div class="col-lg-2  ">
+            <h2>Administración</h2>
+          </div>
+          <div class="col-lg-10">
+            <div id="alertMsg" class="alert alert-dismissible" role="alert" hidden >
+              <button type="button" class="close" aria-label="Close" {{action 'cerrarMsg'}}><span aria-hidden="true">&times;</span></button>
+              <strong>{{msg.tipo}}</strong> {{msg.desc}}
+            </div>
+          </div>
+        </div>
+
+
+<div class="row ">
+	{{admin-sidebar-component}}
+	<div class="col-md-10">
+
+      <div class="well jumbo-color">
+
+        <div class="row">
+
+          	<div class="col-md-12 ">
+            	<div class="panel panel-default">
+	                <div class="panel-heading">
+	                  <h3 class="panel-title">Borrar Elemento</h3>
+	                </div>
+                	<div class="panel-body">
+                		<form  id="form_borrar">
+				      		<div class="row">
+
+				      			<div class="col-md-4">
+								<div class="form-group">
+									<label>Tipo Elemento Borrar</label><small class="form-text text-muted">* </small>
+									<div class="input-group input-group">
+									  <select class="form-control" name="tipo" id="select_tipo" onchange={{action 'selectNuevoTipo'}}>
+									  	<option disabled selected value="">Seleccione...</option>
+									      <option value="Cliente">Cliente</option>
+									      <option value="Proveedor">Proveedor</option>
+									      <option value="Solicitud">Solicitud</option>
+									      <option value="Material">Material</option>
+									      <option value="Servicio">Servicio</option>
+									      <option value="Proyecto">Proyecto</option>
+									      <option value="Presupuesto">Presupuesto</option>
+									    </select>
+									  <span class="input-group-addon">{{fa-icon "file-text-o"}}</span>
+									</div>
+								</div>
+								</div>
+
+				      			<div class="col-md-8">
+									<div class="form-group">
+										<label>Código del Elemento </label><small class="form-text text-muted">* </small>
+										<div class="input-group">
+										  {{input name="codigo" id="codigo" type="text" class="form-control" placeholder="Código del elemento seleccionado" value=codigo}}
+										  <span class="input-group-addon">{{fa-icon "trash-o"}}</span>
+										</div>
+
+									</div>
+								</div>
+
+							
+
+								
+
+							
+
+								<div class="col-md-12"></div>
+							</div>
+						</form>
+                	</div>
+	                <div class="panel-footer">
+	                 	<div class="row">
+	                		<div class="col-md-12">
+	                			<button class="btn btn-primary pull-right" type="submit" {{action 'borrar'}}>Borrar</button>
+	                		</div>
+	                	</div>
+	                </div>
+              	</div>
+            </div>
+
+
+            
+
+          </div>
+
+        </div>
+	</div>
+</div>
+
+</div>
