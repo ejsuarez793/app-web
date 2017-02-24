@@ -264,18 +264,21 @@
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
-                                    <th >Nombre</th>
                                     <th >Desc</th>
                                     <th class="col-md-1">Cantidad</th>
                                   </tr>
                                 </thead>
                                 <tbody id="tbody" class="text-center">
-                                  {{#each materiales_disponibles as |material|}}
+                                  {{#each desglose.disponibles as |material|}}
                                   <tr>
-                                    <td class="col-tabla">{{material.codigo_mat}}</td>
-                                    <td class="col-tabla"><{{material.nombre}}</td>
-                                    <td class="col-tabla">{{material.desc}}</td>
-                                    <td class="col-tabla">{{material.cant}}</td>
+                                    <td class="col-tabla">{{material.codigo}}</td>
+                                    <td class="col-tabla">
+                                      {{material.nombre}}&nbsp;
+                                      {{material.desc}}&nbsp;
+                                      {{material.marca}} 
+                                      {{#if material.serial}}&nbsp;-SE:{{material.serial}}{{/if}}
+                                    </td>
+                                    <td class="col-tabla">{{material.cantidad}}</td>
                                   </tr>
                                   {{/each}}
                                 </tbody>
@@ -304,18 +307,22 @@
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
-                                    <th >Nombre</th>
                                     <th >Desc</th>
                                     <th class="col-md-1">Cantidad</th>
                                   </tr>
                                 </thead>
                                 <tbody id="tbody" class="text-center">
-                                  {{#each materiales_usados_totales as |material|}}
+                                  {{#each desglose.usados as |material|}}
                                   <tr>
-                                    <td class="col-tabla">{{material.codigo_mat}}</td>
-                                    <td class="col-tabla"><{{material.nombre}}</td>
-                                    <td class="col-tabla">{{material.desc}}</td>
-                                    <td class="col-tabla">{{material.cant}}</td>
+                                    <td class="col-tabla">{{material.codigo}}</td>
+                                    <td class="col-tabla">
+                                      {{material.nombre}}&nbsp;
+                                      {{material.desc}}&nbsp;
+                                      {{material.marca}} 
+                                      {{#if material.serial}}&nbsp;-SE:{{material.serial}}{{/if}}
+
+                                    </td>
+                                    <td class="col-tabla">{{material.cantidad}}</td>
                                   </tr>
                                   {{/each}}
                                 </tbody>
@@ -339,11 +346,16 @@
                         Materiales usados por etapas
                       </div>
                        <div class="panel-body">
-                       {{#each materiales_usados_etapas as |etapa|}}
+                       {{#each desglose.etapas as |etapa|}}
+                        {{#if etapa.tiene_materiales}}
                            <div class="panel panel-default">
 
                             <div class="panel-heading">
-                             <p><strong>Etapa: </strong>{{etapa.letra}}<strong>Nombre:</strong>{{etapa.nombre}}</p>
+                             <p>
+                               <strong>Etapa: </strong>{{etapa.letra_eta}}<strong>
+                               &nbsp;&nbsp;&nbsp;
+                               Nombre: </strong>{{etapa.nombre_eta}}
+                             </p>
                             </div>
                              <div class="panel-body">
                                  <div class="row">
@@ -352,7 +364,6 @@
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
-                                    <th >Nombre</th>
                                     <th >Desc</th>
                                     <th class="col-md-1">Cantidad</th>
                                   </tr>
@@ -360,10 +371,14 @@
                                 <tbody id="tbody" class="text-center">
                                   {{#each etapa.materiales as |material|}}
                                   <tr>
-                                    <td class="col-tabla">{{material.codigo_mat}}</td>
-                                    <td class="col-tabla"><{{material.nombre}}</td>
-                                    <td class="col-tabla">{{material.desc}}</td>
-                                    <td class="col-tabla">{{material.cant}}</td>
+                                    <td class="col-tabla">{{material.codigo}}</td>
+                                    <td class="col-tabla">
+                                      {{material.nombre}}&nbsp;
+                                      {{material.desc}}&nbsp;
+                                      {{material.marca}} 
+                                      {{#if material.serial}}&nbsp;-SE:{{material.serial}}{{/if}}
+                                    </td>
+                                    <td class="col-tabla">{{material.cantidad}}</td>
                                   </tr>
                                   {{/each}}
                                 </tbody>
@@ -372,13 +387,14 @@
                             </div>
                              </div>
                              </div>
+                          {{/if}}
                        {{/each}}
                            
                        </div>
                         <div class="panel-footer">
                          <div class="row">
                             <div class="col-sm-12">
-                              <button class="btn btn-primary pull-right"  id="exportar_mat_etapas"  {{action 'generarPDF' 'material_etapas'}} type="submit">Exportar PDF</button>
+                              <button class="btn btn-primary pull-right"  id="exportar_mat_material_etapas"  {{action 'generarPDF' 'material_etapas'}} type="submit">Exportar PDF</button>
                             </div>
                         </div>
                         </div>

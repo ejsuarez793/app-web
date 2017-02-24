@@ -357,9 +357,9 @@ export default Ember.Controller.extend({
 	setDesglose(desglose,context){
 		console.log(desglose);
 		context.set('desglose',desglose);
-		context.listadoMateriales();
+		//context.listadoMateriales();
 	},
-	listadoMateriales(){
+	/*listadoMateriales(){
 		//console.log(this.get('desglose'));
 		var desglose = this.get('desglose');
 		var disponibles = [];
@@ -386,8 +386,6 @@ export default Ember.Controller.extend({
 		});
 
 		//hasta este punto me deberian salir un json con un campo de cada etapa y sus egresados y retornados, para luego restar los eleentos
-		/*console.log("usados antes proce");
-		console.log(usados_e);*/
 
 		//ahora resto los elementos
 		$.each(usados_e,function(i,usado_e){
@@ -422,8 +420,6 @@ export default Ember.Controller.extend({
 			
 		});
 
-		/*console.log("usados efectivamente");
-		console.log(usados_efectivamente);*/
 
 		//por ultimo sumo los materiales disponibles de los presupuestos
 		$.each(desglose.presupuestos.toArray(),function(i,material){
@@ -459,8 +455,7 @@ export default Ember.Controller.extend({
 			});
 		});
 
-		/*console.log("total usados");
-		console.log(total_usados);*/
+
 
 		//finalizando restamos los disponibles del presupuesto con los usados efectivamente en cada etapa
 		
@@ -497,14 +492,13 @@ export default Ember.Controller.extend({
 		    //console.log(propName);
 		}
 		//console.log(materiales_x_etapa);
-		/*console.log("disponibles");
-		console.log(disponibles);*/
+
 
 		this.set('materiales_disponibles',disponibles);
 		this.set('materiales_usados_etapas',materiales_x_etapa);
 		this.set('materiales_usados_totales',total_usados);
 
-	},
+	},*/
 	ordenar(prop, asc,array) {
 	    array = array.sort(function(a, b) {
 	        if (asc) {
@@ -1357,7 +1351,7 @@ export default Ember.Controller.extend({
         this.llamadaServidor(method,url,data,this.msgRespuesta,this);
         this.init();
 	},
-	generarPDF(tipo){
+	/*generarPDF(tipo){
 		//$("#modalBody").css('background', '#fff');
 
 		function canvasSc(element){
@@ -1387,7 +1381,7 @@ export default Ember.Controller.extend({
                 doc.save(nombrepdf);
 		    },
 		});
-	},
+	},*/
 	generarPDFActa(nombre,modal){
 		$("#"+modal).css('background', '#fff');
 		function canvasSc(element){
@@ -1524,7 +1518,9 @@ export default Ember.Controller.extend({
 		},
 		generarPDF:function(tipo){
 			$("#exportar_mat_"+tipo).hide();
-			this.generarPDF(tipo);
+			//console.log(tipo);
+			var nombrepdf = this.get('proyecto.codigo')+"-listado-materiales-"+tipo+".pdf";
+			this.generarPDFActa(nombrepdf,tipo);
 			$("#exportar_mat_"+tipo).show();
 		},
 		materialDesglose: function(){
