@@ -41,7 +41,11 @@ export default Ember.Controller.extend({
 			var aux = [];
 			aux.push(proyectos);
 			proyectos = aux;
-		}	
+		}
+
+		$.each(proyectos, function(i, proyecto){
+			proyecto.reporte_inicial.fecha_visita_mostrar = moment(proyecto.reporte_inicial.f_vis).format('ll');
+		});
 		_this.set('proyectos',proyectos);
 		//console.log(proyectos);
 	 	_this.paginationInitialize(10);	

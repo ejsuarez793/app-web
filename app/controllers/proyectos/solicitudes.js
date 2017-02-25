@@ -163,7 +163,7 @@ export default Ember.Controller.extend({
     			}
     		});
     		if (!flag){
-    			$("#nombre_t").val('Cedula no registrada.');
+    			$("#nombre_t").val('Cédula no registrada.');
     		}
     	});
 	},

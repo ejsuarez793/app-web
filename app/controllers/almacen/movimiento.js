@@ -350,7 +350,7 @@ export default Ember.Controller.extend({
 		this.set('movimiento.materiales',materiales);
 	},
 	buscar(){
-		console.log(this.get('movimiento.ingreso'));
+		//console.log(this.get('movimiento.ingreso'));
 		var method = "GET";
 		var url;
 		var tipo_mov = this.get('tipo_mov');

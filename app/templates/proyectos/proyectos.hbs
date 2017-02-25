@@ -43,7 +43,7 @@
 		   <table class="table table-bordered table-hover " id="tabla">	
         	<thead class="header-tabla">
         		<tr>
-				    <th {{action "ordenarPor" "codigo"}}>Codigo <span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
+				    <th {{action "ordenarPor" "codigo"}}>Código <span id="th-codigo" class="glyphicon glyphicon-chevron-down"></span></th>
 				    <th {{action "ordenarPor" "nombre"}}>Nombre <span id="th-nombre" class="glyphicon glyphicon-chevron-down"></span></th>
 				    <th{{action "ordenarPor" "nombre_c"}} >Cliente <span id="th-nombre_c" class="glyphicon glyphicon-chevron-down"></span></th>
 				    <th{{action "ordenarPor" "estatus"}} >Estado<span id="th-estatus" class="glyphicon glyphicon-chevron-down"></span></th>
@@ -96,7 +96,7 @@
             <div class="col-md-6 ">
               <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Persona que atendió visita</h3>
+                  <h3 class="panel-title">Persona que atendió la visita técnica</h3>
                 </div>
                 <div class="panel-body">
                   <dl class="dl-horizontal">
@@ -124,8 +124,8 @@
             <div class="col-md-12 ">
               <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Detalles Visita</h3>
-                  <small class="form-text text-muted">fecha solicitud {{solicitud.f_sol}}</small>
+                  <h3 class="panel-title">Detalles de la visita técnica</h3>
+                  <small class="form-text text-muted">fecha visita {{reporte_ini.fecha_visita_mostrar}}</small>
                 </div>
                 <div class="panel-body">
                   <p>{{reporte_ini.desc}}</p>
@@ -248,7 +248,7 @@
               <div class="panel panel-primary">
                 <div class="panel-heading">
                   <h3 class="panel-title">Detalles Visita</h3>
-                  <small class="form-text text-muted">fecha solicitud {{solicitud.f_sol}}</small>
+                  <small class="form-text"><strong>fecha solicitud {{solicitud.f_sol}}</strong></small>
                 </div>
                 <div class="panel-body">
                   <p>{{reporte_ini.desc}}</p>

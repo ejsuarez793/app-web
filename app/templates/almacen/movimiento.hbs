@@ -123,7 +123,7 @@
 
 									<div class="col-md-6">
 										<div class="form-group">
-											<label>Persona transporte </label><small class="form-text text-muted">* </small>
+											<label>Persona responsable transporte </label><small class="form-text text-muted">* </small>
 											<div class="input-group">
 											  {{input name="persona_t" id="persona_t" type="text" class="form-control" placeholder="Persona que traslado los materiales" value=movimiento.ingreso.persona_t}}
 											  <span class="input-group-addon">{{fa-icon "bus"}}</span>
@@ -134,7 +134,7 @@
 
 									<div class="col-md-6">
 										<div class="form-group">
-											<label>Persona entrega </label><small class="form-text text-muted">* </small>
+											<label>Persona responsable entrega </label><small class="form-text text-muted">* </small>
 											<div class="input-group">
 											  {{input name="persona_e" id="persona_e" type="text" class="form-control" placeholder="Persona del proveedor que hizo entrega de los materiales" value=movimiento.ingreso.persona_e}}
 											  <span class="input-group-addon">{{fa-icon "user"}}</span>
@@ -459,8 +459,11 @@
                   <td class="col-tabla">{{material.desc}}</td>
                   <td class="col-tabla">{{#if material.serial}} {{material.serial}}{{else}}N/A{{/if}}</td>
                   <td>
-                  	
-                  	<input type="number" class="form-control input-sm" id="cant_sel_{{material.codigo}}" min="0" max="{{material.cantidad}}">
+                  	{{#if material.serial}}
+                  		<input type="number" class="form-control input-sm" id="cant_sel_{{material.codigo}}" min="0" max="1">
+                  	{{else}}
+                  		<input type="number" class="form-control input-sm" id="cant_sel_{{material.codigo}}" min="0" max="99999">
+                  	{{/if}}
 
                   </td>
                   <td><input type="checkbox" value={{material.codigo}}></td>

@@ -41,7 +41,7 @@
                   <div class="col-md-12 ">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                          <h3 class="panel-title">Detalles Proyecto <strong>{{proyecto.estatus}} {{proyecto.f_finalizada}} </strong>
+                          <h3 class="panel-title">Detalles del proyecto <strong>{{proyecto.estatus}} {{proyecto.f_finalizada}} </strong>
 
                           </h3>
                         </div>
@@ -88,14 +88,15 @@
                         </div>
                         <div class="panel-footer">
                           <div class="row">
-                          <div class="col-sm-7"></div>
+                          <div class="col-sm-6"></div>
                           <div class="col-sm-2">
                             {{#if generar_acta_inicio}}
                               <button id="accion" class="btn btn-primary" {{action 'openModalActaInicio'}} type="submit">Acta Inicio</button>
                             {{/if}}
                           </div>
-                            <div class="col-sm-3">
-                              <button class="btn btn-primary" {{action 'openModalGeneral'}} type="submit">Editar</button>
+                           <div class="col-sm-2">  <button class="btn btn-primary" {{action 'openModalGeneral'}} type="submit">Editar</button></div>
+                            <div class="col-sm-2">
+                             
                               <button id="accion" class="btn btn-primary" {{action 'accionProyecto'}} type="submit">{{proyecto.accion}}</button>
                             </div>
                           </div>
@@ -118,7 +119,7 @@
                   <div class="col-md-12 ">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                          <h3 class="panel-title">Técnicos Proyecto
+                          <h3 class="panel-title">Técnicos del proyecto
 
                           </h3>
                         </div>
@@ -181,7 +182,7 @@
                   <div class="col-md-12 ">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                          <h3 class="panel-title">Etapas Proyecto</h3>
+                          <h3 class="panel-title">Etapas del proyecto</h3>
                         </div>
                         <div class="panel-body">
                         
@@ -582,7 +583,7 @@
 
           <div class="col-md-6">
           <div class="form-group">
-            <label>Fecha estimada </label><small class="form-text text-muted">*</small>
+            <label>Fecha estimada de culminación</label><small class="form-text text-muted">*</small>
             <div class="input-group">
               {{input name="f_est" type="date" class="form-control" placeholder="Fecha estimada de finalización" value=pg.f_est}}
               <span class="input-group-addon">{{fa-icon "calendar"}}</span>
@@ -709,7 +710,7 @@
 
             <div class="col-md-6">
             <div class="form-group">
-              <label>Fecha Estimada </label><small class="form-text text-muted">*</small>
+              <label>Fecha estimada de culminación </label><small class="form-text text-muted">*</small>
               <div class="input-group">
                 {{input name="f_est" type="date" class="form-control" value=pe.f_est}}
                 <span class="input-group-addon">{{fa-icon "calendar"}}</span>
@@ -1135,7 +1136,7 @@
             <div class="col-md-12 well">
                <div class="col-md-12">
                <table class="table table-bordered table-hover table-condensed" id="tabla">  
-                  <thead class="header-tabla">
+                  <thead class="header-tabla-presupuesto">
                     <tr>
                       <th class="col-md-1">Código</th>
                       <th class="col-md-5">Descripción</th>

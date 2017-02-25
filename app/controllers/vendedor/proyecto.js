@@ -492,23 +492,26 @@ export default Ember.Controller.extend({
 		var materiales = $.extend(true, [], this.get('presupuesto.materiales').toArray());
 		var servicios = $.extend(true, [], this.get('presupuesto.servicios').toArray());
 
+		/*console.log(materiales);
+		console.log(servicios);*/
 		//console.log(this.get('presupuesto'));
 		var codigos = [];
 		//agregamos los codigos a un arreglo donde le agregamos "pt_" al inicio, para poder referenciar
 		//la td en el precio total
 		$.each(materiales,function(i,elemento){
-			codigos.push("pt_"+elemento.codigo_mat);
+			cont = cont +(elemento.cantidad * parseFloat(elemento.precio_venta)); /*codigos.push("pt_"+elemento.codigo_mat);*/
 		});
 		$.each(servicios,function(i,elemento){
-			codigos.push("pt_"+elemento.codigo_ser);
+			cont = cont +(elemento.cantidad * parseFloat(elemento.precio_venta)); /*codigos.push("pt_"+elemento.codigo_ser);*/
 		});
 		//console.log(codigos);
-		$("td[name='precio_total']").each(function(){
+		/*$("td[name='precio_total']").each(function(){
 			if($.inArray($(this).attr('id'), codigos) !== -1){
 				pt = parseFloat($(this).text());
+				//console.log(pt);
 				cont += pt;
 			}
-		});
+		});*/
 
 		subtotal1 = cont;
 		descuento = cont *(parseFloat(this.get('presupuesto.descuento') / 100));

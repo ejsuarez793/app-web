@@ -12,6 +12,11 @@ ul {
 	background-color: #F6BB42;
 }
 
+.header-tabla-presupuesto{
+  background-color:#337ab7;
+  color:white;
+}
+
 .col-tabla{
 	font-size:12px;
 	text-align: left;

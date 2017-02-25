@@ -24,7 +24,7 @@ export default Ember.Controller.extend({
 		});
 
 		$.validator.addMethod('rifValido', function(value, element){
-				return this.optional(element) ||   value.length <= 15 && /[J]\-\d+\-\d/.test(value);
+				return this.optional(element) ||   value.length <= 15 && /([J]|[G]|[V])\-\d+\-\d/.test(value);
 		}, 'Rif no válido');
 
 
