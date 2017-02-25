@@ -41,7 +41,7 @@ export default Ember.Controller.extend({
 		},
 		{
 			nro:"7",
-			pregunta:"¿Qué tan probable es que recomienden la compañia?",
+			pregunta:"¿Qué tan probable es que recomienden la compañía?",
 			resp:"",
 		},
 	],
@@ -466,7 +466,14 @@ export default Ember.Controller.extend({
 			elemento.precio_unitario_mostrar = numeral(elemento.precio_unitario).format('0,0.00');
 			elemento.precio_total_mostrar = numeral(elemento.precio_total).format('0,0.00');
 		})
+		response.subtotal1_mostrar = numeral(response.subtotal1).format('0,0.00');
+		response.descuento_mostrar = numeral(response.descuento).format('0,0.00');
+		response.subtotal_final_mostrar = numeral(response.subtotal_final).format('0,0.00');
+		response.iva_mostrar = numeral(response.iva).format('0,0.00');
+		response.total_mostrar = numeral(response.total).format('0,0.00');
+		response.f_hoy = moment().format('YYYY-MM-DD');
 		context.set('factura',response);
+		//console.log(response);
 		if (response.detalle.facturada!==undefined || response.detalle.facturada!==null){
 			if (response.detalle.facturada===true){
 				context.set('editing',false);
@@ -476,6 +483,7 @@ export default Ember.Controller.extend({
 		}else{
 			context.set('editing',true);
 		}
+		//context.set('factura.f_hoy',moment().format('YYYY-MM-DD'));
 		$("#myModalFactura").modal('show');
 	},
 	
@@ -787,7 +795,7 @@ export default Ember.Controller.extend({
 	},
 	facturarEtapa(){
 		//console.log(this.get('factura'));
-		this.set('factura.f_hoy',moment().format('YYYY-MM-DD'));
+		
 		var factura = this.get('factura');
 		var method = "POST";
 		var url;
@@ -876,8 +884,8 @@ export default Ember.Controller.extend({
 
 	},*/
 	openModalPagoFactura(){
-
 		$("#myModalPagoFactura").modal('show');
+
 	},
 	guardarPagoFactura(){
 		var pago = this.get('pago');
@@ -892,6 +900,7 @@ export default Ember.Controller.extend({
 		if ($("#formulario_pago").valid()){
 			this.llamadaServidor(method,url,data,this.msgRespuesta,this);
 			$("#myModalPagoFactura").modal('hide');
+			$('#myModalFactura').modal('hide');
 		}
 	},
 	actions:{

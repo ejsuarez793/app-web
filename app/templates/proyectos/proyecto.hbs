@@ -88,17 +88,23 @@
                         </div>
                         <div class="panel-footer">
                           <div class="row">
-                          <div class="col-sm-6"></div>
-                          <div class="col-sm-2">
-                            {{#if generar_acta_inicio}}
-                              <button id="accion" class="btn btn-primary" {{action 'openModalActaInicio'}} type="submit">Acta Inicio</button>
+                          <div class="col-sm-3">
+                          {{#if proyecto_activo}}
+                            <button id="accion" class="btn btn-primary width-80" {{action 'openModalActaEstado'}} type="submit">Acta Estado</button>
+                          {{/if}}
+                          </div>
+                          <div class="col-sm-3">
+                            {{#if proyecto_activo}}
+                              <button id="accion" class="btn btn-primary width-80" {{action 'openModalActaInicio'}} type="submit">Acta Inicio</button>
                             {{/if}}
                           </div>
-                           <div class="col-sm-2">  <button class="btn btn-primary" {{action 'openModalGeneral'}} type="submit">Editar</button></div>
-                            <div class="col-sm-2">
+                           
+                            <div class="col-sm-3">
                              
-                              <button id="accion" class="btn btn-primary" {{action 'accionProyecto'}} type="submit">{{proyecto.accion}}</button>
+                              <button id="accion" class="btn btn-primary width-80" {{action 'accionProyecto'}} type="submit">{{proyecto.accion}}</button>
                             </div>
+
+                            <div class="col-sm-3">  <button class="btn btn-primary width-80" {{action 'openModalGeneral'}} type="submit">Editar</button></div>
                           </div>
                         </div>
                       </div>
@@ -265,7 +271,8 @@
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
-                                    <th >Desc</th>
+                                    <th class="col-md-2">Nombre</th>
+                                    <th >Descripción</th>
                                     <th class="col-md-1">Cantidad</th>
                                   </tr>
                                 </thead>
@@ -273,11 +280,13 @@
                                   {{#each desglose.disponibles as |material|}}
                                   <tr>
                                     <td class="col-tabla">{{material.codigo}}</td>
+                                    <td class="col-tabla">{{material.nombre}}</td>
                                     <td class="col-tabla">
-                                      {{material.nombre}}&nbsp;
                                       {{material.desc}}&nbsp;
-                                      {{material.marca}} 
+                                      {{material.marca}}&nbsp;
+                                      ({{material.presen}})
                                       {{#if material.serial}}&nbsp;-SE:{{material.serial}}{{/if}}
+
                                     </td>
                                     <td class="col-tabla">{{material.cantidad}}</td>
                                   </tr>
@@ -308,7 +317,8 @@
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
-                                    <th >Desc</th>
+                                    <th class="col-md-2">Nombre</th>
+                                    <th >Descripción</th>
                                     <th class="col-md-1">Cantidad</th>
                                   </tr>
                                 </thead>
@@ -316,10 +326,11 @@
                                   {{#each desglose.usados as |material|}}
                                   <tr>
                                     <td class="col-tabla">{{material.codigo}}</td>
+                                    <td class="col-tabla">{{material.nombre}}</td>
                                     <td class="col-tabla">
-                                      {{material.nombre}}&nbsp;
                                       {{material.desc}}&nbsp;
-                                      {{material.marca}} 
+                                      {{material.marca}}&nbsp;
+                                      ({{material.presen}})
                                       {{#if material.serial}}&nbsp;-SE:{{material.serial}}{{/if}}
 
                                     </td>
@@ -365,7 +376,8 @@
                                 <thead class="header-tabla">
                                   <tr>
                                     <th class="col-md-2">Código</th>
-                                    <th >Desc</th>
+                                    <th class="col-md-2">Nombre</th>
+                                    <th >Descripción</th>
                                     <th class="col-md-1">Cantidad</th>
                                   </tr>
                                 </thead>
@@ -373,11 +385,13 @@
                                   {{#each etapa.materiales as |material|}}
                                   <tr>
                                     <td class="col-tabla">{{material.codigo}}</td>
+                                    <td class="col-tabla">{{material.nombre}}</td>
                                     <td class="col-tabla">
-                                      {{material.nombre}}&nbsp;
                                       {{material.desc}}&nbsp;
-                                      {{material.marca}} 
+                                      {{material.marca}}&nbsp;
+                                      ({{material.presen}})
                                       {{#if material.serial}}&nbsp;-SE:{{material.serial}}{{/if}}
+
                                     </td>
                                     <td class="col-tabla">{{material.cantidad}}</td>
                                   </tr>
@@ -432,17 +446,19 @@
                       <table class="table table-bordered table-hover table-condensed" id="tabla">  
                         <thead class="header-tabla">
                           <tr>
-                            <th class="col-md-2">Técnico</th>
-                            <th class="col-md-2"> Fecha Solicitud</th>
+                            <th class="col-md-1">Código</th>
+                            <th class="col-md-4">Técnico</th>
+                            <th class="col-md-3"> Fecha de la solicitud</th>
                             <th class="col-md-1">Etapa</th>
                             <th class="col-md-1">Autorizada</th>
                              <th class="col-md-1">Completada</th>
-                            <th class="col-md-1">Detalles Materiales</th>
+                            <th class="col-md-1">Materiales</th>
                           </tr>
                         </thead>
                         <tbody id="tbody" class="text-center">
                           {{#each proyecto.solicitudes as |solicitud|}}
                           <tr>
+                            <td class="col-tabla">{{solicitud.codigo}}</td>
                             <td class="col-tabla">{{solicitud.nombre_t}}, VE-{{solicitud.ci_tecnico}}</td>
                             <td class="col-tabla"><{{solicitud.f_sol_mostrar}}</td>
                              <td class="col-tabla">{{solicitud.letra_eta}}</td>
@@ -776,6 +792,7 @@
                   <th>Código</th>
                   <th>Nombre</th>
                   <th>Descripción</th>
+                  <th>Serial</th>
                   <th>Cantidad</th>
                 </tr>
               </thead>
@@ -784,7 +801,8 @@
                 <tr>
                   <td class="col-tabla">{{material.codigo_mat}}</td>
                   <td class="col-tabla">{{material.nombre_mat}}</td>
-                  <td class="col-tabla">{{material.desc_mat}}</td>
+                  <td class="col-tabla">{{material.desc_mat}} {{material.marca_mat}} ({{material.presen_mat}})</td>
+                  <td class="col-tabla">{{#if material.serial}} {{material.serial}} {{else}} N/A {{/if}}</td>
                   <td class="col-tabla">{{material.cant}}</td>
                 </tr>
                 {{/each}}
@@ -802,11 +820,12 @@
           <table class="table table-condensed">
           <thead>
             <tr>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Cantidad Solicitada</th>
-              <th>Cantidad Inventario</th>
+              <th class="col-md-2">Código</th>
+              <th class="col-md-2">Nombre</th>
+              <th class="col-md-5">Descripción</th>
+              <th class="col-md-1">Serial</th>
+              <th class="col-md-1">Cantidad Solicitada</th>
+              <th class="col-md-1">Cantidad Inventario</th>
             </tr>
           </thead>
           <tbody>
@@ -814,7 +833,8 @@
             <tr>
                 <td>{{material.codigo_mat}}</td>
                 <td>{{material.nombre_mat}}</td>
-                <td>{{material.desc_mat}}</td>
+                <td>{{material.desc_mat}} {{material.marca_mat}} ({{material.presen_mat}})</td>
+                <td>{{#if material.serial}} {{material.serial}} {{else}} N/A {{/if}}</td>
                 <td>{{material.cantidad_solicitada}}</td>
                 <td>{{material.cantidad_inventario}}</td>
             </tr>
@@ -822,7 +842,7 @@
           </tbody>
           </table>
         </div>
-         <div class="col-md-1"></div>
+        <div class="col-md-1"></div>
          {{/if}}
         </div>
       </div>
@@ -852,7 +872,7 @@
             <div class="col-md-6 ">
               <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Persona que atendió visita</h3>
+                  <h3 class="panel-title">Persona que atendió la visita de detalle</h3>
                 </div>
                 <div class="panel-body">
                   <dl class="dl-horizontal">
@@ -889,7 +909,7 @@
               <div class="col-md-12 ">
               <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Vicios Ocultos</h3>
+                  <h3 class="panel-title">Vicios ocultos</h3>
                 </div>
                 <div class="panel-body">
                   <p>{{reporte_detalle.vicios_ocu}}</p>
@@ -930,7 +950,7 @@
 
   
             <strong>{{reporte.nombre_t}}</strong>
-            <small class="text-muted">{{reporte.fecha}}</small>
+            <small class="text-muted">{{reporte.fecha_mostrar}}</small>
             <strong class="text-success">{{reporte.estado}}</strong>
 
 
@@ -1407,8 +1427,143 @@
 
 
 
+<!-- Modal ACTA ESTADO DEL PROYECTO-->
+<div class="modal fade " id="myModalActaEstado" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Acta de Estado</h4>
+      </div>
+      <div class="modal-body" id="modalActaEstado">
+          
+        <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-8"></div>
 
-<!-- Modal ACTA ENTREGA CULMNACION PROYECTO-->
+
+          <div class="col-md-12">
+              <h2 class="text-center">ACTA DE ESTADO DEL PROYECTO</h2>
+
+          </div>
+          <br>
+          <br>
+          <br>
+          <br>
+          <div class="col-md-12">
+            <p class="text-justify">
+              Mediante la presente, <strong>SISTELRED C.A. RIF: J-30994445-2</strong> deja constancia del estado del proyecto registrado bajo el código <strong>{{acta_estado.codigo_pro}}</strong>, de fecha {{acta_estado.f_ini}}, cuyo objeto se define como <strong>{{acta_estado.desc_pro}}</strong>. A continuación se listan las etapas y sus actividades:
+
+            </p>
+            <br>
+            
+          </div>
+
+          <br>
+          <br>
+          <br>
+          <br>
+
+          {{#each acta_estado.etapas as |etapa|}}
+            <div class="col-md-12">
+              <h4 class="text-center"><strong>Etapa {{etapa.letra_eta}} - {{etapa.nombre_eta}} - {{etapa.estatus}}</strong></h4>
+            </div>
+
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+              <h5 ><strong>Actividades</strong></h5>
+            </div>
+            <div class="col-md-1"></div>
+
+            <div class="col-md-12"></div>
+
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+              <table class="table table-condensed">
+                <thead>
+                  <tr>
+                    <th class="col-md-1">Nro</th>
+                    <th class="col-md-9">Descripción</th>
+                    <th class="col-md-2">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each etapa.actividades as |actividad|}}
+                  <tr>
+                      <td class="col-tabla">{{actividad.nro}}</td>
+                      <td class="col-tabla">{{actividad.desc}}</td>
+                      <td class="col-tabla"><strong>{{#if actividad.completada}}Completada{{else}}Pendiente{{/if}}</strong></td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+                </table>
+            </div>
+            <div class="col-md-1"></div>
+
+          {{/each}}
+
+         
+
+          <div class="col-md-12">
+            
+            <p>
+              Acta que se efectúa a petición del cliente <strong>{{acta_estado.nombre_cliente}}, RIF: {{acta_estado.rif_cliente}}</strong> en la ciudad de Guatire, a los {{acta_estado.dias}} días del mes de {{acta_estado.mes}} del año {{acta_estado.anio}}.
+            </p>
+          </div>
+
+          <div class="col-md-6"> 
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Por el Cliente: <strong>{{acta_inicio.nombre_cliente}}</strong>
+              </div>
+              <div class="panel-body">
+                <p class="text-center">
+                  <stong>Firma y Sello</stong>
+                </p>
+                <p>Nombre:</p>
+                <p>Cargo:</p>
+                <p>Firma:</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Por <strong>SISTELRED, C.A</strong>
+              </div>
+              <div class="panel-body">
+                <p class="text-center">
+                  <stong>Firma y Sello</stong>
+                </p>
+                <p>Nombre:</p>
+                <p>Cargo:</p>
+                <p>Firma:</p>
+              </div>
+            </div>
+          </div>
+          
+
+
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button  {{action 'generarPDFActa' 'Estado' 'modalActaEstado'}} class="btn btn-primary">PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- Modal ACTA ENTREGA CULMINACION PROYECTO-->
 <div class="modal fade " id="myModalActaCulminacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -1520,8 +1675,8 @@
 
           <div class="col-md-12">
             <dl class="dl-horizontal">
-              <dt>Proyecto: </dt> <dd> <span >{{acta_entrega.codigo_pro}} <br> {{acta_entrega.nombre_pro}}</span></dd>
-              <dt>Etapa: </dt> <dd><span>{{acta_entrega.codigo_eta}} <br>  {{acta_entrega.nombre_eta}}</span></dd>
+              <dt>Proyecto: </dt> <dd> <span >{{acta_entrega.codigo_pro}}  {{acta_entrega.nombre_pro}}</span></dd>
+              <dt>Etapa: </dt> <dd><span>{{acta_entrega.codigo_eta}}-{{acta_entrega.nombre_eta}}</span></dd>
             </dl>
           </div>
 

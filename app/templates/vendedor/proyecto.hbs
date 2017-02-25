@@ -378,7 +378,7 @@
                         {{#if etapa.facturada}}
 
 
-                          <div class="col-md-2">
+                          <div class="col-md-4">
                           <div class="form-group">
                             <label>Ver Factura</label>
                             <div class="input-group">
@@ -388,14 +388,6 @@
                           </div>
 
 
-                          <div class="col-md-2">
-                          <div class="form-group">
-                            <label>Pago</label>
-                            <div class="input-group">
-                              <button class="btn btn-primary pull-right" type="submit" {{action 'openModalPagoFactura'}}>Pago</button>
-                            </div>
-                          </div>
-                          </div>
 
 
                         {{else}}
@@ -505,8 +497,8 @@
                         {{#if etapa.facturada}}
 
 
-                          <div class="col-md-2">
-                          <div class="form-group">
+                          <div class="col-md-4">
+                          <div class="form-group width-80">
                             <label>Ver Factura</label>
                             <div class="input-group">
                               <button class="btn btn-primary pull-right" type="submit" {{action 'consultarFactura'}}>Factura</button>
@@ -515,14 +507,7 @@
                           </div>
 
 
-                          <div class="col-md-2">
-                          <div class="form-group">
-                            <label>Pago</label>
-                            <div class="input-group">
-                              <button class="btn btn-primary pull-right" type="submit" {{action 'openModalPagoFactura'}}>Pago</button>
-                            </div>
-                          </div>
-                          </div>
+                          
 
 
                         {{else}}
@@ -1027,7 +1012,7 @@
                   <ul class="ul-presupuesto">
                     <li><b>Nombre: </b>{{factura.detalle.nombre_cliente}}</li>
                     <li><b>RIF: </b>{{factura.detalle.rif_cliente}}</li>
-                    <li><b>Teléfono: </b>{{factura.detalle.tlf1_c}}<b>Fax:</b>{{factura.detalle.fax_c}}</li>
+                    <li><b>Teléfono: </b>{{factura.detalle.tlf1_c}}<b> Fax:</b>{{factura.detalle.fax_c}}</li>
                     <li><b>Dirección:</b> <p>{{factura.detalle.dire_c}}</p></li>
                     <br>
                   </ul>
@@ -1049,7 +1034,7 @@
 
                   <dl class="dl-horizontal">
                       <dt>Proyecto: </dt> <dd> {{factura.detalle.codigo_pro}} - {{factura.detalle.nombre_pro}}</dd>
-                      <dt>Etapa: </dt> <dd>{{factura.detalle.letra_eta}}</dd>
+                      <dt>Etapa: </dt> <dd>{{factura.detalle.letra_eta}} - {{factura.detalle.nombre_eta}}</dd>
                   </dl>
                 </div>
               {{/if}}
@@ -1116,7 +1101,7 @@
             <div class="col-md-12 well">
                <div class="col-md-12">
                <table class="table table-bordered table-hover table-condensed">  
-                  <thead class="header-tabla">
+                  <thead class="header-tabla-presupuesto">
                     <tr>
                       <th class="col-md-1">Código</th>
                       <th>Descripción</th>
@@ -1129,7 +1114,7 @@
                     {{#each factura.elementos as |elemento|}}
                     <tr >
                       <td class="col-tabla">{{elemento.codigo}}</td>
-                      <td class="col-tabla"><{{elemento.desc}}</td>
+                      <td class="col-tabla">{{elemento.desc}} {{#if elemento.serial}}-SE:{{elemento.serial}}{{/if}}</td>
                       <td class="col-tabla">{{elemento.cantidad}} </td>
                       <td class="col-tabla"> {{elemento.precio_unitario_mostrar}}</td>
                       <td class="col-tabla">{{elemento.precio_total_mostrar}}</td>
@@ -1155,11 +1140,11 @@
                 </div>
                 <div class="col-md-6">
                   <dl class="dl-horizontal">
-                    <dt>Subtotal 1:</dt> <dd>Bs. <span >{{factura.subtotal1}}</span></dd>
-                    <dt>Descuento ({{factura.descuento_p}}%)</dt> <dd>Bs. <span>{{factura.descuento}}</span></dd>
-                    <dt>Subtotal Final:</dt> <dd>Bs. <span >{{factura.subtotal_final}}</span></dd>
-                    <dt>I.V.A (12%):</dt> <dd>Bs. <span >{{factura.iva}}</span></dd>
-                    <dt>TOTAL:</dt> <dd>Bs. <span >{{factura.total}}</span></dd>
+                    <dt>Subtotal 1:</dt> <dd>Bs. <span >{{factura.subtotal1_mostrar}}</span></dd>
+                    <dt>Descuento ({{factura.descuento_p}}%)</dt> <dd>Bs. <span>{{factura.descuento_mostrar}}</span></dd>
+                    <dt>Subtotal Final:</dt> <dd>Bs. <span >{{factura.subtotal_final_mostrar}}</span></dd>
+                    <dt>I.V.A (12%):</dt> <dd>Bs. <span >{{factura.iva_mostrar}}</span></dd>
+                    <dt>TOTAL:</dt> <dd>Bs. <span >{{factura.total_mostrar}}</span></dd>
                   </dl>
                 </div>
               </div>
@@ -1182,7 +1167,14 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
         <button  {{action 'facturarEtapa'}} class="btn btn-primary">Guardar</button>
       {{else}}
+
+                   
         <button  {{action 'generarFacturaPDF'}} class="btn btn-default">PDF</button>
+        {{#if factura.detalle.pagada}}
+          <button class="btn btn-primary" type="submit" {{action 'openModalPagoFactura'}}>Ver Pago</button>
+        {{else}}
+          <button class="btn btn-primary" type="submit" {{action 'openModalPagoFactura'}}>Pago Pendiente</button>
+        {{/if}}
       {{/if}}
       </div>
     </div>
@@ -1196,7 +1188,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalPresupuestoLabel">Pago Factura</h4>
+        <h4 class="modal-title" id="myModalPresupuestoLabel">Pago Factura 
+
+          {{#if factura.detalle.pagada}}
+            <strong class="text-success">PAGADA</strong>
+          {{else}}
+             <strong class="text-danger">PENDIENTE</strong>
+          {{/if}}
+        </h4>
         <small class="form-text text-muted"></small>
       </div>
 

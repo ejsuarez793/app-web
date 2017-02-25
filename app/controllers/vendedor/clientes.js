@@ -574,8 +574,9 @@ export default Ember.Controller.extend({
 		var aux_asc = [];
 		var aux_des = [];
 		var aux;
-		var numero = 1; //numero de elementos que se desean mostrar, en este caso un top 5 de clientes.
+		var numero = 2; //numero de elementos que se desean mostrar, en este caso un top 5 de clientes.
 
+		console.log(resumen);
 		for (var campo in campos_ordenar) {
 		    if (campos_ordenar.hasOwnProperty(campo)) {
 		        aux = _.sortBy(resumen,campos_ordenar[campo]); //devuele un array ordenado ascendientemente

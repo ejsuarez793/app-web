@@ -22,7 +22,7 @@ export default Ember.Controller.extend({
 	presupuesto_agregar_servicio:false,
 	presupuesto_agregar_material:false,
 
-	generar_acta_inicio:false, //se utiliza para mostrar el boton de generar acta de inicio
+	proyecto_activo:false, //se utiliza para mostrar el boton de generar acta de inicio y de estado del proyecto
  	//3 arreglos usados para generar el listado de materiales usados (total y por etapas) y disponibles
 	materiales_disponibles : [],
 	materiales_usados_etapas: [],
@@ -276,10 +276,10 @@ export default Ember.Controller.extend({
 			
 			proyecto.accion = "Iniciar Proyecto";
 		}else if(proyecto.estatus === "Ejecucion"){
-			_this.set('generar_acta_inicio',true);
+			_this.set('proyecto_activo',true);
 			proyecto.accion = "Culminar";
 		}else if(proyecto.estatus === "Culminado"){
-			_this.set('generar_acta_inicio',true);
+			_this.set('proyecto_activo',true);
 			proyecto.accion = "Acta Culminacion";
 		}else if(proyecto.estatus === "Rechazado"){
 			proyecto.accion = "Proyecto Rechazado";
@@ -355,150 +355,8 @@ export default Ember.Controller.extend({
 		_this.set('materiales',materiales);
 	},
 	setDesglose(desglose,context){
-		console.log(desglose);
 		context.set('desglose',desglose);
-		//context.listadoMateriales();
 	},
-	/*listadoMateriales(){
-		//console.log(this.get('desglose'));
-		var desglose = this.get('desglose');
-		var disponibles = [];
-		var usados_e = {};
-		var usados_efectivamente = {};
-		var total_usados = [];
-		var flag = false; // usada para saber si un material no fue sumado/restado en la iteracion de usados efectivamente
-		var aux;
-
-		//aqui organizo los egresados y retornados por etapas, para luego sacar los usados efectivamente en cada etapa.
-		$.each(desglose.egresados.toArray(),function(i,egresado){
-			if (usados_e[egresado.codigo_eta]===null || usados_e[egresado.codigo_eta]===undefined){
-				//console.log(egresado.codigo_eta);
-				usados_e[egresado.codigo_eta] = [];
-			}
-			usados_e[egresado.codigo_eta].push(egresado);
-		});
-
-		$.each(desglose.retornados.toArray(),function(i,retornado){
-			if (usados_e[retornado.codigo_eta]===null || usados_e[retornado.codigo_eta]===undefined){
-				usados_e[retornado.codigo_eta] = [];
-			}
-			usados_e[retornado.codigo_eta].push(retornado);
-		});
-
-		//hasta este punto me deberian salir un json con un campo de cada etapa y sus egresados y retornados, para luego restar los eleentos
-
-		//ahora resto los elementos
-		$.each(usados_e,function(i,usado_e){
-			//flag = false;
-			//console.log(usado_e);
-			$.each(usado_e,function(i, usado){
-				flag = false;
-				//console.log(usado);
-				if (usados_efectivamente[usado.codigo_eta]===null || usados_efectivamente[usado.codigo_eta]===undefined){
-					usados_efectivamente[usado.codigo_eta] = [];
-					//usados_efectivamente['letra_eta'] = usado.letra_eta;
-					//usados_efectivamente['nombre_eta'] = usado.nombre_eta;
-				}
-				$.each(usados_efectivamente[usado.codigo_eta],function(i,usado_efectivamente){
-					if(usado_efectivamente.codigo_mat === usado.codigo_mat){
-						if(usado.tipo_mov === "Egreso"){
-							usado_efectivamente.cant = usado_efectivamente.cant + usado.cant;
-						}else if(usado.tipo_mov === "Retorno"){
-							usado_efectivamente.cant = usado_efectivamente.cant - usado.cant;
-						}
-						flag=true;
-					}
-				});
-				if(!flag){
-					aux = $.extend(true,{},usado);
-					if(aux.tipo_mov === "Retorno"){
-						aux.cant = aux.cant * (-1);
-					}
-					usados_efectivamente[usado.codigo_eta].push(aux);
-				}
-			});
-			
-		});
-
-
-		//por ultimo sumo los materiales disponibles de los presupuestos
-		$.each(desglose.presupuestos.toArray(),function(i,material){
-			flag = false;
-			$.each(disponibles,function(i,disponible){
-				if (material.codigo_mat === disponible.codigo_mat){
-					disponible.cant += material.cant;
-					flag = true;
-				}
-			});
-			if(!flag){
-				aux = $.extend(true,{},material);
-				disponibles.push(aux);
-			}
-		});
-
-		//aqui agregamos los usados efectivamente por etapa y los agrupamos en otro arreglo para poder mostrar otra categoria
-		//de usados totales
-
-		$.each(usados_efectivamente,function(i, etapa){
-			$.each(etapa,function(i, usado_efectivamente){
-				flag = false;
-				$.each(total_usados,function(i,material_tu){
-					if (usado_efectivamente.codigo_mat === material_tu.codigo_mat){
-						material_tu.cant = material_tu.cant + usado_efectivamente.cant;
-						flag = true;
-					}
-				});
-				if(!flag && usado_efectivamente.cant>0){
-					aux = $.extend(true,{},usado_efectivamente);
-					total_usados.push(aux);
-				}
-			});
-		});
-
-
-
-		//finalizando restamos los disponibles del presupuesto con los usados efectivamente en cada etapa
-		
-		$.each(disponibles,function(i,disponible){
-			$.each(usados_efectivamente, function(i,etapa){
-				$.each(etapa, function(i, material){
-					if(disponible.codigo_mat === material.codigo_mat){
-			  			disponible.cant = disponible.cant - material.cant;
-			  		}
-				});
-				
-			});
-		});
-
-		
-		var materiales_x_etapa = [];
-		for(var propName in usados_efectivamente) {
-		    $.each(this.get('proyecto.etapas'),function(i,etapa){
-		    	//console.log(etapa);
-		    	if (etapa.codigo === parseInt(propName)){
-		    		//console.log(etapa.nombre);
-		    		aux = $.extend(true,{},etapa); 
-		    		aux['materiales'] = [];
-		    		$.each(usados_efectivamente[propName],function(i,mat){
-		    			if (mat.cant>0){
-		    				aux['materiales'].push(mat);
-		    			}
-		    		});
-		    		materiales_x_etapa.push(aux);
-
-
-		    	}
-		    });
-		    //console.log(propName);
-		}
-		//console.log(materiales_x_etapa);
-
-
-		this.set('materiales_disponibles',disponibles);
-		this.set('materiales_usados_etapas',materiales_x_etapa);
-		this.set('materiales_usados_totales',total_usados);
-
-	},*/
 	ordenar(prop, asc,array) {
 	    array = array.sort(function(a, b) {
 	        if (asc) {
@@ -598,7 +456,7 @@ export default Ember.Controller.extend({
 		var actividades = [];
 		//var fecha;
 		var proyecto = this.get('proyecto');
-		var materiales_etapas = this.get('materiales_usados_etapas').toArray();
+		var materiales_etapas = this.get('desglose.etapas').toArray();
 		var aux;
 
 		//console.log(proyecto);
@@ -629,14 +487,15 @@ export default Ember.Controller.extend({
 			});
 		});
 
+		//console.log(materiales_etapas);
 		$.each(materiales_etapas,function(i,material_etapa){
-			if (material_etapa.codigo === etapa.codigo){
+			if (material_etapa.codigo_eta === etapa.codigo_eta){
 				$.each(material_etapa.materiales,function(i,material){
 					aux = {};
-					aux.codigo = material.codigo_mat;
+					aux.codigo = material.codigo;
 					aux.desc = material.nombre + " " + material.desc + " " +material.marca;
-					console.log(material);
-					aux.cantidad = material.cant;
+					//console.log(material);
+					aux.cantidad = material.cantidad;
 					elementos.push($.extend(true,{},aux));
 				});
 			}
@@ -780,7 +639,7 @@ export default Ember.Controller.extend({
 				$.each(presupuesto_materiales,function(i,pm){
 					if (elemento.codigo === pm.codigo_mat){
 						elemento['mostrar_seleccion'] = true;
-						elemento['desc_mostrar'] = elemento['nombre'] + " " + elemento['desc'] +" "+ elemento['marca'];
+						elemento['desc_mostrar'] = elemento['nombre'] + " " + elemento['desc'] +" "+ elemento['marca'] + " (" + elemento['presen'] + ")";
 						elemento['mostrar_sin_seleccion'] = false;
 						elemento['tipo'] = "Material";
 						elemento['cantidad'] = pm.cantidad;
@@ -790,7 +649,7 @@ export default Ember.Controller.extend({
 				});
 				if (flag === false){
 					elemento['mostrar_seleccion'] = false;
-					elemento['desc_mostrar'] = elemento['nombre'] + " " + elemento['desc'] +" "+ elemento['marca'];
+					elemento['desc_mostrar'] = elemento['nombre'] + " " + elemento['desc'] +" "+ elemento['marca'] + " (" + elemento['presen'] + ")";
 					elemento['mostrar_sin_seleccion'] = true;
 					elemento['tipo'] = "Material";
 					elemento['cantidad'] = 0;
@@ -1127,6 +986,61 @@ export default Ember.Controller.extend({
 		this.set('acta_inicio',acta_inicio);
 		$("#myModalActaInicio").modal('show');
 	},
+	openModalActaEstado(){
+		//console.log("epaleeee");
+		this.prepararActaEstado();
+		$("#myModalActaEstado").modal('show');
+	},
+	prepararActaEstado(){
+		var acta_estado = {};
+		var proyecto = this.get('proyecto');
+		var fecha = new Date();
+		var nombre_meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+		var aux;
+		var aux2;
+
+		acta_estado.nombre_cliente = proyecto.cliente.nombre;
+		acta_estado.rif_cliente = proyecto.cliente.rif;
+		acta_estado.nombre_pro = proyecto.nombre;
+		acta_estado.codigo_pro = proyecto.codigo;
+		acta_estado.desc_pro = proyecto.desc;
+		acta_estado.f_ini = moment(proyecto.f_ini).format("LL");
+		//acta_inicio.f_fin = moment(proyecto.f_fin).format("LL");
+		acta_estado.dias = fecha.getDate();
+		acta_estado.mes =  nombre_meses[fecha.getMonth()];
+		acta_estado.anio = fecha.getFullYear();
+
+		acta_estado.etapas = [];
+
+		$.each(proyecto.etapas.toArray(),function(i,etapa){
+			aux = {};
+			aux['letra_eta'] = etapa.letra;
+			aux['nombre_eta'] = etapa.nombre;
+
+			if (etapa.estatus == "Culminado"){
+				aux['estatus'] = "Culminada";
+			}else if(etapa.estatus === "Ejecucion"){
+				aux['estatus'] = "En Ejecución";
+			}else{
+				aux['estatus'] = etapa.estatus;
+			}
+
+			aux['actividades'] = [];
+			$.each(etapa.actividades,function(i, actividad){
+				aux2 = {};
+				aux2.nro = actividad.nro;
+				aux2.desc = actividad.desc;
+				aux2.completada = actividad.completada;
+				aux['actividades'].push($.extend(true,{},aux2));
+			});
+
+			acta_estado.etapas.push($.extend(true,{},aux));
+		});
+
+		console.log(acta_estado.etapas);
+		this.set('acta_estado',acta_estado);
+
+	},
 	openModalGeneral(){
 		this.set('pg.nombre',this.get('proyecto.nombre'));
 		this.set('pg.desc',this.get('proyecto.desc'));
@@ -1163,6 +1077,7 @@ export default Ember.Controller.extend({
 		//console.log(etapa.reportes);
 		var aux = $.extend(true,{},etapa);
 		$.each(aux.reportes,function(i,reporte){
+			reporte.fecha_mostrar = moment(reporte.fecha).format('L');
 			if (reporte.leido){
 				reporte.estado = "";
 			}else{
@@ -1444,6 +1359,9 @@ export default Ember.Controller.extend({
     	openModalActaInicio(){
     		this.openModalActaInicio();
     	},
+    	openModalActaEstado(){
+    		this.openModalActaEstado();
+    	},
     	openModalGeneral:function(){
     		this.openModalGeneral();
     	},
@@ -1536,6 +1454,9 @@ export default Ember.Controller.extend({
 				nombre = "acta culminacion-" +this.get('proyecto.codigo') + '.pdf';
 			}else if (tipo ==="Inicio"){
 				nombre =  "acta inicio-" +this.get('proyecto.codigo') + '.pdf';
+			}
+			else if (tipo ==="Estado"){
+				nombre =  "acta estado-" +this.get('proyecto.codigo') + '.pdf';
 			}
 			this.generarPDFActa(nombre,modal);
 		}

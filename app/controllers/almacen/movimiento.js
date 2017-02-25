@@ -30,7 +30,15 @@ export default Ember.Controller.extend({
 		this._super();
 		if (!((Cookies.get('token')===undefined) || (Cookies.getJSON('current')===undefined))){
 			this.set('currentName', Cookies.getJSON('current').nombre1 + " " +Cookies.getJSON('current').apellido1);
-		} 
+			this.set('msg',{});
+			this.set('tipo_mov',"");
+			this.set('movimiento',{});
+			this.set('movimiento.ni',false);
+			this.set('movimiento.re',false);
+			this.set('movimiento.eg',false);
+
+		}
+
 		//agrego el evento on change al radio button del tipo movimiento
 	},
 	validarEgreso(){
@@ -325,6 +333,7 @@ export default Ember.Controller.extend({
 			//console.log(codigo + ": "+ $(input_cantidad+codigo).val());
 		});
 		this.set('movimiento.materiales',materiales);
+		$("#myModalMateriales").modal('hide');
 	},
 	eliminarMaterialesSeleccionados(){
 		var checkbox = '#tabla input:checked';
