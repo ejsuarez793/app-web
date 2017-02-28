@@ -44,7 +44,9 @@ export default Ember.Controller.extend({
 		}
 
 		$.each(proyectos, function(i, proyecto){
-			proyecto.reporte_inicial.fecha_visita_mostrar = moment(proyecto.reporte_inicial.f_vis).format('ll');
+			if (proyecto.reporte_inicial!== null){
+				proyecto.reporte_inicial.fecha_visita_mostrar = moment(proyecto.reporte_inicial.f_vis).format('ll');
+			}
 		});
 		_this.set('proyectos',proyectos);
 		//console.log(proyectos);
@@ -53,14 +55,16 @@ export default Ember.Controller.extend({
 
 	prepararModal(proyecto){
 		var aux = ['progress-bar-success','progress-bar-success','progress-bar-info','progress-bar-info','progress-bar-warning','progress-bar-warning','progress-bar-warning','progress-bar-danger','progress-bar-danger','progress-bar-danger'];
+		var aux2 = ['progress-bar-danger','progress-bar-danger','progress-bar-danger','progress-bar-warning','progress-bar-warning','progress-bar-warning','progress-bar-info','progress-bar-info','progress-bar-success','progress-bar-success'];
 
 		this.set('reporte_ini',proyecto.reporte_inicial);
 		var cwidth =proyecto.reporte_inicial.complejidad * 10;
 		var cclass = aux[(cwidth/10)-1];
 
-		var fwidth =Math.abs(proyecto.reporte_inicial.factibilidad - 10) * 10;
-		var fclass = aux[(fwidth/10)-1];
+		var fwidth =Math.abs(proyecto.reporte_inicial.factibilidad ) * 10;
+		var fclass = aux2[((fwidth)/10)-1];
 
+		console.log(fwidth);
 		$("#factibilidad").css("width", fwidth+"%");
 		$('#factibilidad').addClass(fclass);
 

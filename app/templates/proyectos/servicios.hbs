@@ -65,8 +65,8 @@
   				<tr id="{{servicio.codigo}}">
 					<td class="col-tabla">{{servicio.codigo}}</td>
 					<td class="col-tabla"><{{servicio.desc}}</td>
-					<td class="col-tabla">{{servicio.precio_act}}</td>
-					<td class="col-tabla">{{servicio.f_act}}</td>
+					<td class="col-tabla">{{servicio.precio_act_mostrar}}</td>
+					<td class="col-tabla">{{servicio.f_act_mostrar}}</td>
 					<td class="col-tabla"><button {{action 'openModal' 'true' servicio}} class="btn btn-default btn-xs">editar</button></td>
 				</tr>
 			{{/each}}

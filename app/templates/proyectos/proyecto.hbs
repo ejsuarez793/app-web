@@ -52,7 +52,7 @@
                               <h4>{{proyecto.nombre}}</h4>
                               <h4><small>{{proyecto.codigo}}</small></h4>
                               <h4><small>{{proyecto.ubicacion}}</small></h4>
-                              <p class="text-justify">{{proyecto.desc}}</p>
+                              <pre><p class="text-justify">{{proyecto.desc}}</p></pre>
                             </div>
                             <div class="col-sm-6">
                               <div class="panel panel-default">
@@ -809,7 +809,7 @@
               </tbody>
             </table>
         </div>
-        <div class="col-md-12">
+       <!-- <div class="col-md-12">
             <div id="solicitudMsg" class="alert alert-dismissible" role="alert">
             <strong>{{disponibilidad_material.tipo}}:</strong> {{disponibilidad_material.msg}}
           </div>
@@ -843,7 +843,91 @@
           </table>
         </div>
         <div class="col-md-1"></div>
-         {{/if}}
+         {{/if}}-->
+         {{#if solicitud.autorizado}}
+          <div class="col-md-12">
+            <p>La solicitud ya fue autorizada</p>
+            {{#if solicitud.completada}}
+              <p>y completada</p>
+            {{/if}}
+          </div>
+         {{else}}
+                {{#if disponibilidad_material.sin_disp}}
+
+                      <div class="col-md-12">
+                        <div id="solicitudMsg" class="alert alert-dismissible" role="alert">
+                          <strong>Sin disponibilidad:</strong> Los materiales listados a continuación no poseen existencia en el almacén:
+                        </div>
+                      </div>
+                      <div class="col-md-1"></div>
+                      <div class="col-md-10">
+                        <table class="table table-condensed">
+                        <thead>
+                          <tr>
+                            <th class="col-md-2">Código</th>
+                            <th class="col-md-2">Nombre</th>
+                            <th class="col-md-5">Descripción</th>
+                            <th class="col-md-1">Serial</th>
+                            <th class="col-md-1">Cantidad Solicitada</th>
+                            <th class="col-md-1">Cantidad Inventario</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#each disponibilidad_material.materiales_sin_disponibilidad as |material|}}
+                          <tr>
+                              <td>{{material.codigo_mat}}</td>
+                              <td>{{material.nombre_mat}}</td>
+                              <td>{{material.desc_mat}} {{material.marca_mat}} ({{material.presen_mat}})</td>
+                              <td>{{#if material.serial}} {{material.serial}} {{else}} N/A {{/if}}</td>
+                              <td>{{material.cantidad_solicitada}}</td>
+                              <td>{{material.cantidad_inventario}}</td>
+                          </tr>
+                          {{/each}}
+                        </tbody>
+                        </table>
+                      </div>
+                      <div class="col-md-1"></div>
+                {{/if}}
+
+
+                {{#if disponibilidad_material.disp_limit}}
+                      <div class="col-md-12">
+                        <div id="solicitudMsg" class="alert alert-dismissible" role="alert">
+                          <strong>Disponibilidad limitada:</strong> Los siguientes materiales poseen existencia en almacén pero se encuentran reservados para otra etapa:
+                        </div>
+                      </div>
+                      <div class="col-md-1"></div>
+                      <div class="col-md-10">
+                        <table class="table table-condensed">
+                        <thead>
+                          <tr>
+                            <th class="col-md-2">Código</th>
+                            <th class="col-md-2">Nombre</th>
+                            <th class="col-md-5">Descripción</th>
+                            <th class="col-md-1">Serial</th>
+                            <th class="col-md-1">Cantidad Solicitada</th>
+                            <th class="col-md-1">Cantidad Reservada</th>
+                            <th class="col-md-1">Cantidad Inventario</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{#each disponibilidad_material.materiales_disponibilidad_limitada as |material|}}
+                          <tr>
+                              <td>{{material.codigo_mat}}</td>
+                              <td>{{material.nombre_mat}}</td>
+                              <td>{{material.desc_mat}} {{material.marca_mat}} ({{material.presen_mat}})</td>
+                              <td>{{#if material.serial}} {{material.serial}} {{else}} N/A {{/if}}</td>
+                              <td>{{material.cantidad_solicitada}}</td>
+                              <td>{{material.cantidad_reservada}}</td>
+                              <td>{{material.cantidad_inventario}}</td>
+                          </tr>
+                          {{/each}}
+                        </tbody>
+                        </table>
+                      </div>
+                      <div class="col-md-1"></div>
+               {{/if}}
+          {{/if}}
         </div>
       </div>
        <div class="modal-footer">
@@ -1178,7 +1262,7 @@
                           <td class="col-tabla">
                             <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
                           </td>
-                          <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total}}</td>
+                          <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total_mostrar}}</td>
                           <td><input type="checkbox" value={{elemento.codigo}}></td>
                         </tr>
                       {{/if}}
@@ -1194,7 +1278,7 @@
                           <td class="col-tabla">
                             <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
                           </td>
-                          <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total}}</td>
+                          <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total_mostrar}}</td>
                           <td><input type="checkbox" value={{elemento.codigo}}></td>
                         </tr>
                       {{/if}}

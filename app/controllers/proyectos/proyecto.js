@@ -659,6 +659,8 @@ export default Ember.Controller.extend({
 			this.set('materiales',materiales);
 			this.set('servicios',servicios);
 			this.set('presupuesto',presupuesto);
+
+			console.log(presupuesto);
 			
 			$('#myModalPresupuesto').on('shown.bs.modal', function () {
 	  			// cuando se muestra el modal se calcula el precio total de cada elemento y el monto total
@@ -679,6 +681,7 @@ export default Ember.Controller.extend({
 
 	},
 	openModalSolicitud(solicitud){
+		console.log(solicitud);
 		this.set('solicitud',solicitud);
 		$("#myModalSolicitudes").modal('show');
 		var method = "GET";
@@ -688,16 +691,16 @@ export default Ember.Controller.extend({
 	},
 	msgDisponibilidadMaterial(response,context){
 		//console.log(response);
-		if (response.tipo === "Sin Disponibilidad"){
+		/*if (response.tipo === "Sin Disponibilidad"){
 			response.sin_disponibilidad = true;
-		}
+		}*/
 		context.set('disponibilidad_material',response);
 	},
 	aprobarSolicitud(solicitud){
 		//console.log(solicitud);
 		var disp = this.get('disponibilidad_material');
 
-		if(disp.tipo === "Disponibilidad"){
+		if(disp.disponible === true){
 			var codigo_pro = this.get('proyecto.codigo');
 			var method = "POST";
 			var url = window.serverUrl +'/proyecto/'+codigo_pro+'/solicitud/' +solicitud.codigo+'/aprobar/';
@@ -833,6 +836,7 @@ export default Ember.Controller.extend({
 				elemento.precio_venta = parseFloat($(pu).val());
 				elemento.precio_act = elemento.precio_venta;
 				elemento.precio_total = elemento.cantidad * elemento.precio_venta;
+				elemento.precio_total_mostrar =  numeral(elemento.precio_total).format('0,0.00');
 			}
 		});
 
@@ -843,6 +847,7 @@ export default Ember.Controller.extend({
 				elemento.precio_venta =  parseFloat($(pu).val());
 				elemento.precio_act = elemento.precio_venta;
 				elemento.precio_total = elemento.cantidad * elemento.precio_venta;
+				elemento.precio_total_mostrar = numeral(elemento.precio_total).format('0,0.00');
 			}
 		});
 

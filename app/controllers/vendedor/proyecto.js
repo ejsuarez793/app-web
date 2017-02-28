@@ -82,7 +82,7 @@ export default Ember.Controller.extend({
 				},
 				desc:{
 					required:true,
-					maxlength: 200,
+					maxlength: 500,
 				},
 				observ:{
 					maxlength: 300,
@@ -114,7 +114,7 @@ export default Ember.Controller.extend({
 				},
 				desc:{
 					required:'Este campo es requerido.',
-					maxlength: 'Longitud máxima de 200 caracteres',
+					maxlength: 'Longitud máxima de 500 caracteres',
 				},
 				observ:{	
 					maxlength: 'Longitud máxima de 300 caracteres',

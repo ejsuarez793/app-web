@@ -157,7 +157,11 @@ export default Ember.Controller.extend({
 			var aux = [];
 			aux.push(servicios);
 			servicios = aux;
-		}	
+		}
+		$.each(servicios,function(i,servicio){
+			servicio.precio_act_mostrar = numeral(servicio.precio_act).format('0,0.00');
+			servicio.f_act_mostrar = moment(servicio.f_act).format('l');
+		});
 		_this.set('servicios',servicios);
 	 	_this.paginationInitialize(10);	
 	},
