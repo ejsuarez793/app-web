@@ -70,7 +70,7 @@ export default Ember.Controller.extend({
             return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value);
         }, "Por favor ingrese un correo válido");
 
-		$("#formulario").validate({
+		$("#formulario_pre").validate({
 			rules:{
 				atencion_n:{
 					required:true,
@@ -85,9 +85,11 @@ export default Ember.Controller.extend({
 					maxlength: 500,
 				},
 				observ:{
+					required:true,
 					maxlength: 300,
 				},
 				cond_g:{
+					required:true,
 					maxlength: 500,
 				},
 				validez_o:{
@@ -96,6 +98,15 @@ export default Ember.Controller.extend({
 					min: 1,
 				},
 				cond_p:{
+					required:true,
+					maxlength: 500,
+				},
+				cond_pago:{
+					required:true,
+					maxlength: 500,
+				},
+				t_ent:{
+					required:true,
 					maxlength: 500,
 				},
 				descuento:{
@@ -116,10 +127,12 @@ export default Ember.Controller.extend({
 					required:'Este campo es requerido.',
 					maxlength: 'Longitud máxima de 500 caracteres',
 				},
-				observ:{	
+				observ:{
+					required:'Este campo es requerido.',
 					maxlength: 'Longitud máxima de 300 caracteres',
 				},
 				cond_g:{
+					required:'Este campo es requerido.',
 					maxlength: 'Longitud máxima de 500 caracteres',
 				},
 				validez_o:{
@@ -128,6 +141,15 @@ export default Ember.Controller.extend({
 					min: 'Al menos 1 día hábil de validez.',
 				},
 				cond_p:{
+					required:'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 500 caracteres',
+				},
+				cond_pago:{
+					required:'Este campo es requerido.',
+					maxlength: 'Longitud máxima de 500 caracteres',
+				},
+				t_ent:{
+					required:'Este campo es requerido.',
 					maxlength: 'Longitud máxima de 500 caracteres',
 				},
 				descuento:{
@@ -571,11 +593,12 @@ export default Ember.Controller.extend({
 		data.ci_vendedor = Cookies.getJSON('current').ci;
 		//console.log(data);
 		this.validarCampos();
-        if ($("#formulario").valid()){
+        if ($("#formulario_pre").valid()){
         	//console.log(Cookies.getJSON('current').ci);
         	this.llamadaServidor(method,url,data,this.msgRespuesta,this);
+        	$("#myModalPresupuesto").modal('hide');
         }
-        $("#myModalPresupuesto").modal('hide');
+        
 	},
 	generarPDF(codigo){
 		$("#modalBody").css('background', '#fff');
@@ -626,6 +649,7 @@ export default Ember.Controller.extend({
 		datosPDF.cliente_tlf = cliente.tlf1;
 		datosPDF.atencion = presupuesto.atencion_n;
 		datosPDF.email = presupuesto.atencion_e;
+		datosPDF.descripcion = presupuesto.desc;
 		datosPDF.detalle = $.extend(true,[],[]); 
 		//datosPDF.servicios
 		datosPDF.observ  = presupuesto.observ;
@@ -636,7 +660,7 @@ export default Ember.Controller.extend({
 		datosPDF.iva;
 		datosPDF.total;
 		datosPDF.condiciones_generales = presupuesto.cond_g
-		//datosPDF.condiciones_pago = presupuesto.cond_pago
+		datosPDF.condiciones_pago = presupuesto.cond_pago
 		datosPDF.dias = presupuesto.validez_o;
 		datosPDF.condiciones_precios = presupuesto.cond_p
 		datosPDF.tiempo_entrega = presupuesto.t_ent
@@ -715,50 +739,18 @@ export default Ember.Controller.extend({
 			{text: 'Precio Unit.', style: 'tableHeader'}, 
 			{text: 'Precio Total', style: 'tableHeader'}
 		]);
-		//console.log(detalles);
-		//console.log(detalles.map(function(x){return x}));
-		/*$.each(datosPDF.detalle,function(i,detalle){
 
-		});*/
-		//console.log(datosPDF.detalle =  JSON.parse(JSON.stringify(datosPDF.detalle.toString())))
-		/*datosPDF.detalle.map(function(x) { console.log( x  ) });*/
-		//console.log(datosPDF.detalle);
-		
-		//console.log(datosPDF.detalle);
-		var base64;
-
-		/*function getDataUri(url, callback) {
-		    var image = new Image();
-
-		    image.onload = function () {
-		        var canvas = document.createElement('canvas');
-		        canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
-		        canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
-
-		        canvas.getContext('2d').drawImage(this, 0, 0);
-
-		        // Get raw image data
-		        callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
-
-		        // ... or get as Data URI
-		        callback(canvas.toDataURL('image/png'));
-		    };
-
-		    image.src = url;
-		}
-		getDataUri('../../logo-sistelred-nuevo.jpg', function(dataUri) {
-		    // Do whatever you'd like with the Data URI!
-		    console.log(dataUri);
-		    base64 = dataUri;
-		});*/
-
-		/*console.log(base64);
-		console.log(document.baseURI);*/
 		var docDefinition = {
+			info: {
+			    title: 'Presupuesto ' + datosPDF.codigo,
+			    author: datosPDF.nombre + " " + datosPDF.apellido,
+			    /*subject: 'subject of document',
+			    keywords: 'keywords for document',*/
+			},
 			content: [
-				{
+				/*{
 					image:'/logo-sistelred-nuevo.jpg',
-				},
+				},*/
 				{
 					style: 'encabezado',
 					table: {
@@ -788,6 +780,7 @@ export default Ember.Controller.extend({
 					layout: 'noBorders'
 				},
 				{text:'Atención: ' + datosPDF.atencion + ', e-mail: ' + datosPDF.email, style:'atencion'},
+				{text: datosPDF.descripcion, style:'descripcion'},
 				{
 					style: 'tablaMateriales',
 					table: {
@@ -802,13 +795,13 @@ export default Ember.Controller.extend({
 				{
 					style: 'tablaTotal',
 					/*color: '#444',*/
-					pageBreak: 'before',
+					/*pageBreak: 'before',*/
 
 					table: {
 						widths: ['*', 'auto', 'auto'],
-						//headerRows: 2,
-						// keepWithHeaderRows: 1,
-
+						headerRows: 5,
+						keepWithHeaderRows: 1,
+						//dontBreakRows: true,
 						body: [
 							[{rowSpan: 5, text: [
 				                    { text: 'Observaciones:\r', bold: true , fontSize:9},
@@ -851,7 +844,7 @@ export default Ember.Controller.extend({
 				{
 					type: 'none',
 					ol: [
-						{text: '70% Prepagado para adquisición de materiales, 30% Pagadero con la presentación de la factura final.-',style:'elementoCondiciones'},
+						{text: datosPDF.condiciones_pago ,style:'elementoCondiciones'},
 						{text: 'Bs. Depositar en la CTA. CTE. # 0108-0989-42-0100009763, de Sistelred, C.A. en el Banco Provincial.-',style:'elementoCondiciones'},
 						{text: 'Bs. Depositar en la CTA. CTE. # 0134-1085-200001000397, de Sistelred, C.A. en el Banco Banesco.-',style:'elementoCondiciones'},
 						{text: 'Bs. Depositar en la CTA. CTE. # 0105-0225-01-1225042666, de Sistelred, C.A. en el Banco Mercantil.-',style:'elementoCondiciones'},
@@ -863,7 +856,7 @@ export default Ember.Controller.extend({
 				{
 					type: 'none',
 					ol: [
-						{text: '100% Realizado.-',style:'elementoCondiciones'},
+						{text: datosPDF.tiempo_entrega, style:'elementoCondiciones'},
 					]
 						
 				},
@@ -880,7 +873,12 @@ export default Ember.Controller.extend({
 			styles: {
 				atencion:{
 					fontSize:12,
-					alignment: 'center'
+					alignment:'center'
+				},
+				descripcion:{
+					fontSize:11,
+					alignment:'left',
+					margin:[0,5,0,5]
 				},
 				tableHeader: {
 					fontSize: 12,
@@ -924,7 +922,7 @@ export default Ember.Controller.extend({
 			footer: function(page, pages) { 
 				    return { 
 				        columns: [ 
-				            { text: 'Presupuesto-PB27022017-2', italics: true , fontSize:8},
+				            { text: 'Presupuesto-' + datosPDF.codigo, italics: true , fontSize:8},
 				            { 
 				                alignment: 'right',
 				                text: [
@@ -940,6 +938,311 @@ export default Ember.Controller.extend({
 		}
 
 		pdfMake.createPdf(docDefinition).open();
+	},
+	generarFacturaPDFNuevoMetodo(){
+		var factura = this.get('factura');
+		var datosPDF = {};
+		//console.log(factura);
+
+		datosPDF.cliente_nombre = factura.detalle.nombre_cliente;
+		datosPDF.cliente_rif = factura.detalle.rif_cliente;
+		datosPDF.cliente_tlf = factura.detalle.tlf1_c;
+		datosPDF.cliente_fax = factura.detalle.fax_c;
+		datosPDF.cliente_direccion = factura.detalle.dire_c;
+		datosPDF.nro_factura = factura.detalle.nro_factura;
+		datosPDF.fecha_emision = moment(factura.detalle.f_emi).format('l');
+		datosPDF.fecha_vencimiento = moment(factura.detalle.f_ven).format('l');
+		datosPDF.vendedor_nombre = factura.detalle.nombre_v;
+		datosPDF.condicion_pago = factura.detalle.cond_pago;
+		datosPDF.proyecto_codigo = factura.detalle.codigo_pro;
+		datosPDF.proyecto_nombre = factura.detalle.nombre_pro;
+		datosPDF.etapa_codigo = factura.detalle.letra_eta;
+		datosPDF.etapa_nombre = factura.detalle.nombre_eta;
+		datosPDF.detalle = [];
+		datosPDF.atencion = factura.detalle.persona_cc;
+		datosPDF.departamento = factura.detalle.departamento_cc;
+		datosPDF.nro_orden = factura.detalle.nro_orden;
+		datosPDF.subtotal1 = numeral(factura.subtotal1).format('0,0.00');
+		datosPDF.descuento_p = factura.descuento_p + "%";
+		datosPDF.descuento = numeral(factura.descuento).format('0,0.00');
+		datosPDF.subtotalfinal = numeral(factura.subtotal_final).format('0,0.00');
+		datosPDF.iva = numeral(factura.iva).format('0,0.00');
+		datosPDF.total = numeral(factura.total).format('0,0.00');;
+
+		/*console.log(datosPDF);*/
+
+		var aux;
+		$.each(factura.elementos,function(i,elemento){
+			aux = [{text:elemento.codigo, noWrap: true}, 
+			{text: elemento.desc}, 
+			{text: elemento.cantidad, noWrap: true, alignment:'center'}, 
+			{text: numeral(elemento.precio_unitario).format('0,0.00'), style:'numero'}, 
+			{text:numeral(elemento.precio_total).format('0,0.00'), style:'numero'}]
+			datosPDF.detalle.push($.extend(false,[],aux));
+		});
+
+
+		
+		var body = [];
+		$.each(datosPDF.detalle,function(i,detalle){
+
+				body.push([detalle[0],detalle[1],detalle[2],detalle[3],detalle[4]]);	
+		
+		});
+
+		body.unshift([
+			{text: 'Código', style: 'tableHeader'}, 
+			{text: 'Descripción', style: 'tableHeader'}, 
+			{text: 'Cant', style: 'tableHeader'},
+			{text: 'Precio Unit.', style: 'tableHeader'}, 
+			{text: 'Precio Total', style: 'tableHeader'}
+		]);
+
+		var docDefinition = {
+			info: {
+			    title: 'Factura ' + datosPDF.nro_factura,
+			    author: datosPDF.vendedor_nombre,
+			    /*subject: 'subject of document',
+			    keywords: 'keywords for document',*/
+			},
+			content: [
+				/*{
+					image:'/logo-sistelred-nuevo.jpg',
+				},*/
+				{
+					style: 'encabezado',
+					table: {
+
+						widths: ['*', 'auto'],
+						body: [
+							/*[*/
+								[ 
+						            { 
+						                text: [
+						                    { text: 'Nombre: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.cliente_nombre, style:'encabezado'}
+						                ],
+						            },
+						            { 
+						                text: [
+						                    { text: 'Factura Nro: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.nro_factura, style:'encabezado'}
+						                ], noWrap:true
+						            },
+						        ],
+
+
+
+
+						        [ 
+						            { 
+						                text: [
+						                    { text: 'RIF: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.cliente_rif, style:'encabezado'}
+						                ], noWrap:true
+						            },
+						            { 
+						                text: [
+						                    { text: 'F. Emisión: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.fecha_emision, style:'encabezado'}
+						                ], noWrap:true
+						            },
+						        ],
+
+						        [ 
+						            { 
+						                text: [
+						                    { text: 'Teléfono: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.cliente_tlf, style:'encabezado'},
+						                    { text: ' Fax: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.cliente_fax, style:'encabezado'},
+						                ], noWrap:true
+						            },
+						            { 
+						                text: [
+						                    { text: 'F. Vencimiento: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.fecha_vencimiento, style:'encabezado'}
+						                ], noWrap:true
+						            },
+						        ],
+
+
+						        [ 
+						            { 
+						                text: [
+						                    { text: 'Dirección: \n' ,bold: true, style:'encabezado'},
+						                    { text: '', style:'encabezado'}
+						                ],
+						            },
+						            { 
+						                text: [
+						                    { text: 'Cond. de Pago: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.condicion_pago, style:'encabezado'}
+						                ], noWrap:true
+						            },
+						        ],
+
+
+						        [ 
+						            { 
+						                text: [
+						                    { text: datosPDF.cliente_direccion, style:'encabezado'},
+						                    { text: '', style:'encabezado'}
+						                ],
+						            },
+						            { 
+						                text: [
+						                    { text: '' , style:'encabezado'},
+						                    { text: '', style:'encabezado'}
+						                ],
+						            },
+						        ],
+				            	
+						],
+
+					},
+					layout: 'noBorders'
+				},
+				{
+					style: 'encabezado',
+					table: {
+
+						widths: ['auto', '*'],
+						body: [
+							/*[*/
+								[ 
+				           
+				                    { text: 'Proyecto: ' ,bold: true, style:'encabezado', noWrap:true},
+				                    { text: datosPDF.proyecto_codigo + ' - ' + datosPDF.proyecto_nombre, style:'encabezado'}
+						      
+						 
+						        
+						        ],
+						        [
+
+				                    { text: 'Etapa: ' ,bold: true, style:'encabezado', noWrap:true},
+				                    { text: datosPDF.etapa_codigo + ' - ' + datosPDF.etapa_nombre, style:'encabezado'}
+						        ],
+
+
+
+				            	
+						],
+
+					},
+					layout: 'noBorders'
+				},
+				{
+					style: 'tablaMateriales',
+					table: {
+						headerRows: 1,
+						// dontBreakRows: true,
+						// keepWithHeaderRows: 1,
+						widths: ['auto', '*','auto','auto','auto'],
+						body:body,
+					}
+				},
+
+				{
+					style: 'tablaTotal',
+					/*color: '#444',*/
+					/*pageBreak: 'after',*/
+
+					table: {
+						widths: ['*', 'auto', 'auto'],
+						headerRows: 5,
+						keepWithHeaderRows: 1,
+
+						body: [
+							[{rowSpan: 5, text: [
+			                    { text: 'Atención: ', bold: true , fontSize:10,},
+			                    { text: datosPDF.atencion, fontSize:10},
+			                    { text: '\rDepartamento: ', bold: true , fontSize:10},
+			                    { text: datosPDF.departamento, fontSize:10},
+			                    { text: '\rOrden de Compra: ', bold: true , fontSize:10},
+			                    { text: datosPDF.nro_orden, fontSize:10},
+				            ]}, {text:'Sub Total 1:', bold:true,  style:'numero'}, {text:'Bs. ' + datosPDF.subtotal1,  style:'numero'}],
+							['', {text:'Descuento (0%)', bold:true, style:'numero'},  {text:'Bs. ' + datosPDF.descuento,  style:'numero'}],
+							['', {text:'Sub Total Final:', bold:true,  style:'numero'},  {text:'Bs. ' + datosPDF.subtotalfinal,  style:'numero'}],
+							['', {text:'I.V.A (12%):', bold:true,  style:'numero'},  {text:'Bs. ' + datosPDF.iva,  style:'numero'}],
+							['', {text:'TOTAL:', bold:true,  style:'numero'},  {text:'Bs. ' + datosPDF.total,  style:'numero'}],
+							/*['Sample value 1', {colSpan: 2, rowSpan: 2, text: 'Both:\nrowSpan and colSpan\ncan be defined at the same time'}, ''],
+							['Sample value 1', '', ''],*/
+						]
+					}
+				},
+
+			],
+
+			styles: {
+				atencion:{
+					fontSize:12,
+					alignment:'center'
+				},
+				descripcion:{
+					fontSize:11,
+					alignment:'left',
+					margin:[0,5,0,5]
+				},
+				tableHeader: {
+					fontSize: 12,
+					alignment: 'left',
+					bold: true,
+					fillColor: '#337ab7',
+					color:"#FFFFFF",
+					noWrap:true,
+					/*margin: [0, 0, 0, 10]*/
+				},
+				tablaMateriales: {
+					fontSize:9,
+					margin: [0, 15 , 0, 15],
+				},
+				encabezado: {
+					fontSize: 12,
+					margin: [0, 5, 0, 5]
+				},
+				tablaTotal: {
+					fontSize:9,
+					margin: [0, 15 , 0, 15],
+				},
+				condiciones:{
+					fontSize:9,
+					bold:true,
+					margin: [0, 10, 0, 10]
+				},
+				numero:{
+					noWrap: true, 
+					alignment:'right'
+				},
+				elementoCondiciones:{
+					fontSize:9,
+					margin: [0, 1, 0, 1]
+				},
+				atentamente:{
+					fontSize:9,
+					margin: [0, 10, 0, 10]
+				}
+			},
+			footer: function(page, pages) { 
+				    return { 
+				        columns: [ 
+				            { text: 'Factura Nro-' + datosPDF.nro_factura, italics: true , fontSize:8},
+				            { 
+				                alignment: 'right',
+				                text: [
+				                    { text: 'Página '+ page.toString(), italics: true , fontSize:8},
+				                    { text: ' de ', fontSize:8},
+				                    { text: pages.toString(), italics: true , fontSize:8}
+				                ]
+				            }
+				        ],
+				        margin: [15, 15 , 15, 15]
+				    };
+				},
+		}
+
+		pdfMake.createPdf(docDefinition).open();
+
 	},
 	generarFacturaPDF(nombre,modal){
 		//console.log("entra");
@@ -1100,10 +1403,8 @@ export default Ember.Controller.extend({
 			codigo_pre=null;
 		}
 		url = window.serverUrl + '/ventas/factura/consultar/' + codigo_eta + '/' +codigo_pre+'/';
-		//this.validarCausaRechazo();
-		//if ($("#formulario_cr").valid()){
-			this.getElements(method,url,this.setFactura,this);
-		//}
+		this.getElements(method,url,this.setFactura,this);
+
 	},
 	facturarEtapa(){
 		//console.log(this.get('factura'));
@@ -1134,66 +1435,6 @@ export default Ember.Controller.extend({
 		}
 
 	},
-	/*openModalFactura(editing){
-		this.set('editing',editing);
-		$("#myModalFactura").modal('show');
-		//var factura = {
-		//	nombre_cliente:'',
-		//	rif_cliente:'',
-		//	tlf1_c:'',
-		//	tlf2_c:'',
-		//	fax_c:'',
-		//	dire_c:'',
-		//	nro_factura:'',
-		//	nro_control:'',
-		//	f_emi:'',
-		//	f_ven:'',
-		//	nombre_v:'',
-		//	cond_pago: '',
-		//	persona_cc:'',
-		//	email_cc:'',
-		//	cargo_cc:'',
-		//	departamento_cc:'',
-		//	elementos:[],
-		//	pagada:false,
-		//	banco_dest:'',
-		//	nro_ref:'',
-		//	codigo_pre:'',
-		//	codigo_eta:'',
-		//};
-		var servicios = [];
-		var materiales = [];
-		var etapa = this.get('etapa');
-		var reportes;
-		if (etapa.reportes!==undefined){
-			reportes = etapa.reportes.toArray();
-		}
-		$.each(reportes,function(i,reporte){
-			$.each(reporte.servicios,function(i,servicio){
-				var flag = false;
-				$.each(servicios,function(i,serv_incluido){
-					if (servicio.codigo ===serv_incluido.codigo){
-						serv_incluido.cantidad += servicio.cantidad;
-						flag=true;
-					}
-				});
-				if (!flag){
-					var aux = $.extend(true,{},servicio);
-					servicios.push(aux);
-				}
-			});
-		});
-
-		$.each(this.get('materiales_usados_etapas').toArray(),function(i,mue){
-			if (mue.codigo===etapa.codigo){
-				$.each(mue.materiales,function(i,material){
-					var aux = $.extend(true,{},material);
-					materiales.push(aux);
-				});
-			}
-		});
-
-	},*/
 	openModalPagoFactura(){
 		$("#myModalPagoFactura").modal('show');
 
@@ -1226,6 +1467,9 @@ export default Ember.Controller.extend({
 		},
 		generarPDFNuevoMetodo: function(codigo){
 			this.generarPDFNuevoMetodo();
+		},
+		generarFacturaPDFNuevoMetodo: function(){
+			this.generarFacturaPDFNuevoMetodo();
 		},
 		procesarProyecto:function(proyecto,estatus){
 			this.procesarProyecto(proyecto,estatus);

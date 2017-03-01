@@ -540,19 +540,20 @@ export default Ember.Controller.extend({
 		var nuevo_p ={
 			codigo:'',
 			codigo_pro:'',
-			fecha: '',
+			fecha: moment().format("YYYY-MM-DD"),
 			fecha_mostrar:moment().format("LL"),
-			validez_o: '5',
-			descuento: '0',
-			observ: 'Observaciones del presupuesto, a ser llenado por un agente de ventas.',
-			desc: 'Descripción del presupuesto, a ser llenado por un agente de ventas.',
-			atencion_n: 'a ser llenado por un agente de ventas.',
-			atencion_e: 'llenar@enventas.com',
+			validez_o: 0,
+			descuento: 0,
+			observ: '.',
+			desc: '',
+			atencion_n: '',
+			atencion_e: '',
 			materiales: [],
 			servicios:[],
-			cond_g:'Del fabricante.-',
-			cond_p: 'Precio sujeto a cambios sin previo aviso, dependerá de la alta rotación de inventario y disponibilidad.-\nEstos precios no incluyen transporte fuera del área metropolitana de Caracas.-\nEstos precios incluyen el Impuesto al Valor Agregado (IVA).-\n',
-			t_ent: 'Previa planificación con el cliente final.-',
+			cond_g:'',/*'Del fabricante.-',*/
+			cond_p: '',/*'Precio sujeto a cambios sin previo aviso, dependerá de la alta rotación de inventario y disponibilidad.-\nEstos precios no incluyen transporte fuera del área metropolitana de Caracas.-\nEstos precios incluyen el Impuesto al Valor Agregado (IVA).-\n',*/
+			cond_pago:'',
+			t_ent: '',/*'Previa planificación con el cliente final.-',*/
 		};
 		//console.log(presupuesto);
 		if (!editing){
@@ -886,7 +887,8 @@ export default Ember.Controller.extend({
 
 		$("td[name='precio_total']").each(function(){
 			if($.inArray($(this).attr('id'), codigos) !== -1){
-				pt = parseFloat($(this).text());
+				pt = parseFloat(numeral($(this).text()).value());
+				//console.log(numeral($(this).text()).value() );
 				if (!isNaN(pt)){
 					cont += pt;
 				}

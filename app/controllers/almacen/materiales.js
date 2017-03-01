@@ -92,7 +92,7 @@ export default Ember.Controller.extend({
 				color:{
 					maxlength:20,
 				},
-				alto:{
+				/*alto:{
 					maxlength:20,
 				},
 				largo:{
@@ -100,7 +100,7 @@ export default Ember.Controller.extend({
 				},
 				ancho:{
 					maxlength:20,
-				}
+				}*/
 			},
 			messages:{
 				codigo:{
@@ -138,7 +138,7 @@ export default Ember.Controller.extend({
 				color:{
 					maxlength:'Longitud máxima de 20 caracteres',
 				},
-				alto:{
+				/*alto:{
 					maxlength:'Longitud máxima de 20 caracteres',
 				},
 				largo:{
@@ -146,7 +146,7 @@ export default Ember.Controller.extend({
 				},
 				ancho:{
 					maxlength:'Longitud máxima de 20 caracteres',
-				}
+				}*/
 			},
 			errorElement: 'small',
 			errorClass: 'help-block',

@@ -657,7 +657,7 @@
       </div>
 
       <div class="modal-body" id="modalBody">
-        <form  id="formulario">
+        <form  id="formulario_pre">
         <div class="container-fluid">
           <div class="row">
 
@@ -821,9 +821,9 @@
                     {{#if editing}}
                     
                       <div class="col-sm-12">
-                      <div class="form-group">
-                      {{input name="cond_g" id="cond_g" type="text" class="form-control" placeholder="Condiciones Generales" value=pe.cond_g}}
-                      </div>
+                        <div class="form-group">
+                        {{input name="cond_g" id="cond_g" type="text" class="form-control" placeholder="Condiciones generales" value=pe.cond_g}}
+                        </div>
                       </div>
                       
                     {{else}}
@@ -837,13 +837,13 @@
 
                       {{#if editing}}
                         <div class="col-sm-12">
-                      <div class="form-group">
-                      {{input name="validez_o" id="validez_o" type="number" class="form-control" placeholder="Validez Oferta en Días Hábiles" value=pe.validez_o}}
-                      </div>
-                      </div>
-                    {{else}}
-                      {{presupuesto.validez_o}} Días hábiles
-                    {{/if}}
+                          <div class="form-group">
+                          {{input name="validez_o" id="validez_o" type="number" class="form-control" placeholder="Validez oferta en días hábiles" value=pe.validez_o}}
+                          </div>
+                        </div>
+                      {{else}}
+                        {{presupuesto.validez_o}} Días hábiles
+                      {{/if}}
 
                     </p></li>
 
@@ -852,13 +852,43 @@
 
                       {{#if editing}}
                         <div class="col-sm-12">
-                      <div class="form-group">
-                      {{input name="cond_p" id="cond_p" type="text" class="form-control" placeholder="Condiones de Precios" value=pe.cond_p}}
-                      </div>
-                      </div>
-                    {{else}}
-                      {{presupuesto.cond_p}}
-                    {{/if}}
+                          <div class="form-group">
+                          {{input name="cond_p" id="cond_p" type="text" class="form-control" placeholder="Condiciones de precios" value=pe.cond_p}}
+                          </div>
+                        </div>
+                      {{else}}
+                        {{presupuesto.cond_p}}
+                      {{/if}}
+
+                    </li>
+
+                   <li ><b>Condiciones de Pago </b> </li>
+                    <li>
+
+                      {{#if editing}}
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                          {{input name="cond_pago" id="cond_pago" type="text" class="form-control" placeholder="Condiones de pago" value=pe.cond_pago}}
+                          </div>
+                        </div>
+                      {{else}}
+                        {{presupuesto.cond_pago}}
+                      {{/if}}
+
+                  </li>
+
+                  <li ><b>Tiempo de Entrega </b> </li>
+                    <li>
+
+                      {{#if editing}}
+                        <div class="col-sm-12">
+                          <div class="form-group">
+                          {{input name="t_ent" id="t_ent" type="text" class="form-control" placeholder="Tiempo de entrega una vez aprobado" value=pe.t_ent}}
+                          </div>
+                        </div>
+                      {{else}}
+                        {{presupuesto.t_ent}}
+                      {{/if}}
 
                   </li>
 
@@ -1164,7 +1194,7 @@
       {{else}}
 
                    
-        <button  {{action 'generarFacturaPDF'}} class="btn btn-default">PDF</button>
+        <button  {{action 'generarFacturaPDFNuevoMetodo'}} class="btn btn-default">PDF</button>
         {{#if factura.detalle.pagada}}
           <button class="btn btn-primary" type="submit" {{action 'openModalPagoFactura'}}>Ver Pago</button>
         {{else}}
