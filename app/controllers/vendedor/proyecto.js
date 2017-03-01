@@ -725,11 +725,40 @@ export default Ember.Controller.extend({
 		//console.log(datosPDF.detalle);
 		
 		//console.log(datosPDF.detalle);
+		var base64;
 
+		/*function getDataUri(url, callback) {
+		    var image = new Image();
+
+		    image.onload = function () {
+		        var canvas = document.createElement('canvas');
+		        canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+		        canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+		        canvas.getContext('2d').drawImage(this, 0, 0);
+
+		        // Get raw image data
+		        callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+
+		        // ... or get as Data URI
+		        callback(canvas.toDataURL('image/png'));
+		    };
+
+		    image.src = url;
+		}
+		getDataUri('../../logo-sistelred-nuevo.jpg', function(dataUri) {
+		    // Do whatever you'd like with the Data URI!
+		    console.log(dataUri);
+		    base64 = dataUri;
+		});*/
+
+		/*console.log(base64);
+		console.log(document.baseURI);*/
 		var docDefinition = {
 			content: [
-				/*{
-				},*/
+				{
+					image:'/logo-sistelred-nuevo.jpg',
+				},
 				{
 					style: 'encabezado',
 					table: {
@@ -839,7 +868,7 @@ export default Ember.Controller.extend({
 						
 				},
 				{text: [
-                    { text: 'Muy Atentamente,\n ' },
+                    { text: '\nMuy Atentamente,\n ' },
                     { text: 'Por: ',  style:'atentamente'},
                     { text: 'Sistelred, C.A.\n\n', bold: true },
                     { text: datosPDF.nombre + " " + datosPDF.apellido + '.\n' },

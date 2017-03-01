@@ -456,7 +456,7 @@ export default Ember.Controller.extend({
 		var actividades = [];
 		//var fecha;
 		var proyecto = this.get('proyecto');
-		var materiales_etapas = this.get('desglose.etapas').toArray();
+		var etapas = this.get('desglose.etapas').toArray();
 		var aux;
 
 		//console.log(proyecto);
@@ -487,10 +487,10 @@ export default Ember.Controller.extend({
 			});
 		});
 
-		//console.log(materiales_etapas);
-		$.each(materiales_etapas,function(i,material_etapa){
-			if (material_etapa.codigo_eta === etapa.codigo_eta){
-				$.each(material_etapa.materiales,function(i,material){
+		//console.log(etapa);
+		$.each(etapas,function(i,eta){
+			if (eta.codigo_eta === etapa.codigo){
+				$.each(eta.materiales,function(i,material){
 					aux = {};
 					aux.codigo = material.codigo;
 					aux.desc = material.nombre + " " + material.desc + " " +material.marca;
