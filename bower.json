@@ -14,6 +14,7 @@
     "lodash": "^4.17.2",
     "jspdf-plugins": "jsPDF-plugins#*",
     "jspdf": "1.2.61",
-    "html2canvas": "^0.4.1"
+    "html2canvas": "^0.4.1",
+    "pdfmake": "^0.1.26"
   }
 }

@@ -20,6 +20,8 @@ module.exports = function(defaults) {
   app.import('bower_components/lodash/dist/lodash.js');
   app.import('bower_components/jspdf/dist/jspdf.min.js');
   app.import('bower_components/html2canvas/build/html2canvas.min.js');
+  app.import('bower_components/pdfmake/build/pdfmake.min.js');
+  app.import('bower_components/pdfmake/build/vfs_fonts.js');
   // If you need to use different assets in different
   // environments, specify an object as the first parameter. That
   // object's keys should be the environment name and the values

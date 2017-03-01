@@ -1053,6 +1053,9 @@
                             <th>Código</th>
                             <th>Descripción</th>
                             <th>Cantidad</th>
+                            {{#unless reporte.leido}}
+                              <th>Eliminar</th>
+                            {{/unless}}
                           </tr>
                         </thead>
                         <tbody>
@@ -1061,6 +1064,9 @@
                               <td>{{servicio.codigo}}</td>
                               <td>{{servicio.desc}}</td>
                               <td>{{servicio.cantidad}}</td>
+                              {{#unless reporte.leido}}
+                                <td class="text-center"><input type="checkbox" id="{{reporte.codigo}}_{{servicio.codigo}}"></td>
+                              {{/unless}}
                           </tr>
                           {{/each}}
                         </tbody>
@@ -1073,7 +1079,7 @@
               <div class="row">
                 <div class="col-sm-10"></div>
                 <div class="col-sm-2">
-                  <input type="checkbox" value="{{reporte.codigo}}"><span> Leido</span>
+                  <input type="checkbox" id="rep_{{reporte.codigo}}"><span> Leido</span>
                 </div>
               </div>
             </div>
@@ -1109,7 +1115,8 @@
           {{#if sin_actividades}}
              <div class="page-header">
                   <h3>Definición de actividades</h3>
-                  <p>Esta etapa no tiene actividades definidas, a continuación deberá definirlas según se requiera y basándose en el contenido del reporte de detalle, una vez que finalice debe oprimir el botón guardar. <strong> Esta definición solo puede hacerce una vez. No se puede editar las actividades despues de guardadas. Adicionalmente debe esta COMPLETADO el reporte de detalle para poder guardarlas.</strong></p>
+                  <h4>{{etapa.letra}} - {{etapa.nombre}}</h4>
+                  <p class="text-justify">Esta etapa no tiene actividades definidas, a continuación deberá definirlas según se requiera y basándose en el contenido del reporte de detalle, una vez que finalice debe oprimir el botón guardar. <strong> Esta definición solo puede hacerce una vez. No se puede editar las actividades despues de guardadas. Adicionalmente debe esta COMPLETADO el reporte de detalle para poder guardarlas.</strong></p>
               </div>
 
                 <ul class="list-group">

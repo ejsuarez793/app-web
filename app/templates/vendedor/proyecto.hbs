@@ -658,7 +658,7 @@
         <div class="container-fluid">
           <div class="row">
 
-            <div class="col-md-12 well">
+            <div class="col-md-12 well" id="presupuesto_encabezado">
             <div class="col-md-7">
               <ul class="ul-presupuesto">
                 <li><b>Sistelred, C.A</b></li>
@@ -722,7 +722,7 @@
               </ul>
             </div>
             </div>
-            <div class="col-md-12 well">
+            <div class="col-md-12 well" id="presupuesto_materiales">
                <div class="col-md-12">
                <table class="table table-bordered table-hover table-condensed" id="tabla">  
                   <thead class="header-tabla-presupuesto">
@@ -759,55 +759,57 @@
 
             </div>
 
-            {{#if editing}}
-            <div class="col-md-6 well col-pre-observ-edit">
-              <ul class="ul-presupuesto">
-                <li ><b>Observaciones </b></li>
-                <li>
-                  <p>
-                  
-                 
-                    <div class="form-group">
-                    {{textarea name="observ" id="observ" type="text" class="form-control" placeholder="Observaciones Presupuesto" value=pe.observ}}
+            <div id="presupuesto_montos">
+                  {{#if editing}}
+                  <div class="col-md-6 well col-pre-observ-edit">
+                    <ul class="ul-presupuesto">
+                      <li ><b>Observaciones </b></li>
+                      <li>
+                        <p>
+                        
+                       
+                          <div class="form-group">
+                          {{textarea name="observ" id="observ" type="text" class="form-control" placeholder="Observaciones Presupuesto" value=pe.observ}}
+                          </div>
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                  {{else}}
+                  <div class="col-md-6 well col-pre-observ">
+                    <ul class="ul-presupuesto">
+                      <li ><b>Observaciones </b></li>
+                      <li>
+                        <p>
+                        {{presupuesto.observ}}
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                  {{/if}}
+                  {{#if editing}}
+                    <div class="col-md-6 well col-pre-observ-edit">
+                       <dl class="dl-horizontal">
+                            <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
+                            <dt>Descuento ({{presupuesto.descuento}}%):</dt> <dd>Bs. <span id="descuento">0.0</span></dd>
+                            <dt>Subtotal Final:</dt> <dd>Bs. <span id="subtotalfinal">0.0</span></dd>
+                            <dt>I.V.A (12%):</dt> <dd>Bs. <span id="iva">0.0</span></dd>
+                            <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
+                        </dl>
                     </div>
-                  </p>
-                </li>
-              </ul>
+                  {{else}}
+                    <div class="col-md-6 well col-pre-observ">
+                     <dl class="dl-horizontal">
+                          <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
+                          <dt>Descuento ({{presupuesto.descuento}}%):</dt> <dd>Bs. <span id="descuento">0.0</span></dd>
+                          <dt>Subtotal Final:</dt> <dd>Bs. <span id="subtotalfinal">0.0</span></dd>
+                          <dt>I.V.A (12%):</dt> <dd>Bs. <span id="iva">0.0</span></dd>
+                          <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
+                      </dl>
+                  </div>
+                  {{/if}}
             </div>
-            {{else}}
-            <div class="col-md-6 well col-pre-observ">
-              <ul class="ul-presupuesto">
-                <li ><b>Observaciones </b></li>
-                <li>
-                  <p>
-                  {{presupuesto.observ}}
-                  </p>
-                </li>
-              </ul>
-            </div>
-            {{/if}}
-            {{#if editing}}
-              <div class="col-md-6 well col-pre-observ-edit">
-                 <dl class="dl-horizontal">
-                      <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
-                      <dt>Descuento ({{presupuesto.descuento}}%):</dt> <dd>Bs. <span id="descuento">0.0</span></dd>
-                      <dt>Subtotal Final:</dt> <dd>Bs. <span id="subtotalfinal">0.0</span></dd>
-                      <dt>I.V.A (12%):</dt> <dd>Bs. <span id="iva">0.0</span></dd>
-                      <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
-                  </dl>
-              </div>
-            {{else}}
-              <div class="col-md-6 well col-pre-observ">
-               <dl class="dl-horizontal">
-                    <dt>Subtotal 1:</dt> <dd>Bs. <span id="subtotal1">0.0</span></dd>
-                    <dt>Descuento ({{presupuesto.descuento}}%):</dt> <dd>Bs. <span id="descuento">0.0</span></dd>
-                    <dt>Subtotal Final:</dt> <dd>Bs. <span id="subtotalfinal">0.0</span></dd>
-                    <dt>I.V.A (12%):</dt> <dd>Bs. <span id="iva">0.0</span></dd>
-                    <dt>TOTAL:</dt> <dd>Bs. <span id="total">0.0</span></dd>
-                </dl>
-            </div>
-            {{/if}}
-             <div class="col-md-12 well">
+             <div class="col-md-12 well" id="presupuesto_condiciones">
               <ul class="ul-presupuesto">
               <div class="row">
                     <li ><b>Condiciones Generales </b></li>
@@ -883,7 +885,7 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
         <button  {{action 'guardarPresupuesto' presupuesto presupuesto.estatus}} class="btn btn-primary">Guardar</button>
       {{else}}
-        <button  {{action 'generarPDF' presupuesto.codigo}} class="btn btn-default">PDF</button>
+        <button  {{action 'generarPDFNuevoMetodo' presupuesto.codigo}} class="btn btn-default">PDF</button>
         <button  {{action 'guardarPresupuesto' presupuesto 'Rechazado'}} class="btn btn-default">Rechazar</button>
         <button  {{action 'guardarPresupuesto' presupuesto 'Cerrado'}} class="btn btn-default">Cerrar</button>
         <button  {{action 'guardarPresupuesto' presupuesto 'Aprobado'}} class="btn btn-primary">Aprobar</button>
@@ -985,9 +987,8 @@
                       <div class="input-group">
                         <select class="form-control" name="cond_pago" id="select_cond_pago">
                           <option disabled selected value="">Seleccione...</option>
-                            <option value="Debito">Débito</option>
                             <option value="Credito">Crédito</option>
-                            <option value="Efectivo">Efectivo</option>
+                            <option value="Contado">Contado</option>
                           </select>
                         <span class="input-group-addon">{{fa-icon "cc-visa"}}</span>
                       </div>
@@ -1056,17 +1057,8 @@
                   </div>
                 </div>
 
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label>Cargo: </label><small class="form-text text-muted"></small>
-                    <div class="input-group">
-                      {{input name="cargo_cc" type="text" class="form-control" placeholder="Cargo persona contacto" value=factura.cargo_cc}}
-                      <span class="input-group-addon">{{fa-icon "user"}}</span>
-                    </div>
-                  </div>
-                </div>
 
-                <div class="col-md-12"></div>
+               
 
                 <div class="col-md-6">
                   <div class="form-group">
@@ -1078,13 +1070,14 @@
                   </div>
                 </div>
 
+                <div class="col-md-12"></div>
 
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <div class="form-group">
-                    <label>Email: </label><small class="form-text text-muted"></small>
+                    <label>Orden de compra nro: </label><small class="form-text text-muted"></small>
                     <div class="input-group">
-                      {{input name="email_cc" type="text" class="form-control" placeholder="Email persona contacto" value=factura.email_cc}}
-                      <span class="input-group-addon">{{fa-icon "user"}}</span>
+                      {{input name="nro_orden" type="text" class="form-control" placeholder="Nro de orden de compra del cliente" value=factura.nro_orden}}
+                      <span class="input-group-addon">{{fa-icon "file-text-o"}}</span>
                     </div>
                   </div>
                 </div>
@@ -1132,9 +1125,8 @@
                   {{#unless editing}}
                     <dl class="dl-horizontal">
                       <dt>Atención: </dt> <dd> <span >{{factura.detalle.persona_cc}}</span></dd>
-                      <dt>Email: </dt> <dd><span>{{factura.detalle.email_cc}}</span></dd>
-                      <dt>Cargo: </dt> <dd> <span >{{factura.detalle.cargo_cc}}</span></dd>
                       <dt>Departamento: </dt> <dd> <span >{{factura.detalle.departamento_cc}}</span></dd>
+                      <dt>Orden de compra: </dt> <dd> <span >{{factura.detalle.nro_orden}}</span></dd>
                     </dl>
                   {{/unless}}
                 </div>

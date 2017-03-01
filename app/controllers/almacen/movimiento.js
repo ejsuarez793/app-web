@@ -234,14 +234,22 @@ export default Ember.Controller.extend({
 			});
 			context.set('movimiento.materiales',info_movimiento.materiales);
 		}else if(tipo_mov === 're'){
+			
 			context.set('movimiento.retorno',info_movimiento);
-			$.each(info_movimiento.materiales,function(i,material){
-				material['cantidad_seleccion'] = 0;
-				material['cantidad_sin_seleccion'] = material['cantidad'];
-				material['mostrar_seleccion'] = false;
-				material['mostrar_sin_seleccion'] = true; 
+			$.each(info_movimiento.etapas,function(i,etapa){
+				$.each(etapa.materiales,function(i,material){
+					material['cantidad_seleccion'] = 0;
+					material['cantidad_sin_seleccion'] = material['cantidad'];
+					material['mostrar_seleccion'] = false;
+					material['mostrar_sin_seleccion'] = true; 
+				});
 			});
-			context.set('movimiento.materiales',info_movimiento.materiales);
+			/*console.log(info_movimiento.etapas[0].codigo_eta);
+			console.log(String(info_movimiento.etapas[0].codigo_eta));
+			$("#select_etapa").val(String(info_movimiento.etapas[0].codigo_eta));
+			console.log($("#select_etapa").val());
+			context.selectEtapaRetorno();*/
+			//context.set('movimiento.materiales',info_movimiento.etapas[0].materiales);
 			//console.log(context.get('movimiento.materiales'));
 		}else if(tipo_mov === 'eg'){
 			context.set('movimiento.egreso',info_movimiento);
@@ -279,9 +287,12 @@ export default Ember.Controller.extend({
 	},
 	selectEtapaRetorno(){
 		var codigo_eta = $("#select_etapa").val();
+		//console.log(codigo_eta);
+		var _this = this;
 		$.each(this.get('movimiento.retorno.etapas'),function(i,etapa){
 			if (parseInt(codigo_eta) === etapa.codigo_eta){
 				$("#nombre_eta").val(etapa.nombre_eta);
+				_this.set('movimiento.materiales',etapa.materiales);
 			}
 		});
 	},

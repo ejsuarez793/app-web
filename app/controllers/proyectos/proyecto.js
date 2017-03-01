@@ -1148,21 +1148,39 @@ export default Ember.Controller.extend({
        // $("#myModalEtapa").modal('hide');
 	},
 	guardarReportesLeidos(){
-		var checkbox = '#myModalReportes input:checked';
+		//var checkbox = '#myModalReportes input:checked';
 		var codigo_eta = this.get('etapa.codigo');
 		var codigos = [];
-
-		$(checkbox).each(function() {
-			codigos.push($(this).val());
-		});
-		//console.log(codigos);
-		var data = {
-			'codigos':codigos,
-		};
+		var reportes = this.get('etapa.reportes').toArray();
+		
+		var data_reportes = [];
+		var aux;
+		/*$(checkbox).each(function() {
+			var codigo = $(this).val();
+			codigos.push(codigo);*/
+			$.each(reportes,function(i,reporte){
+				var checkbox_reporte = "#rep_"+reporte.codigo;
+				if ($(checkbox_reporte).is(":checked")){
+					aux = {};
+					aux['codigo'] = reporte.codigo;
+					aux['servicios'] = [];
+					$.each(reporte.servicios,function(i,servicio){
+						var checkbox = "#"+reporte.codigo+"_"+servicio.codigo;
+						if ($(checkbox).is(":checked")){
+							aux['servicios'].push(servicio.codigo);
+						}
+						
+					});
+					data_reportes.push($.extend(true,{},aux));
+				}	
+			});
+		/*});*/
+		console.log(data_reportes);
+		var data = data_reportes;
 		var method = "PATCH";
 		var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') +'/etapa/' +codigo_eta+'/reporte/';
 		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
-		$("#myModalReportes").modal('hide');
+		/*$("#myModalReportes").modal('hide');*/
 	},
 	agregarActividad(){
 		//console.log("agregar actividad");
