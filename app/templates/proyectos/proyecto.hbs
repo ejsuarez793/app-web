@@ -259,6 +259,8 @@
               </div>
               <div role="tabpanel" class="tab-pane" id="listado">
                 <div class="well jumbo-color">
+                  <div class="panel panel-default">
+                  <div class="panel-body">
                   <div class="panel panel-default" id="disponibles">
 
                       <div class="panel-heading">
@@ -299,7 +301,7 @@
                         <div class="panel-footer">
                         <div class="row">
                             <div class="col-sm-12">
-                              <button class="btn btn-primary pull-right" id="exportar_mat_disponibles" {{action 'generarPDF' 'disponibles'}} type="submit">Exportar PDF</button>
+                            <!--  <button class="btn btn-primary pull-right" id="exportar_mat_disponibles" {{action 'generarPDF' 'disponibles'}} type="submit">Exportar PDF</button>-->
                             </div>
                         </div>
                         </div>
@@ -345,7 +347,7 @@
                         <div class="panel-footer">
                          <div class="row">
                             <div class="col-sm-12">
-                              <button class="btn btn-primary pull-right"   id="exportar_mat_usados" {{action 'generarPDF' 'usados'}} type="submit">Exportar PDF</button>
+                             <!-- <button class="btn btn-primary pull-right"   id="exportar_mat_usados" {{action 'generarPDF' 'usados'}} type="submit">Exportar PDF</button>-->
                             </div>
                         </div>
                         </div>
@@ -409,10 +411,13 @@
                         <div class="panel-footer">
                          <div class="row">
                             <div class="col-sm-12">
-                              <button class="btn btn-primary pull-right"  id="exportar_mat_material_etapas"  {{action 'generarPDF' 'material_etapas'}} type="submit">Exportar PDF</button>
+                              <!--<button class="btn btn-primary pull-right"  id="exportar_mat_material_etapas"  {{action 'generarPDF' 'material_etapas'}} type="submit">Exportar PDF</button>-->
                             </div>
                         </div>
                         </div>
+                    </div>
+                      <button class="btn btn-primary pull-right"{{action 'generarPDFListadoMateriales'}} type="submit">Exportar PDF</button>
+                    </div>
                     </div>
                 </div>
               </div>
@@ -1505,7 +1510,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button  {{action 'generarPDFActa' 'Inicio' 'modalActaInicio'}} class="btn btn-primary">PDF</button>
+        <button  {{action 'generarPDFActaInicio'}} class="btn btn-primary">PDF</button>
       </div>
     </div>
   </div>

@@ -1182,7 +1182,7 @@ export default Ember.Controller.extend({
 		var method = "PATCH";
 		var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') +'/etapa/' +codigo_eta+'/reporte/';
 		this.llamadaServidor(method,url,data,this.msgRespuesta,this);
-		/*$("#myModalReportes").modal('hide');*/
+		$("#myModalReportes").modal('hide');
 	},
 	agregarActividad(){
 		//console.log("agregar actividad");
@@ -1291,37 +1291,6 @@ export default Ember.Controller.extend({
         this.llamadaServidor(method,url,data,this.msgRespuesta,this);
         this.init();
 	},
-	/*generarPDF(tipo){
-		//$("#modalBody").css('background', '#fff');
-
-		function canvasSc(element){
-		  var clone = element.cloneNode(true);
-		  var style = clone.style;
-		  style.position = 'relative';
-		   style.top = window.innerHeight + 'px';
-		  // style.width ='300 px';
-		  style.left = 0;
-		  document.body.appendChild(clone);
-		  return clone;
-		}
-
-		var panel = document.getElementById(tipo);
-		var clone = canvasSc(panel);
-		var nombrepdf = this.get('proyecto.codigo')+"-listado-materiales-"+tipo+".pdf";
-		//console.log($("#"+tipo).width());
-		html2canvas(clone, {
-		    onrendered: function(canvas) {
-		     document.body.removeChild(clone);
-		      var imgData = canvas.toDataURL(
-                    'image/jpeg');             
-                var doc = new jsPDF('p', 'mm', [320,480]);
-                //var width = doc.internal.pageSize.width;    
-				//var height = doc.internal.pageSize.height;
-                doc.addImage(imgData, 'jpeg', 0, 0);//,width,height);
-                doc.save(nombrepdf);
-		    },
-		});
-	},*/
 	generarPDFActa(nombre,modal){
 		$("#"+modal).css('background', '#fff');
 		function canvasSc(element){
@@ -1364,6 +1333,422 @@ export default Ember.Controller.extend({
 
 		//por ultimo importante, devolvemos el estilo original del panel, para que no afecte en la pagina web
 		panel.style = originalStyle;
+	},
+	generarPDFActaInicio(){
+		var datosPDF ={};
+		var proyecto = this.get('proyecto');
+		var fecha = new Date();
+		var nombre_meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+		datosPDF.cliente_nombre = proyecto.cliente.nombre;
+		datosPDF.cliente_rif = proyecto.cliente.rif;
+		datosPDF.proyecto_nombre = proyecto.nombre;
+		datosPDF.proyecto_codigo = proyecto.codigo;
+		datosPDF.proyecto_desc = proyecto.desc;
+		datosPDF.proyecto_fecha = moment(proyecto.f_ini).format("LL");
+		datosPDF.dias = fecha.getDate();
+		datosPDF.mes =  nombre_meses[fecha.getMonth()];
+		datosPDF.anio = fecha.getFullYear();
+		datosPDF.presupuesto_codigo = proyecto.presupuestos[0].codigo;
+		datosPDF.coordinador_nombre = Cookies.getJSON('current').nombre1 + " " + Cookies.getJSON('current').apellido1;  
+
+		/*console.log(datosPDF);*/
+
+		var docDefinition = {
+			info: {
+			    title: 'Acta Inicio ' + datosPDF.proyecto_codigo,
+			    author: datosPDF.vendedor_nombre,
+			    /*subject: 'subject of document',
+			    keywords: 'keywords for document',*/
+			},
+			content: [
+				/*{
+					image:'/logo-sistelred-nuevo.jpg',
+				},*/
+				{
+					text:'Acta de Inicio',
+					style: 'titulo',
+				},
+				{ 
+	           		text: [
+	                    { text: 'Entre '},
+	                    { text: 'SISTELRED C.A. RIF: J-30994445-2', bold:true},
+	                    { text: ' y el cliente '},
+	                    { text: datosPDF.cliente_nombre + " RIF: " + datosPDF.cliente_rif, bold:true},
+	                    { text: ' se da inicio al proyecto '},
+	                    { text: datosPDF.proyecto_nombre, bold:true},
+	                    { text: ' registrado bajo el código '},
+	                    { text: datosPDF.proyecto_codigo, bold:true},
+	                    { text: ' de fecha ' + datosPDF.proyecto_fecha + ', cuyo objeto se define como '},
+	                    { text: datosPDF.proyecto_desc, bold:true},
+	                    { text: ', el cual se regirá según el presupuesto Nro '},
+	                    { text: datosPDF.presupuesto_codigo, bold:true},
+	                ],style:'texto'
+	            },
+
+	            { 
+	           		text: [
+	                    { text: 'Acta que se efectúa en la ciudad de Guatire, a los '},
+	                    { text: datosPDF.dias},
+	                    { text: ' del mes de '},
+	                    { text: datosPDF.mes},
+	                    { text: ' del año '},
+	                    { text: datosPDF.anio},
+	                ],style:'texto'
+	            },
+	            {
+
+					/*color: '#444',*/
+					/*pageBreak: 'after',*/
+
+					table: {
+						widths: ['*', '*'],
+						headerRows: 4,
+						keepWithHeaderRows: 1,
+
+						body: [
+							[
+								{
+									text: [
+					                    { text: 'Por el Cliente: \n' , style:'encabezado'},
+					                    { text: datosPDF.cliente_nombre, bold: true, style:'encabezado'},
+					            	],
+					            	margin:[10,10,10,10],
+					            	fillColor: '#00952e',
+					        	}, 
+
+					            { 	
+					            	text: [
+					                    { text: 'Por: \n' , style:'encabezado'},
+					                    { text: 'SISTELRED, C.A.',bold: true, style:'encabezado'},
+					           	 	],
+					           	 	margin:[10,10,10,10],
+					           	 	fillColor: '#00952e',
+					        	}
+				            ],
+				            [
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+					                    { text: '\r\r    Nombre: ', style:'firma'},
+					                    { text: '\r\r    Cargo: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+					                    { text: '\r\r    Nombre: ', style:'firma'},
+					                    { text: '\r\r    Cargo: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+				            ],
+
+				            [ '', ''],
+				            [ '', ''],
+
+							/*['Sample value 1', {colSpan: 2, rowSpan: 2, text: 'Both:\nrowSpan and colSpan\ncan be defined at the same time'}, ''],
+							['Sample value 1', '', ''],*/
+						]
+					}
+				},
+
+			],
+
+			styles: {
+				titulo:{
+					fontSize:24,
+					alignment:'center',
+					bold:true,
+					margin:[0,0,0,20]
+				},
+				texto: {
+					fontSize: 12,
+					alignment:'justify',
+					margin:[0,20,0,20]
+				},
+				firma: {
+					fontSize: 12,
+					alignment:'left',
+					margin:[10,0,10,0]
+				},
+				encabezado:{
+					color:"#FFFFFF"
+				}
+
+			},
+			footer: function(page, pages) { 
+				    return { 
+				        columns: [ 
+				            { text: 'Acta Inicio Proyecto-' + datosPDF.proyecto_codigo, italics: true , fontSize:8},
+				            { 
+				                alignment: 'right',
+				                text: [
+				                    { text: 'Página '+ page.toString(), italics: true , fontSize:8},
+				                    { text: ' de ', fontSize:8},
+				                    { text: pages.toString(), italics: true , fontSize:8}
+				                ]
+				            }
+				        ],
+				        margin: [15, 15 , 15, 15]
+				    };
+				},
+		}
+
+		pdfMake.createPdf(docDefinition).open();
+	},
+	generarPDFListadoMateriales(){
+		var datosPDF ={};
+		var proyecto = this.get('proyecto');
+		var desglose = this.get('desglose');
+		datosPDF.proyecto_nombre = proyecto.nombre;
+		datosPDF.proyecto_codigo = proyecto.codigo;
+		datosPDF.coordinador_nombre = Cookies.getJSON('current').nombre1 + " " + Cookies.getJSON('current').apellido1;
+		datosPDF.disponibles = []; 
+		datosPDF.usados = [];
+		datosPDF.etapas = []; 
+
+		/*console.log(desglose);*/
+		var aux;
+		var descripcion;
+		$.each(desglose.disponibles,function(i,material){
+			descripcion = material.desc + " " + material.marca + " (" + material.presen + ") ";
+			if (material.serial !== null){
+				descripcion = descripcion + " -SE: " +material.serial;
+			}
+			aux = [{text:material.codigo, noWrap: true}, 
+			{text: material.nombre}, 
+			{text: descripcion}, 
+			{text: material.cantidad, noWrap: true, alignment:'center'}];
+			datosPDF.disponibles.push($.extend(false,[],aux));
+		});
+
+		
+		var bodyDisponibles = [];
+		$.each(datosPDF.disponibles,function(i,detalle){
+
+				bodyDisponibles.push([detalle[0],detalle[1],detalle[2],detalle[3]]);	
+		
+		});
+
+		bodyDisponibles.unshift([
+			{text: 'Código', style: 'tableHeader'}, 
+			{text: 'Nombre', style: 'tableHeader'}, 
+			{text: 'Descripción', style: 'tableHeader'},
+			{text: 'Cantidad', style: 'tableHeader'}, 
+		]);
+
+		/*console.log(bodyDisponibles);*/
+
+
+		$.each(desglose.usados,function(i,material){
+			descripcion = material.desc + " " + material.marca + " (" + material.presen + ") ";
+			if (material.serial !== null){
+				descripcion = descripcion + " -SE: " +material.serial;
+			}
+			aux = [{text:material.codigo, noWrap: true}, 
+			{text: material.nombre}, 
+			{text: descripcion}, 
+			{text: material.cantidad, noWrap: true, alignment:'center'}];
+			datosPDF.usados.push($.extend(false,[],aux));
+		});
+
+		
+		var bodyUsados = [];
+		$.each(datosPDF.usados,function(i,detalle){
+
+				bodyUsados.push([detalle[0],detalle[1],detalle[2],detalle[3]]);	
+		
+		});
+
+		bodyUsados.unshift([
+			{text: 'Código', style: 'tableHeader'}, 
+			{text: 'Nombre', style: 'tableHeader'}, 
+			{text: 'Descripción', style: 'tableHeader'},
+			{text: 'Cantidad', style: 'tableHeader'}, 
+		]);
+
+		/*console.log(bodyUsados);*/
+		/*
+		{
+			text: 'Etapa: A - DESCRIPCION ETAPA',
+			style: 'subheader1',
+			alignment:'left'
+		},
+		{
+			style: 'tablaMateriales',
+			table: {
+				headerRows: 1,
+				// dontBreakRows: true,
+				// keepWithHeaderRows: 1,
+				widths: ['auto', 'auto','*','auto'],
+				body:bodyDisponibles,
+			}
+		},
+		*/
+
+		var content = [];
+		var i=0;
+		content.push({
+					text:'Listado de Materiales Proyecto ' + datosPDF.proyecto_codigo,
+					style: 'titulo',
+				},
+				{
+					text: datosPDF.proyecto_nombre+".",
+					style: 'subheader',
+				},
+				{
+					text: 'Disponibles:',
+					style: 'subheader1',
+				},
+				{
+					style: 'tablaMateriales',
+					table: {
+						headerRows: 1,
+						// dontBreakRows: true,
+						// keepWithHeaderRows: 1,
+						widths: ['auto', 'auto','*','auto'],
+						body:bodyDisponibles,
+					}
+				},
+				{
+					text: 'Usados:',
+					style: 'subheader1',
+				},
+				{
+					style: 'tablaMateriales',
+					table: {
+						headerRows: 1,
+						// dontBreakRows: true,
+						// keepWithHeaderRows: 1,
+						widths: ['auto', 'auto','*','auto'],
+						body:bodyUsados,
+					}
+				},
+				{
+					text: 'Usados por etapa:',
+					style: 'subheader1',
+				});
+		
+		var tablaEtapas = {};
+		var aux_etapa = {};
+		var aux_tabla_eta = {};
+		var bodyEtapa = [];
+		var bodyEtapaJson = [];
+		$.each(desglose.etapas,function(i,etapa){
+			bodyEtapa = []; //se reinicia para que no se repitan los materiales
+			aux_etapa = {
+				text: etapa.letra_eta + " - " + etapa.nombre_eta,
+				style: 'subheader1',
+				alignment:'left'
+			};
+			
+			$.each(etapa.materiales,function(i, material){
+				descripcion = material.desc + " " + material.marca + " (" + material.presen + ") ";
+				if (material.serial !== null){
+					descripcion = descripcion + " -SE: " +material.serial;
+				}
+				aux = [{text:material.codigo, noWrap: true}, 
+				{text: material.nombre}, 
+				{text: descripcion}, 
+				{text: material.cantidad, noWrap: true, alignment:'center'}];
+				bodyEtapa.push($.extend(false,[],aux));
+			});
+
+			
+
+			var bodyUsados = []; //$.extend(true,[],[]);
+			$.each(bodyEtapa,function(i,detalle){
+				bodyUsados.push([detalle[0],detalle[1],detalle[2],detalle[3]]);	
+			});
+
+			bodyUsados.unshift([
+				{text: 'Código', style: 'tableHeader'}, 
+				{text: 'Nombre', style: 'tableHeader'}, 
+				{text: 'Descripción', style: 'tableHeader'},
+				{text: 'Cantidad', style: 'tableHeader'}, 
+			]);
+
+			aux_tabla_eta = {
+				style:'tablaMateriales',
+				table:{
+					headerRows:1,
+					widths: ['auto', 'auto','*','auto'],
+					body:bodyUsados,
+				}
+			};
+			content.push($.extend(true,{},aux_etapa),$.extend(true,{},aux_tabla_eta));
+		});
+
+		console.log(content);
+		var docDefinition = {
+			info: {
+			    title: 'Listado Materiales Proyecto ' + datosPDF.proyecto_codigo,
+			    author: datosPDF.vendedor_nombre,
+			    /*subject: 'subject of document',
+			    keywords: 'keywords for document',*/
+			},
+			content:content,
+			styles: {
+				titulo:{
+					fontSize:18,
+					alignment:'center',
+					bold:true,
+					margin:[0,0,0,20]
+				},
+				subheader:{
+					fontSize:14,
+					alignment:'justify',
+					margin:[0,0,0,20]
+				},
+				subheader1:{
+					fontSize:12,
+					alignment:'center',
+					bold:true,
+					margin:[0,15,0,15]
+				},
+				tableHeader: {
+					fontSize: 12,
+					alignment: 'left',
+					bold: true,
+					fillColor: '#337ab7',
+					color:"#FFFFFF",
+					noWrap:true,
+					/*margin: [0, 0, 0, 10]*/
+				},
+				tablaMateriales: {
+					fontSize:9,
+					margin: [0, 15 , 0, 15],
+				},
+
+			},
+			footer: function(page, pages) { 
+				    return { 
+				        columns: [ 
+				            { text: 'Listado Materiales Proyecto-' + datosPDF.proyecto_codigo, italics: true , fontSize:8},
+				            { 
+				                alignment: 'right',
+				                text: [
+				                    { text: 'Página '+ page.toString(), italics: true , fontSize:8},
+				                    { text: ' de ', fontSize:8},
+				                    { text: pages.toString(), italics: true , fontSize:8}
+				                ]
+				            }
+				        ],
+				        margin: [15, 15 , 15, 15]
+				    };
+				},
+		}
+
+		pdfMake.createPdf(docDefinition).open();
 	},
 	actions: {
 		cerrarMsg:function(){
@@ -1470,6 +1855,12 @@ export default Ember.Controller.extend({
 			var method= "GET";
 			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/materiales/' ;
 		    this.getElements(method,url,this.setDesglose,this);
+		},
+		generarPDFActaInicio: function(){
+			this.generarPDFActaInicio();
+		},
+		generarPDFListadoMateriales: function(){
+			this.generarPDFListadoMateriales();
 		},
 		generarPDFActa:function(tipo,modal){
 			var nombre = nombre;

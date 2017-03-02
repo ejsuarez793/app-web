@@ -1155,12 +1155,12 @@ export default Ember.Controller.extend({
 
 						body: [
 							[{rowSpan: 5, text: [
-			                    { text: 'Atención: ', bold: true , fontSize:10,},
-			                    { text: datosPDF.atencion, fontSize:10},
-			                    { text: '\rDepartamento: ', bold: true , fontSize:10},
-			                    { text: datosPDF.departamento, fontSize:10},
-			                    { text: '\rOrden de Compra: ', bold: true , fontSize:10},
-			                    { text: datosPDF.nro_orden, fontSize:10},
+			                    { text: 'Atención: ', bold: true , style:'encabezado'},
+			                    { text: datosPDF.atencion, style:'encabezado'},
+			                    { text: '\rDepartamento: ', bold: true ,style:'encabezado'},
+			                    { text: datosPDF.departamento, style:'encabezado'},
+			                    { text: '\rOrden de Compra: ', bold: true , style:'encabezado'},
+			                    { text: datosPDF.nro_orden, style:'encabezado'},
 				            ]}, {text:'Sub Total 1:', bold:true,  style:'numero'}, {text:'Bs. ' + datosPDF.subtotal1,  style:'numero'}],
 							['', {text:'Descuento (0%)', bold:true, style:'numero'},  {text:'Bs. ' + datosPDF.descuento,  style:'numero'}],
 							['', {text:'Sub Total Final:', bold:true,  style:'numero'},  {text:'Bs. ' + datosPDF.subtotalfinal,  style:'numero'}],
@@ -1175,17 +1175,8 @@ export default Ember.Controller.extend({
 			],
 
 			styles: {
-				atencion:{
-					fontSize:12,
-					alignment:'center'
-				},
-				descripcion:{
-					fontSize:11,
-					alignment:'left',
-					margin:[0,5,0,5]
-				},
 				tableHeader: {
-					fontSize: 12,
+					fontSize: 10,
 					alignment: 'left',
 					bold: true,
 					fillColor: '#337ab7',
@@ -1198,30 +1189,17 @@ export default Ember.Controller.extend({
 					margin: [0, 15 , 0, 15],
 				},
 				encabezado: {
-					fontSize: 12,
-					margin: [0, 5, 0, 5]
+					fontSize: 10,
+					margin: [0, 2, 0, 2]
 				},
 				tablaTotal: {
 					fontSize:9,
 					margin: [0, 15 , 0, 15],
 				},
-				condiciones:{
-					fontSize:9,
-					bold:true,
-					margin: [0, 10, 0, 10]
-				},
 				numero:{
 					noWrap: true, 
 					alignment:'right'
 				},
-				elementoCondiciones:{
-					fontSize:9,
-					margin: [0, 1, 0, 1]
-				},
-				atentamente:{
-					fontSize:9,
-					margin: [0, 10, 0, 10]
-				}
 			},
 			footer: function(page, pages) { 
 				    return { 
