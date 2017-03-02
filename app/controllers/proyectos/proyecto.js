@@ -1414,7 +1414,8 @@ export default Ember.Controller.extend({
 					                    { text: datosPDF.cliente_nombre, bold: true, style:'encabezado'},
 					            	],
 					            	margin:[10,10,10,10],
-					            	fillColor: '#00952e',
+					            	//fillColor: '#00952e',
+					            	fillColor: '#337ab7',
 					        	}, 
 
 					            { 	
@@ -1423,7 +1424,8 @@ export default Ember.Controller.extend({
 					                    { text: 'SISTELRED, C.A.',bold: true, style:'encabezado'},
 					           	 	],
 					           	 	margin:[10,10,10,10],
-					           	 	fillColor: '#00952e',
+					           	 	//fillColor: '#00952e',
+					           	 	fillColor: '#337ab7'
 					        	}
 				            ],
 				            [
@@ -1576,25 +1578,6 @@ export default Ember.Controller.extend({
 			{text: 'Cantidad', style: 'tableHeader'}, 
 		]);
 
-		/*console.log(bodyUsados);*/
-		/*
-		{
-			text: 'Etapa: A - DESCRIPCION ETAPA',
-			style: 'subheader1',
-			alignment:'left'
-		},
-		{
-			style: 'tablaMateriales',
-			table: {
-				headerRows: 1,
-				// dontBreakRows: true,
-				// keepWithHeaderRows: 1,
-				widths: ['auto', 'auto','*','auto'],
-				body:bodyDisponibles,
-			}
-		},
-		*/
-
 		var content = [];
 		var i=0;
 		content.push({
@@ -1688,7 +1671,7 @@ export default Ember.Controller.extend({
 			content.push($.extend(true,{},aux_etapa),$.extend(true,{},aux_tabla_eta));
 		});
 
-		console.log(content);
+		/*console.log(content);*/
 		var docDefinition = {
 			info: {
 			    title: 'Listado Materiales Proyecto ' + datosPDF.proyecto_codigo,

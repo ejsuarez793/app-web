@@ -189,7 +189,7 @@ export default Ember.Controller.extend({
 		acta_movimiento.anio = fecha.getFullYear();
 		acta_movimiento.fecha_mostrar = moment(acta_movimiento.fecha).format('LL');
 
-		console.log(movimiento);
+		//console.log(movimiento);
 
 		if (movimiento.tipo == "Egreso"){
 			acta_movimiento.nombre_tipo = "ENTREGA DE MATERIAL";
@@ -273,6 +273,416 @@ export default Ember.Controller.extend({
 		//por ultimo importante, devolvemos el estilo original del panel, para que no afecte en la pagina web
 		panel.style = originalStyle;
 	},
+	generarPDFActaMovimiento(){
+		var datosPDF = {};
+		datosPDF.materiales = [];
+		var acta_movimiento = this.get('acta_movimiento');
+		console.log("generando");
+		console.log(this.get('acta_movimiento'));
+		datosPDF.movimiento_codigo = acta_movimiento.codigo;
+		datosPDF.tipo = acta_movimiento.tipo;
+		datosPDF.fecha = acta_movimiento.fecha_mostrar;
+		datosPDF.almacenista_nombre = acta_movimiento.nombre_almace;
+		//datosPDF.materiales = acta_movimiento.materiales;
+		if (datosPDF.tipo === "Ingreso"){
+			
+			datosPDF.proveedor_nombre = acta_movimiento.nombre_prove;
+			datosPDF.proveedor_rif = acta_movimiento.rif_prove;
+			datosPDF.nro_orden = acta_movimiento.codigo_oc;
+			datosPDF.nota_entrega = acta_movimiento.codigo_ne;
+			datosPDF.dias = acta_movimiento.dias;
+			datosPDF.mes = acta_movimiento.mes;
+			datosPDF.anio = acta_movimiento.anio;
+			
+		}else if (datosPDF.tipo === "Egreso" || datosPDF.tipo === "Retorno"){
+			datosPDF.tecnico_nombre = acta_movimiento.nombre_tec;
+			datosPDF.tecnico_ci = acta_movimiento.ci_tecnico;
+			datosPDF.etapa_letra  = acta_movimiento.letra_eta;
+			datosPDF.etapa_nombre = acta_movimiento.nombre_eta;
+			datosPDF.proyecto_codigo = acta_movimiento.codigo_pro;
+			datosPDF.proyecto_nombre = acta_movimiento.nombre_pro;
+		}
+
+		var aux;
+		var descripcion;
+		var serial = "";
+		$.each(acta_movimiento.materiales,function(i,material){
+			if (material.serial === null){
+				serial = "N/A";
+			}
+			aux = [{text:material.codigo, noWrap: true}, 
+			{text: material.nombre}, 
+			{text: material.desc},
+			{text: serial},
+			{text: material.cantidad, noWrap: true, alignment:'center'}];
+			datosPDF.materiales.push($.extend(false,[],aux));
+		});
+
+		
+		var body = [];
+		$.each(datosPDF.materiales,function(i,detalle){
+
+				body.push([detalle[0],detalle[1],detalle[2],detalle[3],detalle[4]]);	
+		
+		});
+
+		body.unshift([
+			{text: 'Código', style: 'tableHeader'}, 
+			{text: 'Nombre', style: 'tableHeader'}, 
+			{text: 'Descripción', style: 'tableHeader'},
+			{text: 'Serial', style: 'tableHeader'},
+			{text: 'Cantidad', style: 'tableHeader'}, 
+		]);
+
+		/*console.log(datosPDF);*/
+		var content = [];
+		if (datosPDF.tipo === "Ingreso"){
+			content.push(
+				{
+					text:'Acta de ' + datosPDF.tipo + " de Material",
+					style: 'titulo',
+				},
+				{ 
+	           		text: [
+	                    { text: 'Por medio de la presente, se hace constar que se recibe del proveedor '},
+	                    { text: datosPDF.proveedor_nombre + " RIF " + datosPDF.proveedor_rif , bold:true},
+	                    { text: ', según orden de compra '},
+	                    { text: datosPDF.nro_orden , bold:true},
+	                    { text: ' y nota de entrega '},
+	                    { text: datosPDF.nota_entrega , bold:true},
+	                    { text: ' el material que se adquiere para hacer reposición del almacén de '},
+	                    { text: 'SISTELRED C.A. RIF: J-30994445-2', bold:true},
+	                    { text: '. Los materiales adquiridos se listan a continuación: '},
+	                ],style:'texto'
+	            },
+	            {
+					style: 'tablaMateriales',
+					table: {
+						headerRows: 1,
+						// dontBreakRows: true,
+						// keepWithHeaderRows: 1,
+						widths: ['auto', 'auto','*','auto','auto'],
+						body:body,
+					}
+				},
+
+	            { 
+	           		text: [
+	                    { text: 'Acta que se efectúa en la ciudad de Guatire, el día '},
+	                    { text: datosPDF.fecha + "."},
+	                ],style:'texto'
+	            },
+
+				{
+				    columns: [
+				        { width: '*', text: '' },
+				        {
+				            width: 'auto',
+				               	table: {
+								headerRows: 4,
+								keepWithHeaderRows: 1,
+								body: [
+									[
+										{
+											text: [
+							                    { text: 'Por ' , style:'encabezado'},
+							                    { text: 'SISTELRED: \n' , bold:true, style:'encabezado'},
+							                    { text: datosPDF.almacenista_nombre, bold: true, style:'encabezado'},
+							            	],
+							            	margin:[90,10,90,10],
+							            	//fillColor: '#00952e',
+							            	fillColor: '#337ab7',
+							        	}, 
+
+						            ],
+						            [
+
+
+							            {
+							            	rowSpan: 3, 
+							            	text: [
+							                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+							                    { text: '\r\r    Nombre: ', style:'firma'},
+							                    { text: '\r\r    Cargo: ', style:'firma'},
+							                    { text: '\r\r    Firma: \r\r', style:'firma'},
+						            		],
+							            	alignment:'center'
+							            	,margin:[10,10,10,10]
+							            },
+						            ],
+
+						            [ ''],
+						            [ ''],
+								]
+							}
+				        },
+				        { width: '*', text: '' },
+				    ]
+				}
+			);
+		}else if (datosPDF.tipo === "Egreso"){
+			content.push(
+				{
+					text:'Acta de ' + datosPDF.tipo + " de Material",
+					style: 'titulo',
+				},
+				{ 
+	           		text: [
+	                    { text: 'Por medio de la presente, '},
+	                    { text: 'SISTELRED C.A. RIF J-30994445-2' , bold:true},
+	                    { text: ' hace constar la entrega de materiales al técnico '},
+	                    { text: datosPDF.tecnico_nombre , bold:true},
+	                    { text: ' C.I. '},
+	                    { text: 'V-' + datosPDF.tecnico_ci , bold:true},
+	                    { text: ', para ser utilizados en la etapa '},
+	                    { text: datosPDF.etapa_letra + " - " + datosPDF.etapa_nombre, bold:true},
+	                    { text: ' del proyecto '},
+	                    { text: datosPDF.proyecto_codigo, bold:true},
+	                    { text: ' que tiene por nombre '},
+	                      { text: datosPDF.proyecto_nombre,},
+	                    { text: '. Los materiales que se entregan se listan a continuación: '},
+	                ],style:'texto'
+	            },
+	            {
+					style: 'tablaMateriales',
+					table: {
+						headerRows: 1,
+						// dontBreakRows: true,
+						// keepWithHeaderRows: 1,
+						widths: ['auto', 'auto','*','auto','auto'],
+						body:body,
+					}
+				},
+
+	            { 
+	           		text: [
+	                    { text: 'Acta que se efectúa en la ciudad de Guatire, el día '},
+	                    { text: datosPDF.fecha + "."},
+	                ],style:'texto'
+	            },
+	            {
+					table: {
+						widths: ['*', '*'],
+						headerRows: 4,
+						keepWithHeaderRows: 1,
+
+						body: [
+							[
+								{
+									text: [
+					                    { text: 'Técnico Responsable: \n' , style:'encabezado'},
+					                    { text: datosPDF.tecnico_nombre, bold: true, style:'encabezado'},
+					            	],
+					            	margin:[10,10,10,10],
+					            	//fillColor: '#00952e',
+					            	fillColor: '#337ab7',
+					        	}, 
+
+					            { 	
+					            	text: [
+					                    { text: 'Por SISTELRED, C.A.: \n' , style:'encabezado'},
+					                    { text: datosPDF.almacenista_nombre, bold: true, style:'encabezado'},
+					           	 	],
+					           	 	margin:[10,10,10,10],
+					           	 	//fillColor: '#00952e',
+					           	 	fillColor: '#337ab7'
+					        	}
+				            ],
+				            [
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: '\r\r    Cédula: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: '\r\r    Cédula: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+				            ],
+
+				            [ '', ''],
+				            [ '', ''],
+
+							/*['Sample value 1', {colSpan: 2, rowSpan: 2, text: 'Both:\nrowSpan and colSpan\ncan be defined at the same time'}, ''],
+							['Sample value 1', '', ''],*/
+						]
+					}
+				}
+			);
+		}else if(datosPDF.tipo === "Retorno"){
+			content.push(
+				{
+					text:'Acta de ' + datosPDF.tipo + " de Material",
+					style: 'titulo',
+				},
+				{ 
+	           		text: [
+	                    { text: 'Por medio de la presente, '},
+	                    { text: 'SISTELRED C.A. RIF J-30994445-2' , bold:true},
+	                    { text: ' recibe del técnico '},
+	                    { text: datosPDF.tecnico_nombre , bold:true},
+	                    { text: ' C.I. '},
+	                    { text: 'V-' + datosPDF.tecnico_ci , bold:true},
+	                    { text: ', asignado al proyecto '},
+	                    { text: datosPDF.proyecto_codigo, bold:true},
+	                    { text: ' que tiene por nombre '},
+	                    { text: datosPDF.proyecto_nombre, bold:true},
+	                    { text: ', el material sobrante de la etapa '},
+	                    { text: datosPDF.etapa_letra + " - " + datosPDF.etapa_nombre, bold:true},
+	                    { text: '. Los materiales que se entregan se listan a continuación: '},
+	                ],style:'texto'
+	            },
+	            {
+					style: 'tablaMateriales',
+					table: {
+						headerRows: 1,
+						// dontBreakRows: true,
+						// keepWithHeaderRows: 1,
+						widths: ['auto', 'auto','*','auto','auto'],
+						body:body,
+					}
+				},
+
+	            { 
+	           		text: [
+	                    { text: 'Acta que se efectúa en la ciudad de Guatire, el día '},
+	                    { text: datosPDF.fecha + "."},
+	                ],style:'texto'
+	            },
+	            {
+					table: {
+						widths: ['*', '*'],
+						headerRows: 3,
+						keepWithHeaderRows: 1,
+
+						body: [
+							[
+								{
+									text: [
+					                    { text: 'Técnico Responsable: \n' , style:'encabezado'},
+					                    { text: datosPDF.tecnico_nombre, bold: true, style:'encabezado'},
+					            	],
+					            	margin:[10,10,10,10],
+					            	//fillColor: '#00952e',
+					            	fillColor: '#337ab7',
+					        	}, 
+
+					            { 	
+					            	text: [
+					                    { text: 'Por SISTELRED, C.A.: \n' , style:'encabezado'},
+					                    { text: datosPDF.almacenista_nombre, bold: true, style:'encabezado'},
+					           	 	],
+					           	 	margin:[10,10,10,10],
+					           	 	//fillColor: '#00952e',
+					           	 	fillColor: '#337ab7'
+					        	}
+				            ],
+				            [
+					            {
+					            	rowSpan: 2, 
+					            	text: [
+					                    { text: '\r\r    Cédula: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+
+					            {
+					            	rowSpan: 2, 
+					            	text: [
+					                    { text: '\r\r    Cédula: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+				            ],
+				            [ '', ''],
+
+							/*['Sample value 1', {colSpan: 2, rowSpan: 2, text: 'Both:\nrowSpan and colSpan\ncan be defined at the same time'}, ''],
+							['Sample value 1', '', ''],*/
+						]
+					}
+				}
+			);
+		}
+
+		var docDefinition = {
+			info: {
+			    title: 'Acta de ' + datosPDF.tipo + " de Material " + datosPDF.codigo ,
+			    author: datosPDF.almacenista_nombre,
+			    /*subject: 'subject of document',
+			    keywords: 'keywords for document',*/
+			},
+			content:content,
+			styles: {
+				titulo:{
+					fontSize:24,
+					alignment:'center',
+					bold:true,
+					margin:[0,0,0,20]
+				},
+				texto: {
+					fontSize: 12,
+					alignment:'justify',
+					margin:[0,20,0,20]
+				},
+				firma: {
+					fontSize: 12,
+					alignment:'left',
+					margin:[10,0,10,0]
+				},
+				encabezado:{
+					color:"#FFFFFF"
+				},
+				tableHeader: {
+					fontSize: 12,
+					alignment: 'left',
+					bold: true,
+					fillColor: '#337ab7',
+					color:"#FFFFFF",
+					noWrap:true,
+					/*margin: [0, 0, 0, 10]*/
+				},
+				tablaMateriales: {
+					fontSize:9,
+					margin: [0, 15 , 0, 15],
+				},
+
+			},
+			footer: function(page, pages) { 
+				    return { 
+				        columns: [ 
+				            { text: 'Acta Movimiento', italics: true , fontSize:8},
+				            { 
+				                alignment: 'right',
+				                text: [
+				                    { text: 'Página '+ page.toString(), italics: true , fontSize:8},
+				                    { text: ' de ', fontSize:8},
+				                    { text: pages.toString(), italics: true , fontSize:8}
+				                ]
+				            }
+				        ],
+				        margin: [15, 15 , 15, 15]
+				    };
+				},
+		}
+
+		pdfMake.createPdf(docDefinition).open();
+
+
+	},
 	actions:{
 		cerrarMsgAlert:function(){
 			this.cerrarMsgAlert();
@@ -306,6 +716,9 @@ export default Ember.Controller.extend({
 				nombre = "ACTA DE INGRESO DE MATERIAL "+movimiento.codigo;;
 			}
 			this.generarPDFActa(nombre,modal);
-		}
+		},
+		generarPDFActaMovimiento: function(){
+			this.generarPDFActaMovimiento();
+		},
 	}
 });
