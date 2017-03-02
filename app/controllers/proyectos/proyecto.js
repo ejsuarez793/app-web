@@ -1291,7 +1291,7 @@ export default Ember.Controller.extend({
         this.llamadaServidor(method,url,data,this.msgRespuesta,this);
         this.init();
 	},
-	generarPDFActa(nombre,modal){
+	/*generarPDFActa(nombre,modal){
 		$("#"+modal).css('background', '#fff');
 		function canvasSc(element){
 			//console.log(element.style);
@@ -1333,38 +1333,60 @@ export default Ember.Controller.extend({
 
 		//por ultimo importante, devolvemos el estilo original del panel, para que no afecte en la pagina web
 		panel.style = originalStyle;
-	},
-	generarPDFActaInicio(){
+	},*/
+	generarPDFActa(tipo){
 		var datosPDF ={};
 		var proyecto = this.get('proyecto');
+		var etapa = this.get('etapa');
+		var acta_entrega = this.get('acta_entrega');
 		var fecha = new Date();
 		var nombre_meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-		datosPDF.cliente_nombre = proyecto.cliente.nombre;
-		datosPDF.cliente_rif = proyecto.cliente.rif;
-		datosPDF.proyecto_nombre = proyecto.nombre;
-		datosPDF.proyecto_codigo = proyecto.codigo;
-		datosPDF.proyecto_desc = proyecto.desc;
-		datosPDF.proyecto_fecha = moment(proyecto.f_ini).format("LL");
-		datosPDF.dias = fecha.getDate();
-		datosPDF.mes =  nombre_meses[fecha.getMonth()];
-		datosPDF.anio = fecha.getFullYear();
-		datosPDF.presupuesto_codigo = proyecto.presupuestos[0].codigo;
-		datosPDF.coordinador_nombre = Cookies.getJSON('current').nombre1 + " " + Cookies.getJSON('current').apellido1;  
+		var content = [];
+		if (tipo === "Inicio" || tipo === "Estado"){
+			datosPDF.cliente_nombre = proyecto.cliente.nombre;
+			datosPDF.cliente_rif = proyecto.cliente.rif;
+			datosPDF.proyecto_nombre = proyecto.nombre;
+			datosPDF.proyecto_codigo = proyecto.codigo;
+			datosPDF.proyecto_desc = proyecto.desc;
+			datosPDF.proyecto_fecha = moment(proyecto.f_ini).format("LL");
+			datosPDF.dias = fecha.getDate();
+			datosPDF.mes =  nombre_meses[fecha.getMonth()];
+			datosPDF.anio = fecha.getFullYear();
+			datosPDF.presupuesto_codigo = proyecto.presupuestos[0].codigo;
+			datosPDF.coordinador_nombre = Cookies.getJSON('current').nombre1 + " " + Cookies.getJSON('current').apellido1; 
 
-		/*console.log(datosPDF);*/
 
-		var docDefinition = {
-			info: {
-			    title: 'Acta Inicio ' + datosPDF.proyecto_codigo,
-			    author: datosPDF.vendedor_nombre,
-			    /*subject: 'subject of document',
-			    keywords: 'keywords for document',*/
-			},
-			content: [
-				/*{
-					image:'/logo-sistelred-nuevo.jpg',
-				},*/
+		}else if(tipo === "Culminacion"){
+			datosPDF.cliente_nombre = proyecto.cliente.nombre;
+			datosPDF.cliente_rif = proyecto.cliente.rif;
+			datosPDF.proyecto_nombre = proyecto.nombre;
+			datosPDF.proyecto_codigo = proyecto.codigo;
+			datosPDF.proyecto_desc = proyecto.desc;
+			datosPDF.proyecto_fecha_inicio = moment(proyecto.f_ini).format("LL");
+			datosPDF.proyecto_fecha_fin = moment(proyecto.f_fin).format("LL");
+			datosPDF.dias = fecha.getDate();
+			datosPDF.mes =  nombre_meses[fecha.getMonth()];
+			datosPDF.anio = fecha.getFullYear();
+		}else if (tipo === "Entrega"){
+			/*console.log("entrega");*/
+			datosPDF.cliente_nombre = proyecto.cliente.nombre;
+			datosPDF.cliente_rif = proyecto.cliente.rif;
+			datosPDF.proyecto_nombre = proyecto.nombre;
+			datosPDF.proyecto_codigo = proyecto.codigo;
+			datosPDF.dias = fecha.getDate();
+			datosPDF.mes =  nombre_meses[fecha.getMonth()];
+			datosPDF.anio = fecha.getFullYear();
+			datosPDF.etapa_codigo = etapa.letra;
+			datosPDF.etapa_nombre = etapa.nombre;
+			datosPDF.actividades = acta_entrega.actividades;
+			datosPDF.elementos = acta_entrega.elementos;
+			/*console.log(datosPDF);*/
+		}
+
+
+		if (tipo === "Inicio"){
+			content.push(
 				{
 					text:'Acta de Inicio',
 					style: 'titulo',
@@ -1393,14 +1415,10 @@ export default Ember.Controller.extend({
 	                    { text: ' del mes de '},
 	                    { text: datosPDF.mes},
 	                    { text: ' del año '},
-	                    { text: datosPDF.anio},
+	                    { text: datosPDF.anio + '.'},
 	                ],style:'texto'
 	            },
 	            {
-
-					/*color: '#444',*/
-					/*pageBreak: 'after',*/
-
 					table: {
 						widths: ['*', '*'],
 						headerRows: 4,
@@ -1456,14 +1474,478 @@ export default Ember.Controller.extend({
 
 				            [ '', ''],
 				            [ '', ''],
-
-							/*['Sample value 1', {colSpan: 2, rowSpan: 2, text: 'Both:\nrowSpan and colSpan\ncan be defined at the same time'}, ''],
-							['Sample value 1', '', ''],*/
 						]
 					}
 				},
+			);
+		}else if (tipo === "Culminacion"){
+			content.push(
+				{
+					text:'Acta de Culminacion',
+					style: 'titulo',
+				},
+				{ 
+	           		text: [
+	                    { text: 'Mediante la presente '},
+	                    { text: 'SISTELRED C.A. RIF: J-30994445-2', bold:true},
+	                    { text: ' hace entrega al cliente '},
+	                    { text: datosPDF.cliente_nombre + " RIF: " + datosPDF.cliente_rif, bold:true},
+	                    { text: ' el proyecto '},
+	                    { text: datosPDF.proyecto_nombre, bold:true},
+	                    { text: ' registrado bajo el código '},
+	                    { text: datosPDF.proyecto_codigo, bold:true},
+	                    { text: ' de fecha ' + datosPDF.proyecto_fecha_inicio + ' y culminado el ' + datosPDF.proyecto_fecha_fin},
+	                    { text: ', cuyo objecto fue '},
+	                    { text: datosPDF.proyecto_desc, bold:true},
+	                    { text: ', el cual se entrega a entera satisfacción de ambas partes y dando por culminado el servicio prestado por parte de la empresa '},
+	                    { text: datosPDF.presupuesto_codigo, bold:true},
+	                ],style:'texto'
+	            },
 
-			],
+	            { 
+	           		text: [
+	                    { text: 'Acta que se efectúa en la ciudad de Guatire, a los '},
+	                    { text: datosPDF.dias},
+	                    { text: ' del mes de '},
+	                    { text: datosPDF.mes},
+	                    { text: ' del año '},
+	                    { text: datosPDF.anio + '.'},
+	                ],style:'texto'
+	            },
+	            { 
+	           		text: [
+	                    { text: 'NOTA: ', bold:true},
+	                    { text: ' Este documento indica la recepción definitiva de los trabajos realizados a entera satisfacción de '},
+	                    { text: datosPDF.cliente_nombre /*+ " RIF: " + datosPDF.cliente_rif*/, bold:true},
+	                    { text: ' liberando cualquier fianza o retención generada como producto del fiel cumplimiento, presentada por la empresa '},
+	                    { text: 'SISTELRED, C.A.', bold:true},
+	                    { text: ' y aceptados por el cliente. '},
+	                ],style:'nota'
+	            },
+	            {
+					table: {
+						widths: ['*', '*'],
+						headerRows: 4,
+						keepWithHeaderRows: 1,
+
+						body: [
+							[
+								{
+									text: [
+					                    { text: 'Por el Cliente: \n' , style:'encabezado'},
+					                    { text: datosPDF.cliente_nombre, bold: true, style:'encabezado'},
+					            	],
+					            	margin:[10,10,10,10],
+					            	//fillColor: '#00952e',
+					            	fillColor: '#337ab7',
+					        	}, 
+
+					            { 	
+					            	text: [
+					                    { text: 'Por: \n' , style:'encabezado'},
+					                    { text: 'SISTELRED, C.A.',bold: true, style:'encabezado'},
+					           	 	],
+					           	 	margin:[10,10,10,10],
+					           	 	//fillColor: '#00952e',
+					           	 	fillColor: '#337ab7'
+					        	}
+				            ],
+				            [
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+					                    { text: '\r\r    Nombre: ', style:'firma'},
+					                    { text: '\r\r    Cargo: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+					                    { text: '\r\r    Nombre: ', style:'firma'},
+					                    { text: '\r\r    Cargo: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+				            ],
+
+				            [ '', ''],
+				            [ '', ''],
+						]
+					}
+				},
+			);
+		} else if (tipo ==="Estado"){
+
+			var tablaEtapas = {};
+			var aux_etapa = {};
+			var aux_actividad = {};
+			var aux_tabla_eta = {};
+			var bodyEtapa = [];
+			var aux = {};
+			var body = [];
+			var estatus;
+
+			//primera parte del pdf
+			content.push(
+					{
+						text:'Acta de Estado',
+						style: 'titulo',
+					},
+					{ 
+		           		text: [
+		                    { text: 'Mediante la presente, '},
+		                    { text: 'SISTELRED C.A. RIF: J-30994445-2', bold:true},
+		                    { text: ' deja constancia del estado del proyecto registrado bajo el código '},
+		                    { text: datosPDF.proyecto_codigo, bold:true},
+		                    { text: ', de fecha ' + datosPDF.proyecto_fecha_inicio},
+		                    { text: ', cuyo objeto se define como '},
+		                    { text: datosPDF.proyecto_desc, bold:true},
+		                    { text: '.A continuación se listan las etapas y sus actividades:'},
+		                ],style:'texto'
+		            },
+		    );
+
+
+
+			//segunda parte del pdf
+			$.each(proyecto.etapas,function(i,etapa){
+				bodyEtapa = []; //se reinicia para que no se repitan las actividades
+				aux_etapa = {
+					text: etapa.letra + " - " + etapa.nombre + " - " + etapa.estatus,
+					style: 'subheader1',
+					alignment:'center'
+				};
+				aux_actividad = {
+					text: 'Actividades',
+					style:'subheader1',
+					alignment:'left'
+				};
+				
+				$.each(etapa.actividades,function(i, actividad){
+					if (actividad.completada === true){
+						estatus = "Completada";
+					}else{
+						estatus = "Pendiente";
+					}
+					aux = [{text:actividad.nro, noWrap: true}, 
+					{text: actividad.desc}, 
+					{text: estatus},];
+					bodyEtapa.push($.extend(false,[],aux));
+				});
+
+				
+
+				var bodyUsados = []; //$.extend(true,[],[]);
+				$.each(bodyEtapa,function(i,detalle){
+					bodyUsados.push([detalle[0],detalle[1],detalle[2]]);	
+				});
+
+				bodyUsados.unshift([
+					{text: 'Nro', style: 'tableHeader'}, 
+					{text: 'Descripción', style: 'tableHeader'}, 
+					{text: 'Estado', style: 'tableHeader'},
+				]);
+
+				aux_tabla_eta = {
+					style:'tablaMateriales',
+					table:{
+						headerRows:1,
+						widths: ['auto','*','auto'],
+						body:bodyUsados,
+					}
+				};
+				content.push($.extend(true,{},aux_etapa),$.extend(true,{},aux_actividad),$.extend(true,{},aux_tabla_eta));
+			});
+
+			//tercera parte del pdf
+			content.push(
+	            { 
+	           		text: [
+	                    { text: 'Acta que se efectúa a petición del cliente ' },
+	                    { text: datosPDF.cliente_nombre, bold:true },
+	                    { text:' en la ciudad de Guatire, a los '},
+	                    { text: datosPDF.dias},
+	                    { text: ' días del mes de '},
+	                    { text: datosPDF.mes},
+	                    { text: ' del año '},
+	                    { text: datosPDF.anio + '.'},
+	                ],style:'texto'
+	            },
+	            {
+					table: {
+						widths: ['*', '*'],
+						headerRows: 4,
+						keepWithHeaderRows: 1,
+
+						body: [
+							[
+								{
+									text: [
+					                    { text: 'Por el Cliente: \n' , style:'encabezado'},
+					                    { text: datosPDF.cliente_nombre, bold: true, style:'encabezado'},
+					            	],
+					            	margin:[10,10,10,10],
+					            	//fillColor: '#00952e',
+					            	fillColor: '#337ab7',
+					        	}, 
+
+					            { 	
+					            	text: [
+					                    { text: 'Por: \n' , style:'encabezado'},
+					                    { text: 'SISTELRED, C.A.',bold: true, style:'encabezado'},
+					           	 	],
+					           	 	margin:[10,10,10,10],
+					           	 	//fillColor: '#00952e',
+					           	 	fillColor: '#337ab7'
+					        	}
+				            ],
+				            [
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+					                    { text: '\r\r    Nombre: ', style:'firma'},
+					                    { text: '\r\r    Cargo: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+					                    { text: '\r\r    Nombre: ', style:'firma'},
+					                    { text: '\r\r    Cargo: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+				            ],
+
+				            [ '', ''],
+				            [ '', ''],
+						]
+					}
+				},
+			);
+		}else if (tipo === "Entrega"){
+			var tablaEtapas = {};
+			var aux_etapa = {};
+			var aux_actividad = {};
+			var aux_tabla_eta = {};
+			var bodyEtapa = [];
+			var aux = {};
+			var body = [];
+			var estatus;
+
+			//primera parte del pdf
+			content.push(
+					{
+						text:'Acta de Entrega',
+						style: 'titulo',
+					},
+					{ 
+		           		text: [
+		                    { text: 'Mediante la presente, '},
+		                    { text: 'SISTELRED C.A. RIF: J-30994445-2', bold:true},
+		                    { text:' hace constar la entrega de los trabajos, pertenecientes a la etapa '},
+		                    { text: datosPDF.etapa_codigo + " - " + datosPDF.etapa_nombre, bold:true},
+		                    { text: ', del proyecto registrado bajo el código '},
+		                    { text: datosPDF.proyecto_codigo, bold:true},
+		                    { text: ', cuyo objeto se define como '},
+		                    { text: datosPDF.proyecto_nombre, bold:true},
+		                    { text: '.En los trabajos se utilizaron los siguientes materiales y/o servicios, los mismos fueron instalados y se encuentran totalmente operativos:'},
+		                    /*{text: 'hacemos constar la entrega de los siguientes trabajos utilizando los materiales y servicios a entera satisfacción del cliente, los mismos fueron instalados y se encuentran totalmente operativos'},*/
+		                    /*{ text: 'SISTELRED C.A. RIF: J-30994445-2', bold:true},
+		                    { text: ' deja constancia del estado del proyecto registrado bajo el código '},
+		                    { text: datosPDF.proyecto_codigo, bold:true},
+		                    { text: ', de fecha ' + datosPDF.proyecto_fecha_inicio},
+		                    { text: ', cuyo objeto se define como '},
+		                    { text: datosPDF.proyecto_desc, bold:true},
+		                    { text: '.A continuación se listan las etapas y sus actividades:'},*/
+		                ],style:'texto'
+		            },
+		            {
+						text: 'Actividades',
+						style:'subheader1',
+						alignment:'left'
+					}
+		    );
+
+
+
+			//segunda parte del pdf
+			bodyEtapa = []; //se reinicia para que no se repitan las actividades
+			$.each(datosPDF.actividades,function(i,actividad){
+				aux = [{text:actividad.nro, noWrap: true}, 
+				{text: actividad.desc},];
+				bodyEtapa.push($.extend(false,[],aux));
+
+			});
+
+			var bodyUsados = []; //$.extend(true,[],[]);
+			$.each(bodyEtapa,function(i,detalle){
+				bodyUsados.push([detalle[0], detalle[1]]);	
+			});
+
+			bodyUsados.unshift([
+				{text: 'Nro', style: 'tableHeader'}, 
+				{text: 'Descripción', style: 'tableHeader'}, 
+			]);
+
+			aux_tabla_eta = {
+				style:'tablaMateriales',
+				table:{
+					headerRows:1,
+					widths: ['auto','*'],
+					body:bodyUsados,
+				}
+			};
+			content.push($.extend(true,{},aux_tabla_eta));
+
+			content.push(
+				{ 
+					text: 'Materiales y/o Servicios',
+					style:'subheader1',
+					alignment:'left'
+				}
+			);
+
+			bodyEtapa = []; //se reinicia para que no se repitan las actividades
+			$.each(datosPDF.elementos,function(i,elemento){
+				aux = [{text:elemento.codigo, noWrap: true}, 
+				{text: elemento.desc},
+				{text: elemento.cantidad}];
+				bodyEtapa.push($.extend(false,[],aux));
+
+			});
+
+			var bodyUsados = []; //$.extend(true,[],[]);
+			$.each(bodyEtapa,function(i,detalle){
+				bodyUsados.push([detalle[0], detalle[1],detalle[2]]);	
+			});
+
+			bodyUsados.unshift([
+				{text: 'Código', style: 'tableHeader'}, 
+				{text: 'Descripción', style: 'tableHeader'},
+				{text: 'Cantidad', style: 'tableHeader'},  
+			]);
+
+			aux_tabla_eta = {
+				style:'tablaMateriales',
+				table:{
+					headerRows:1,
+					widths: ['auto','*','auto'],
+					body:bodyUsados,
+				}
+			};
+			content.push($.extend(true,{},aux_tabla_eta));
+
+
+			//tercera parte del pdf
+			content.push(
+				 { 
+	           		text: [
+	                    { text: 'NOTA: ', bold:true},
+	                    { text: ' Este documento indica la recepción definitiva de los trabajos realizados a entera satisfacción de '},
+	                    { text: datosPDF.cliente_nombre /*+ " RIF: " + datosPDF.cliente_rif*/, bold:true},
+	                    { text: ' liberando cualquier fianza o retención generada como producto del fiel cumplimiento, presentada por la empresa '},
+	                    { text: 'SISTELRED, C.A.', bold:true},
+	                    { text: ' y aceptados por el cliente. '},
+	                ],style:'nota'
+	            },
+	            { 
+	           		text: [
+	                    { text: 'Acta que se efectúa' },
+	                    { text:' en la ciudad de Guatire, a los '},
+	                    { text: datosPDF.dias},
+	                    { text: ' días del mes de '},
+	                    { text: datosPDF.mes},
+	                    { text: ' del año '},
+	                    { text: datosPDF.anio + '.'},
+	                ],style:'texto'
+	            },
+	            {
+					table: {
+						widths: ['*', '*'],
+						headerRows: 4,
+						keepWithHeaderRows: 1,
+
+						body: [
+							[
+								{
+									text: [
+					                    { text: 'Por el Cliente: \n' , style:'encabezado'},
+					                    { text: datosPDF.cliente_nombre, bold: true, style:'encabezado'},
+					            	],
+					            	margin:[10,10,10,10],
+					            	//fillColor: '#00952e',
+					            	fillColor: '#337ab7',
+					        	}, 
+
+					            { 	
+					            	text: [
+					                    { text: 'Por: \n' , style:'encabezado'},
+					                    { text: 'SISTELRED, C.A.',bold: true, style:'encabezado'},
+					           	 	],
+					           	 	margin:[10,10,10,10],
+					           	 	//fillColor: '#00952e',
+					           	 	fillColor: '#337ab7'
+					        	}
+				            ],
+				            [
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+					                    { text: '\r\r    Nombre: ', style:'firma'},
+					                    { text: '\r\r    Cargo: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+
+					            {
+					            	rowSpan: 3, 
+					            	text: [
+					                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
+					                    { text: '\r\r    Nombre: ', style:'firma'},
+					                    { text: '\r\r    Cargo: ', style:'firma'},
+					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+				            		],
+					            	alignment:'center'
+					            	,margin:[10,10,10,10]
+					            },
+				            ],
+
+				            [ '', ''],
+				            [ '', ''],
+						]
+					}
+				},
+			);
+		}
+
+		var docDefinition = {
+			info: {
+			    title: 'Acta ' + tipo + " " +  datosPDF.proyecto_codigo,
+			    author: datosPDF.vendedor_nombre,
+			    /*subject: 'subject of document',
+			    keywords: 'keywords for document',*/
+			},
+			content: content,
 
 			styles: {
 				titulo:{
@@ -1477,6 +1959,11 @@ export default Ember.Controller.extend({
 					alignment:'justify',
 					margin:[0,20,0,20]
 				},
+				nota:{
+					fontSize: 10,
+					alignment:'justify',
+					margin:[0,20,0,20]
+				},
 				firma: {
 					fontSize: 12,
 					alignment:'left',
@@ -1484,13 +1971,38 @@ export default Ember.Controller.extend({
 				},
 				encabezado:{
 					color:"#FFFFFF"
-				}
+				},
+				subheader:{
+					fontSize:14,
+					alignment:'justify',
+					margin:[0,0,0,20]
+				},
+				subheader1:{
+					fontSize:12,
+					alignment:'center',
+					bold:true,
+					margin:[0,15,0,15]
+				},
+				tableHeader: {
+					fontSize: 12,
+					alignment: 'left',
+					bold: true,
+					fillColor: '#337ab7',
+					color:"#FFFFFF",
+					noWrap:true,
+					/*margin: [0, 0, 0, 10]*/
+				},
+				tablaMateriales: {
+					fontSize:9,
+					margin: [0, 15 , 0, 15],
+				},
+
 
 			},
 			footer: function(page, pages) { 
 				    return { 
 				        columns: [ 
-				            { text: 'Acta Inicio Proyecto-' + datosPDF.proyecto_codigo, italics: true , fontSize:8},
+				            { text: 'Acta ' + tipo + ' Proyecto-' + datosPDF.proyecto_codigo, italics: true , fontSize:8},
 				            { 
 				                alignment: 'right',
 				                text: [
@@ -1827,25 +2339,25 @@ export default Ember.Controller.extend({
 		guardarActividades:function(){
 			this.guardarActividades();
 		},
-		generarPDF:function(tipo){
+		/*generarPDF:function(tipo){
 			$("#exportar_mat_"+tipo).hide();
 			//console.log(tipo);
 			var nombrepdf = this.get('proyecto.codigo')+"-listado-materiales-"+tipo+".pdf";
 			this.generarPDFActa(nombrepdf,tipo);
 			$("#exportar_mat_"+tipo).show();
-		},
+		},*/
 		materialDesglose: function(){
 			var method= "GET";
 			var url = window.serverUrl + '/proyecto/' + this.get('proyecto.codigo') + '/materiales/' ;
 		    this.getElements(method,url,this.setDesglose,this);
 		},
-		generarPDFActaInicio: function(){
-			this.generarPDFActaInicio();
+		generarPDFActa: function(tipo){
+			this.generarPDFActa(tipo);
 		},
 		generarPDFListadoMateriales: function(){
 			this.generarPDFListadoMateriales();
 		},
-		generarPDFActa:function(tipo,modal){
+		/*generarPDFActa:function(tipo,modal){
 			var nombre = nombre;
 			if(tipo==="Entrega"){
 				nombre = "acta entrega-"+this.get('proyecto.codigo') + '-'+this.get('etapa.letra') +'.pdf';
@@ -1858,6 +2370,6 @@ export default Ember.Controller.extend({
 				nombre =  "acta estado-" +this.get('proyecto.codigo') + '.pdf';
 			}
 			this.generarPDFActa(nombre,modal);
-		}
+		}*/
 	}
 });
