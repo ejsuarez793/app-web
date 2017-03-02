@@ -986,7 +986,7 @@ export default Ember.Controller.extend({
 
 			var docDefinition = {
 			info: {
-			    title: 'Resumen Clientes Sistelred' + fecha_resumen,
+			    title: 'Resumen Clientes Sistelred ' + fecha_resumen,
 			    author: vendedor_nombre,
 			    /*subject: 'subject of document',
 			    keywords: 'keywords for document',*/

@@ -1029,6 +1029,7 @@ export default Ember.Controller.extend({
 						                    { text: datosPDF.nro_factura, style:'encabezado'}
 						                ], noWrap:true
 						            },
+
 						        ],
 
 
@@ -1075,10 +1076,11 @@ export default Ember.Controller.extend({
 						                ],
 						            },
 						            { 
+						               
 						                text: [
-						                    { text: 'Cond. de Pago: ' ,bold: true, style:'encabezado'},
-						                    { text: datosPDF.condicion_pago, style:'encabezado'}
-						                ], noWrap:true
+						                    { text: 'Vendedor: ',bold: true , style:'encabezado'},
+						                    { text: datosPDF.vendedor_nombre, style:'encabezado'}
+						                ],
 						            },
 						        ],
 
@@ -1092,16 +1094,17 @@ export default Ember.Controller.extend({
 						            },
 						            { 
 						                text: [
-						                    { text: '' , style:'encabezado'},
-						                    { text: '', style:'encabezado'}
-						                ],
+						                    { text: 'Cond. de Pago: ' ,bold: true, style:'encabezado'},
+						                    { text: datosPDF.condicion_pago, style:'encabezado'}
+						                ], noWrap:true
 						            },
 						        ],
 				            	
 						],
 
 					},
-					layout: 'noBorders'
+					layout: 'noBorders',
+					margin:[0,80,0,0],
 				},
 				{
 					style: 'encabezado',
