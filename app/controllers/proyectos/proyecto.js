@@ -1044,7 +1044,7 @@ export default Ember.Controller.extend({
 			acta_estado.etapas.push($.extend(true,{},aux));
 		});
 
-		console.log(acta_estado.etapas);
+		/*console.log(acta_estado.etapas);*/
 		this.set('acta_estado',acta_estado);
 
 	},

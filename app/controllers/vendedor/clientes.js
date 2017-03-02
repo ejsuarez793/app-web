@@ -376,6 +376,10 @@ export default Ember.Controller.extend({
 	},
 	setResumen(resumen, context){
 		//console.log(resumen);
+		$.each(resumen,function(i,resumen){
+			resumen.monto_total_mostrar = numeral(resumen.monto_total).format('0,0.00');
+			resumen.promedio_monto_mostrar = numeral(resumen.promedio_monto).format('0,0.00');
+		});
 		context.set('resumen',resumen);
 		
 	},
@@ -574,9 +578,9 @@ export default Ember.Controller.extend({
 		var aux_asc = [];
 		var aux_des = [];
 		var aux;
-		var numero = 2; //numero de elementos que se desean mostrar, en este caso un top 5 de clientes.
+		var numero = 5; //numero de elementos que se desean mostrar, en este caso un top 5 de clientes.
 
-		console.log(resumen);
+		/*console.log(resumen);*/
 		for (var campo in campos_ordenar) {
 		    if (campos_ordenar.hasOwnProperty(campo)) {
 		        aux = _.sortBy(resumen,campos_ordenar[campo]); //devuele un array ordenado ascendientemente
@@ -607,7 +611,7 @@ export default Ember.Controller.extend({
 		//console.log(_.sortBy(resumen,['nro_proyectos']));
 		//console.log(resumen);
 	},
-	generarPDF(){
+	/*generarPDF(){
 		$("#resumen").css('background', '#fff');
 
 		function canvasSc(element){
@@ -644,6 +648,421 @@ export default Ember.Controller.extend({
 		});
 
 		modalBody.style=originalStyle;
+	},*/
+	generarPDFResumen(){
+		console.log("generando...");
+		/*
+		var resumen = this.get('resumen');
+		console.log(resumen);
+		*/
+		var mayores_montos = this.get('mayores_montos');
+		var menores_montos = this.get('menores_montos');
+		var mayores_proyectos = this.get('mayores_proyectos');
+		var menores_proyectos = this.get('menores_proyectos');
+		var mayores_encuestas = this.get('mayores_encuestas');
+		var menores_encuestas = this.get('menores_encuestas');
+		var fecha_resumen = this.get('fecha_resumen');
+		var vendedor_nombre = Cookies.getJSON('current').nombre1 + " " + Cookies.getJSON('current').apellido1;
+		
+		/*console.log(mayores_montos);*/
+		var content = [];
+		var aux_titulo;
+		var body = [];
+		var aux_tabla;
+		var aux;
+
+			//primera parte del pdf
+			content.push(
+					{
+						text:'Resumen Clientes Sistelred, C.A. ',
+						style: 'titulo',
+					},
+					{
+						text: fecha_resumen,
+						style: 'subheader',
+					},
+		    );
+
+			//MAYOR NÚMERO DE PROYECTOS RESUMEN
+			aux_titulo = {
+				text: 'Mayor número de proyectos',
+				style: 'subheader1',
+				alignment:'left'
+			};
+			$.each(mayores_proyectos,function(i,cliente){
+				
+				aux = [{text:cliente.rif, noWrap: true}, 
+				{text: cliente.nombre}, 
+				{text: cliente.act_eco},
+				{text: cliente.nro_proyectos, noWrap: true, color:'#3c763d', bold:true},
+				{text: cliente.promedio_monto_mostrar, noWrap: true, style: 'numero'}];
+				body.push($.extend(false,[],aux));
+				
+			});
+
+			if(true){
+				var tabla = [];
+				$.each(body,function(i,detalle){
+					tabla.push([detalle[0],detalle[1],detalle[2],detalle[3],detalle[4]]);	
+				});
+
+				tabla.unshift([
+					{text: 'RIF', style: 'tableHeader'}, 
+					{text: 'Nombre', style: 'tableHeader'}, 
+					{text: 'Act. Eco.', style: 'tableHeader'},
+					{text: 'Nro Proyectos', style: 'tableHeader'},
+					{text: 'Promedio Monto', style: 'tableHeader'},
+				]);
+
+				aux_tabla = {
+					style:'tablaMateriales',
+					table:{
+						headerRows:1,
+						widths: ['auto','*','auto','auto','auto'],
+						body:tabla,
+					}
+				};
+				content.push($.extend(true,{},aux_titulo),$.extend(true,{},aux_tabla));
+			}
+
+
+
+			//MENOR NÚMERO DE PROYECTOS RESUMEN
+			aux_titulo = {
+				text: 'Menor número de proyectos',
+				style: 'subheader1',
+				alignment:'left'
+			};
+			body = [];
+			$.each(menores_proyectos,function(i,cliente){
+				
+				aux = [{text:cliente.rif, noWrap: true}, 
+				{text: cliente.nombre}, 
+				{text: cliente.act_eco},
+				{text: cliente.nro_proyectos, noWrap: true, color:'#a94442', bold:true,},
+				{text: cliente.promedio_monto_mostrar, noWrap: true, style: 'numero'}];
+				body.push($.extend(false,[],aux));
+				
+			});
+
+			if(true){
+				var tabla = [];
+				$.each(body,function(i,detalle){
+					tabla.push([detalle[0],detalle[1],detalle[2],detalle[3],detalle[4]]);
+				});
+				/*console.log(tabla);*/
+
+				tabla.unshift([
+					{text: 'RIF', style: 'tableHeader'}, 
+					{text: 'Nombre', style: 'tableHeader'}, 
+					{text: 'Act. Eco.', style: 'tableHeader'},
+					{text: 'Nro Proyectos', style: 'tableHeader'},
+					{text: 'Promedio Monto', style: 'tableHeader'},
+				]);
+
+				aux_tabla = {
+					style:'tablaMateriales',
+					table:{
+						headerRows:1,
+						widths: ['auto','*','auto','auto','auto'],
+						body:tabla,
+					}
+				};
+				content.push($.extend(true,{},aux_titulo),$.extend(true,{},aux_tabla));
+			}
+
+
+
+
+			//MAYOR MONTO TOTAL EN PROYECTOS
+			aux_titulo = {
+				text: 'Mayor monto total en proyectos',
+				style: 'subheader1',
+				alignment:'left'
+			};
+			body = [];
+			$.each(mayores_montos,function(i,cliente){
+				
+				aux = [{text:cliente.rif, noWrap: true}, 
+				{text: cliente.nombre}, 
+				{text: cliente.act_eco},
+				{text: cliente.nro_proyectos, noWrap: true},
+				{text: cliente.monto_total_mostrar, noWrap: true, style:'numero', color:'#3c763d', bold:true,}];
+				body.push($.extend(false,[],aux));
+				
+			});
+
+			if(true){
+				var tabla = [];
+				$.each(body,function(i,detalle){
+					tabla.push([detalle[0],detalle[1],detalle[2],detalle[3],detalle[4]]);	
+				});
+				/*console.log(tabla);*/
+
+				tabla.unshift([
+					{text: 'RIF', style: 'tableHeader'}, 
+					{text: 'Nombre', style: 'tableHeader'}, 
+					{text: 'Act. Eco.', style: 'tableHeader'},
+					{text: 'Nro Proyectos', style: 'tableHeader'},
+					{text: 'Monto Total', style: 'tableHeader'},
+				]);
+
+				aux_tabla = {
+					style:'tablaMateriales',
+					table:{
+						headerRows:1,
+						widths: ['auto','*','auto','auto','auto'],
+						body:tabla,
+					}
+				};
+				content.push($.extend(true,{},aux_titulo),$.extend(true,{},aux_tabla));
+			}
+
+
+
+
+
+
+
+			//MENOR MONTO TOTAL EN PROYECTOS
+			aux_titulo = {
+				text: 'Menor monto total en proyectos',
+				style: 'subheader1',
+				alignment:'left'
+			};
+			body = [];
+			$.each(menores_montos,function(i,cliente){
+				
+				aux = [{text:cliente.rif, noWrap: true}, 
+				{text: cliente.nombre}, 
+				{text: cliente.act_eco},
+				{text: cliente.nro_proyectos, noWrap: true},
+				{text: cliente.monto_total_mostrar, noWrap: true, style:'numero', color:'#a94442', bold:true}];
+				body.push($.extend(false,[],aux));
+				
+			});
+
+			if(true){
+				var tabla = [];
+				$.each(body,function(i,detalle){
+					tabla.push([detalle[0],detalle[1],detalle[2],detalle[3],detalle[4]]);	
+				});
+				/*console.log(tabla);*/
+
+				tabla.unshift([
+					{text: 'RIF', style: 'tableHeader'}, 
+					{text: 'Nombre', style: 'tableHeader'}, 
+					{text: 'Act. Eco.', style: 'tableHeader'},
+					{text: 'Nro Proyectos', style: 'tableHeader'},
+					{text: 'Monto Total', style: 'tableHeader'},
+				]);
+
+				aux_tabla = {
+					style:'tablaMateriales',
+					table:{
+						headerRows:1,
+						widths: ['auto','*','auto','auto','auto'],
+						body:tabla,
+					}
+				};
+				content.push($.extend(true,{},aux_titulo),$.extend(true,{},aux_tabla));
+			}
+
+
+
+
+
+
+
+
+			//MAYOR PROMEDIO EN ENCUESTAS
+			aux_titulo = {
+				text: 'Mayor promedio en encuestas',
+				style: 'subheader1',
+				alignment:'left'
+			};
+			body = [];
+			$.each(mayores_encuestas,function(i,cliente){
+				
+				aux = [{text:cliente.rif, noWrap: true}, 
+				{text: cliente.nombre}, 
+				{text: cliente.act_eco},
+				{text: cliente.nro_encuestas, noWrap: true},
+				{text:
+					[{text: cliente.promedio_encuestas, noWrap: true, color:'#3c763d', bold:true,},
+					{text: ' /5', noWrap: true}]
+				}];
+				body.push($.extend(false,[],aux));
+				
+			});
+
+			if(true){
+				var tabla = [];
+				$.each(body,function(i,detalle){
+					tabla.push([detalle[0],detalle[1],detalle[2],detalle[3],detalle[4]]);	
+				});
+				/*console.log(tabla);*/
+
+				tabla.unshift([
+					{text: 'RIF', style: 'tableHeader'}, 
+					{text: 'Nombre', style: 'tableHeader'}, 
+					{text: 'Act. Eco.', style: 'tableHeader'},
+					{text: 'Nro Encuestas', style: 'tableHeader'},
+					{text: 'Promedio Encuestas', style: 'tableHeader'},
+				]);
+
+				aux_tabla = {
+					style:'tablaMateriales',
+					table:{
+						headerRows:1,
+						widths: ['auto','*','auto','auto','auto'],
+						body:tabla,
+					}
+				};
+				content.push($.extend(true,{},aux_titulo),$.extend(true,{},aux_tabla));
+			}
+
+
+
+
+
+
+
+			//MENOR PROMEDIO EN ENCUESTAS
+			aux_titulo = {
+				text: 'Menor promedio en encuestas',
+				style: 'subheader1',
+				alignment:'left'
+			};
+			body = [];
+			$.each(menores_encuestas,function(i,cliente){
+				
+				aux = [{text:cliente.rif, noWrap: true}, 
+				{text: cliente.nombre}, 
+				{text: cliente.act_eco},
+				{text: cliente.nro_encuestas, noWrap: true},
+				{text:
+					[{text: cliente.promedio_encuestas, noWrap: true, color:'#a94442', bold:true},
+					{text: ' /5', noWrap: true}]
+				}
+				];
+				body.push($.extend(false,[],aux));
+				
+			});
+
+			if(true){
+				var tabla = [];
+				$.each(body,function(i,detalle){
+					tabla.push([detalle[0],detalle[1],detalle[2],detalle[3],detalle[4]]);	
+				});
+				/*console.log(tabla);*/
+
+				tabla.unshift([
+					{text: 'RIF', style: 'tableHeader'}, 
+					{text: 'Nombre', style: 'tableHeader'}, 
+					{text: 'Act. Eco.', style: 'tableHeader'},
+					{text: 'Nro Encuestas', style: 'tableHeader'},
+					{text: 'Promedio Encuestas', style: 'tableHeader'},
+				]);
+
+				aux_tabla = {
+					style:'tablaMateriales',
+					table:{
+						headerRows:1,
+						widths: ['auto','*','auto','auto','auto'],
+						body:tabla,
+					}
+				};
+				content.push($.extend(true,{},aux_titulo),$.extend(true,{},aux_tabla));
+			}
+
+
+
+
+
+
+
+
+
+			var docDefinition = {
+			info: {
+			    title: 'Resumen Clientes Sistelred' + fecha_resumen,
+			    author: vendedor_nombre,
+			    /*subject: 'subject of document',
+			    keywords: 'keywords for document',*/
+			},
+			content: content,
+
+			styles: {
+				/*success:{
+					color:'#3c763d',
+					bold:true,
+				},
+				danger:{
+					color:'#a94442',
+					bold:true,
+				},*/
+				titulo:{
+					fontSize:24,
+					alignment:'center',
+					bold:true,
+					margin:[0,0,0,10]
+				},
+				numero:{
+					noWrap: true, 
+					alignment:'right'
+				},
+				encabezado:{
+					color:"#FFFFFF"
+				},
+				subheader:{
+					fontSize:14,
+					alignment:'center',
+					margin:[0,0,0,10]
+				},
+				subheader1:{
+					fontSize:12,
+					alignment:'center',
+					bold:true,
+					margin:[0,15,0,15]
+				},
+				tableHeader: {
+					fontSize: 12,
+					alignment: 'left',
+					bold: true,
+					fillColor: '#337ab7',
+					color:"#FFFFFF",
+					noWrap:true,
+					/*margin: [0, 0, 0, 10]*/
+				},
+				tablaMateriales: {
+					fontSize:9,
+					margin: [0, 15 , 0, 15],
+				},
+
+
+			},
+			footer: function(page, pages) { 
+				    return { 
+				        columns: [ 
+				            { text: 'Resumen Clientes Sistelred ' + fecha_resumen, italics: true , fontSize:8},
+				            { 
+				                alignment: 'right',
+				                text: [
+				                    { text: 'Página '+ page.toString(), italics: true , fontSize:8},
+				                    { text: ' de ', fontSize:8},
+				                    { text: pages.toString(), italics: true , fontSize:8}
+				                ]
+				            }
+				        ],
+				        margin: [15, 15 , 15, 15]
+				    };
+				},
+		}
+
+		pdfMake.createPdf(docDefinition).open();
+
+			
 	},
 	actions: {
 		cerrarMsg:function(){
@@ -662,8 +1081,11 @@ export default Ember.Controller.extend({
     	openModalResumen:function(){
     		this.openModalResumen();
     	},
-    	generarPDF:function(){
-    		this.generarPDF();
+    	generarPDFResumen:function(){
+    		this.generarPDFResumen();
     	}
+    	/*generarPDF:function(){
+    		this.generarPDF();
+    	}*/
 	}
 });

@@ -230,7 +230,7 @@ export default Ember.Controller.extend({
 			this.msgRespuesta('Error: ',"Seleccione un tipo de consulta.",-1,this);
 		}
 	},
-	generarPDFActa(nombre,modal){
+	/*generarPDFActa(nombre,modal){
 		$("#"+modal).css('background', '#fff');
 		function canvasSc(element){
 			//console.log(element.style);
@@ -272,14 +272,14 @@ export default Ember.Controller.extend({
 
 		//por ultimo importante, devolvemos el estilo original del panel, para que no afecte en la pagina web
 		panel.style = originalStyle;
-	},
+	},*/
 	generarPDFActaMovimiento(){
 		var datosPDF = {};
 		datosPDF.materiales = [];
 		var acta_movimiento = this.get('acta_movimiento');
-		console.log("generando");
-		console.log(this.get('acta_movimiento'));
-		datosPDF.movimiento_codigo = acta_movimiento.codigo;
+		/*console.log("generando");
+		console.log(this.get('acta_movimiento'));*/
+		datosPDF.codigo_movimiento = acta_movimiento.codigo;
 		datosPDF.tipo = acta_movimiento.tipo;
 		datosPDF.fecha = acta_movimiento.fecha_mostrar;
 		datosPDF.almacenista_nombre = acta_movimiento.nombre_almace;
@@ -423,7 +423,7 @@ export default Ember.Controller.extend({
 		}else if (datosPDF.tipo === "Egreso"){
 			content.push(
 				{
-					text:'Acta de ' + datosPDF.tipo + " de Material",
+					text:'Acta de ' + datosPDF.tipo + " de Material" + datosPDF.codigo_movimiento,
 					style: 'titulo',
 				},
 				{ 
@@ -522,7 +522,7 @@ export default Ember.Controller.extend({
 		}else if(datosPDF.tipo === "Retorno"){
 			content.push(
 				{
-					text:'Acta de ' + datosPDF.tipo + " de Material",
+					text:'Acta de ' + datosPDF.tipo + " de Material" + datosPDF.codigo_movimiento,
 					style: 'titulo',
 				},
 				{ 
@@ -620,7 +620,7 @@ export default Ember.Controller.extend({
 
 		var docDefinition = {
 			info: {
-			    title: 'Acta de ' + datosPDF.tipo + " de Material " + datosPDF.codigo ,
+			    title: 'Acta de ' + datosPDF.tipo + " de Material " + datosPDF.codigo_movimiento ,
 			    author: datosPDF.almacenista_nombre,
 			    /*subject: 'subject of document',
 			    keywords: 'keywords for document',*/

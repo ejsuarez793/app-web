@@ -257,7 +257,7 @@
 				                    		<td class="col-tabla">{{cliente.nombre}}</td>
 				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
 				                    		<td class="col-tabla"><strong class="text-success">{{cliente.nro_proyectos}}</strong></td>
-				                    		<td class="col-tabla">{{cliente.promedio_monto}}</td>
+				                    		<td class="col-tabla">{{cliente.promedio_monto_mostrar}}</td>
 				                    		
 				                    	</tr>
 				                    {{/each}}
@@ -295,7 +295,7 @@
 				                    		<td class="col-tabla">{{cliente.nombre}}</td>
 				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
 				                    		<td class="col-tabla"><strong class="text-danger">{{cliente.nro_proyectos}}</strong></td>
-				                    		<td class="col-tabla">{{cliente.promedio_monto}}</td>
+				                    		<td class="col-tabla">{{cliente.promedio_monto_mostrar}}</td>
 				                    		
 				                    	</tr>
 				                    {{/each}}
@@ -332,7 +332,7 @@
 				                    		<td class="col-tabla">{{cliente.nombre}}</td>
 				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
 				                    		<td class="col-tabla">{{cliente.nro_proyectos}}</td>
-				                    		<td class="col-tabla"><strong class="text-success">{{cliente.monto_total}}</strong></td>
+				                    		<td class="col-tabla"><strong class="text-success">{{cliente.monto_total_mostrar}}</strong></td>
 				                    		
 				                    	</tr>
 				                    {{/each}}
@@ -368,7 +368,7 @@
 				                    		<td class="col-tabla">{{cliente.nombre}}</td>
 				                    		<td class="col-tabla">{{cliente.act_eco}}</td>
 				                    		<td class="col-tabla">{{cliente.nro_proyectos}}</td>
-				                    		<td class="col-tabla"><strong class="text-danger">{{cliente.monto_total}}</strong></td>
+				                    		<td class="col-tabla"><strong class="text-danger">{{cliente.monto_total_mostrar}}</strong></td>
 				                    		
 				                    	</tr>
 				                    {{/each}}
@@ -458,7 +458,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-        <button class="btn btn-primary" {{action 'generarPDF'}}>PDF</button>
+        <button class="btn btn-primary" {{action 'generarPDFResumen'}}>PDF</button>
       </div>
     </div>
   </div>
