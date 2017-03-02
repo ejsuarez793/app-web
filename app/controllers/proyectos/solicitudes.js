@@ -193,8 +193,10 @@ export default Ember.Controller.extend({
 		var ci_tecnico = proceso.ci_tecnico;
 		var f_vis = proceso.f_vis;
 
+		var solicitud = this.get('solicitud');
 		//se separa la fecha para luego pasarla a formato /dd/mm/aaaa en el codigo de proyecto
-		var date = new Date( this.get('proceso.f_vis'));
+		//var date = new Date( this.get('proceso.f_vis'));
+		var date = new Date(solicitud.f_sol);
 		var dia =  "0" + (date.getDate() + 1);
 		dia = dia.substring(dia.length-2,dia.length);
 		var mes = "0" + (date.getMonth() + 1);
@@ -202,7 +204,7 @@ export default Ember.Controller.extend({
 		var anio = date.getFullYear();
 
 		//se genera una información de proyecto genérica
-		var solicitud = this.get('solicitud');
+		
 		var codigo = "P"+dia+mes+anio+"-"+solicitud.codigo;
 		var nombre = "Nombre Proyecto Codigo: "+codigo+" Solicitud #"+solicitud.codigo;
 		var desc = "Descripción Proyecto Codigo: "+codigo+" Solicitud #"+solicitud.codigo;
