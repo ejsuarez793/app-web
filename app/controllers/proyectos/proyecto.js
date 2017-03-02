@@ -623,6 +623,7 @@ export default Ember.Controller.extend({
 						elemento['mostrar_sin_seleccion'] = false;
 						elemento['tipo'] = "Servicio";
 						elemento['cantidad'] = ps.cantidad;
+						elemento['precio_act'] = ps.precio_venta;
 						flag = true;
 						//console.log(elemento.codigo);
 					}
@@ -644,6 +645,7 @@ export default Ember.Controller.extend({
 						elemento['mostrar_sin_seleccion'] = false;
 						elemento['tipo'] = "Material";
 						elemento['cantidad'] = pm.cantidad;
+						elemento['precio_act'] = pm.precio_venta;
 						flag = true;
 
 					}
@@ -661,7 +663,7 @@ export default Ember.Controller.extend({
 			this.set('servicios',servicios);
 			this.set('presupuesto',presupuesto);
 
-			console.log(presupuesto);
+			/*console.log(presupuesto);*/
 			
 			$('#myModalPresupuesto').on('shown.bs.modal', function () {
 	  			// cuando se muestra el modal se calcula el precio total de cada elemento y el monto total

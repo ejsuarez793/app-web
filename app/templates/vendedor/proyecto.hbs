@@ -742,18 +742,18 @@
                     <tr >
                       <td class="col-tabla">{{elemento.codigo_mat}}</td>
                       <td class="col-tabla"><{{elemento.desc}}</td>
-                      <td class="col-tabla">{{elemento.cantidad}} </td>
-                      <td class="col-tabla"> {{elemento.precio_venta_mostrar}}</td>
-                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo_mat}}">{{elemento.precio_total_mostrar}}</td>
+                      <td class="col-cantidad">{{elemento.cantidad}} </td>
+                      <td class="col-numero"> {{elemento.precio_venta_mostrar}}</td>
+                      <td class="col-numero" name="precio_total" id="pt_{{elemento.codigo_mat}}">{{elemento.precio_total_mostrar}}</td>
                     </tr>
                     {{/each}}
                     {{#each presupuesto.servicios as |elemento|}}
                     <tr >
                       <td class="col-tabla">{{elemento.codigo_ser}}</td>
                       <td class="col-tabla"><{{elemento.desc}}</td>
-                      <td class="col-tabla">{{elemento.cantidad}} </td>
-                      <td class="col-tabla"> {{elemento.precio_venta_mostrar}}</td>
-                      <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo_ser}}">{{elemento.precio_total_mostrar}}</td>
+                      <td class="col-cantidad">{{elemento.cantidad}} </td>
+                      <td class="col-numero"> {{elemento.precio_venta_mostrar}}</td>
+                      <td class="col-numero" name="precio_total" id="pt_{{elemento.codigo_ser}}">{{elemento.precio_total_mostrar}}</td>
                     </tr>
                     {{/each}}
                   </tbody>
@@ -1141,9 +1141,9 @@
                     <tr >
                       <td class="col-tabla">{{elemento.codigo}}</td>
                       <td class="col-tabla">{{elemento.desc}} {{#if elemento.serial}}-SE:{{elemento.serial}}{{/if}}</td>
-                      <td class="col-tabla">{{elemento.cantidad}} </td>
-                      <td class="col-tabla"> {{elemento.precio_unitario_mostrar}}</td>
-                      <td class="col-tabla">{{elemento.precio_total_mostrar}}</td>
+                      <td class="col-cantidad">{{elemento.cantidad}} </td>
+                      <td class="col-numero"> {{elemento.precio_unitario_mostrar}}</td>
+                      <td class="col-numero">{{elemento.precio_total_mostrar}}</td>
                     </tr>
                     {{/each}}
                   </tbody>

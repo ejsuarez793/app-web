@@ -23,6 +23,16 @@ ul {
 	text-align: left;
 }
 
+.col-numero{
+  font-size:12px;
+  text-align: right;
+}
+
+.col-cantidad{
+  font-size:12px;
+  text-align: center;
+}
+
 .ui-autocomplete {
   position: absolute;
   top: 100%;

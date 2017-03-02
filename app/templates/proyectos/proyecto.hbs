@@ -1256,7 +1256,7 @@
                     <tr>
                       <th class="col-md-1">Código</th>
                       <th class="col-md-5">Descripción</th>
-                      <th class="col-md-1">Cantidad</th>
+                      <th class="col-md-2">Cantidad</th>
                       <th class="col-md-2">Precio Unitario</th>
                       <th class="col-md-2">Precio Total</th>
                       <th class="col-md-1">Selección</th>
@@ -1269,12 +1269,12 @@
                           <td class="col-tabla">{{elemento.codigo}}</td>
                           <td class="col-tabla"><{{elemento.desc_mostrar}}</td>
                           <td class="col-tabla">
-                            <input type="number" class="form-control input-sm" id="cantidad_{{elemento.codigo}}" value="{{elemento.cantidad}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                            <input type="number" class="form-control input-sm col-cantidad" id="cantidad_{{elemento.codigo}}" value="{{elemento.cantidad}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
                           </td>
                           <td class="col-tabla">
-                            <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                            <input type="number" class="form-control input-sm col-numero" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
                           </td>
-                          <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total_mostrar}}</td>
+                          <td class="col-numero" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total_mostrar}}</td>
                           <td><input type="checkbox" value={{elemento.codigo}}></td>
                         </tr>
                       {{/if}}
@@ -1285,12 +1285,12 @@
                           <td class="col-tabla">{{elemento.codigo}}</td>
                           <td class="col-tabla"><{{elemento.desc}}</td>
                           <td class="col-tabla">
-                            <input type="number" class="form-control input-sm" id="cantidad_{{elemento.codigo}}" value="{{elemento.cantidad}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                            <input type="number" class="form-control input-sm col-cantidad" id="cantidad_{{elemento.codigo}}" value="{{elemento.cantidad}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
                           </td>
                           <td class="col-tabla">
-                            <input type="number" class="form-control input-sm" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
+                            <input type="number" class="form-control input-sm col-numero" id="pu_{{elemento.codigo}}" value="{{elemento.precio_act}}"  min="0" {{action 'calcularPrecioTotal' elemento.codigo on='change'}}>
                           </td>
-                          <td class="col-tabla" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total_mostrar}}</td>
+                          <td class="col-numero" name="precio_total" id="pt_{{elemento.codigo}}"  value="{{elemento.precio_total}}" >{{elemento.precio_total_mostrar}}</td>
                           <td><input type="checkbox" value={{elemento.codigo}}></td>
                         </tr>
                       {{/if}}
