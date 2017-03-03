@@ -41,7 +41,7 @@ export default Ember.Controller.extend({
 		},
 		{
 			nro:"7",
-			pregunta:"¿Qué tan probable es que recomienden la compañía?",
+			pregunta:"¿Qué tan probable es que recomienden nuestra empresa?",
 			resp:"",
 		},
 	],
@@ -600,7 +600,7 @@ export default Ember.Controller.extend({
         }
         
 	},
-	generarPDF(codigo){
+	/*generarPDF(codigo){
 		$("#modalBody").css('background', '#fff');
 
 		function canvasSc(element){
@@ -637,12 +637,19 @@ export default Ember.Controller.extend({
 		});
 
 		modalBody.style=originalStyle;
-	},
+	},*/
 	generarPDFNuevoMetodo(){
 		var presupuesto = this.get('presupuesto');
 		var cliente = this.get('proyecto.cliente');
 		var datosPDF = {};
 		datosPDF.fecha = moment(presupuesto.fecha).format('LL');
+		console.log(datosPDF.fecha);
+		var fecha = new Date(presupuesto.fecha);
+		var nombre_meses_minus = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+		datosPDF.dias_pre = "0" + (fecha.getDate() + 1);
+		datosPDF.dias_pre = datosPDF.dias_pre.substring( datosPDF.dias_pre.length-2, datosPDF.dias_pre.length);
+		datosPDF.mes_pre =  nombre_meses_minus[fecha.getMonth()];
+		datosPDF.anio_pre = fecha.getFullYear();
 		datosPDF.codigo = presupuesto.codigo;
 		datosPDF.cliente_rif = cliente.rif;
 		datosPDF.cliente_nombre = cliente.nombre;
@@ -751,7 +758,7 @@ export default Ember.Controller.extend({
 				/*{
 					image:'/logo-sistelred-nuevo.jpg',
 				},*/
-				{
+				/*{
 					style: 'encabezado',
 					table: {
 
@@ -765,7 +772,7 @@ export default Ember.Controller.extend({
 								]
 							],
 							[
-								'Guatire, ' + datosPDF.fecha,''
+								{ text:'Guatire, ' + datosPDF.dias_pre + " de " + datosPDF.mes_pre + " de " + datosPDF.anio_pre,}, {text:''}
 							],
 							[
 								[
@@ -774,6 +781,43 @@ export default Ember.Controller.extend({
 								],
 								''
 							],
+						],
+
+					},
+					layout: 'noBorders'
+				},*/
+				{
+					style: 'encabezado',
+					table: {
+
+						widths: ['*', 'auto'],
+						body: [
+							[
+								{ text:'Sistelred, C.A.', bold: true}, 
+								{ text:'Guatire, ' + datosPDF.dias_pre + " de " + datosPDF.mes_pre + " de " + datosPDF.anio_pre, noWrap:true}
+								/*[
+									{ text:'Cotización Nro:', bold: true},
+									{ text:  datosPDF.codigo, bold:false}
+								]*/
+							],
+							[
+								{ text:'J-30994445-2', bold: true}, 
+								{ text:'Cotización Nro:', bold: true,/*margin:[70,0,0,0]*/},
+							],
+							[
+								
+								[
+									{ text:'Cotización a:', bold: true},
+									/*{ text:datosPDF.cliente_rif + ', ' + datosPDF.cliente_nombre + ', tlf:' + datosPDF.cliente_tlf, bold:false}*/
+								],/*{ text:'Guatire, ' + datosPDF.dias_pre + " de " + datosPDF.mes_pre + " de " + datosPDF.anio_pre,}, {text:''}*/
+								[
+									{ text:  datosPDF.codigo, bold:false, /*margin:[70,0,0,0]*/}
+								]
+							],
+							[
+								{ text:datosPDF.cliente_rif + ', ' + datosPDF.cliente_nombre + ', tlf:' + datosPDF.cliente_tlf, bold:false},''
+							],
+
 						],
 
 					},
@@ -846,7 +890,7 @@ export default Ember.Controller.extend({
 					ol: [
 						{text: datosPDF.condiciones_pago ,style:'elementoCondiciones'},
 						{text: 'Bs. Depositar en la CTA. CTE. # 0108-0989-42-0100009763, de Sistelred, C.A. en el Banco Provincial.-',style:'elementoCondiciones'},
-						{text: 'Bs. Depositar en la CTA. CTE. # 0134-1085-200001000397, de Sistelred, C.A. en el Banco Banesco.-',style:'elementoCondiciones'},
+						{text: 'Bs. Depositar en la CTA. CTE. # 0134-1085-20-0001000397, de Sistelred, C.A. en el Banco Banesco.-',style:'elementoCondiciones'},
 						{text: 'Bs. Depositar en la CTA. CTE. # 0105-0225-01-1225042666, de Sistelred, C.A. en el Banco Mercantil.-',style:'elementoCondiciones'},
 						{text: 'Bs. Depositar en la CTA. CTE. # 0163-0205-88-2052000177, de Sistelred, C.A. en el Banco del Tesoro.-',style:'elementoCondiciones'},
 						{text: 'Bs. Depositar en la CTA. CTE. # 0115-0021-89-1004088046, de Sistelred, C.A. en el Banco Exterior.-',style:'elementoCondiciones'},
@@ -878,7 +922,7 @@ export default Ember.Controller.extend({
 				descripcion:{
 					fontSize:11,
 					alignment:'left',
-					margin:[0,5,0,5]
+					margin:[0,2,0,2]
 				},
 				tableHeader: {
 					fontSize: 12,
@@ -891,20 +935,20 @@ export default Ember.Controller.extend({
 				},
 				tablaMateriales: {
 					fontSize:9,
-					margin: [0, 15 , 0, 15],
+					margin: [0, 2 , 0, 2],
 				},
 				encabezado: {
 					fontSize: 12,
-					margin: [0, 5, 0, 5]
+					margin: [0, 0, 0, 0]
 				},
 				tablaTotal: {
 					fontSize:9,
-					margin: [0, 15 , 0, 15],
+					margin: [0, 2 , 0, 2],
 				},
 				condiciones:{
 					fontSize:9,
 					bold:true,
-					margin: [0, 10, 0, 10]
+					margin: [0, 2, 0, 2]
 				},
 				numero:{
 					noWrap: true, 
@@ -916,7 +960,7 @@ export default Ember.Controller.extend({
 				},
 				atentamente:{
 					fontSize:9,
-					margin: [0, 10, 0, 10]
+					margin: [0, 2, 0, 2]
 				}
 			},
 			footer: function(page, pages) { 
@@ -950,8 +994,8 @@ export default Ember.Controller.extend({
 		datosPDF.cliente_fax = factura.detalle.fax_c;
 		datosPDF.cliente_direccion = factura.detalle.dire_c;
 		datosPDF.nro_factura = factura.detalle.nro_factura;
-		datosPDF.fecha_emision = moment(factura.detalle.f_emi).format('l');
-		datosPDF.fecha_vencimiento = moment(factura.detalle.f_ven).format('l');
+		datosPDF.fecha_emision = moment(factura.detalle.f_emi).format('L');
+		datosPDF.fecha_vencimiento = moment(factura.detalle.f_ven).format('L');
 		datosPDF.vendedor_nombre = factura.detalle.nombre_v;
 		datosPDF.condicion_pago = factura.detalle.cond_pago;
 		datosPDF.proyecto_codigo = factura.detalle.codigo_pro;
@@ -1189,7 +1233,7 @@ export default Ember.Controller.extend({
 				},
 				tablaMateriales: {
 					fontSize:9,
-					margin: [0, 15 , 0, 15],
+					margin: [0, 2 , 0, 2],
 				},
 				encabezado: {
 					fontSize: 10,
@@ -1197,7 +1241,7 @@ export default Ember.Controller.extend({
 				},
 				tablaTotal: {
 					fontSize:9,
-					margin: [0, 15 , 0, 15],
+					margin: [0, 2, 0, 2],
 				},
 				numero:{
 					noWrap: true, 

@@ -282,6 +282,7 @@ export default Ember.Controller.extend({
 		datosPDF.codigo_movimiento = acta_movimiento.codigo;
 		datosPDF.tipo = acta_movimiento.tipo;
 		datosPDF.fecha = acta_movimiento.fecha_mostrar;
+
 		datosPDF.almacenista_nombre = acta_movimiento.nombre_almace;
 		//datosPDF.materiales = acta_movimiento.materiales;
 		if (datosPDF.tipo === "Ingreso"){
@@ -303,6 +304,13 @@ export default Ember.Controller.extend({
 			datosPDF.proyecto_nombre = acta_movimiento.nombre_pro;
 		}
 
+		var nombre_meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+		var fecha = new Date(acta_movimiento.fecha);
+		datosPDF.dias = "0" + (fecha.getDate() + 1);
+		datosPDF.dias = datosPDF.dias.substring( datosPDF.dias.length-2, datosPDF.dias.length);
+		datosPDF.mes =  nombre_meses[fecha.getMonth()];
+		datosPDF.anio = fecha.getFullYear();
+
 		var aux;
 		var descripcion;
 		var serial = "";
@@ -313,7 +321,7 @@ export default Ember.Controller.extend({
 			aux = [{text:material.codigo, noWrap: true}, 
 			{text: material.nombre}, 
 			{text: material.desc},
-			{text: serial},
+			{text: serial, alignment:'center'},
 			{text: material.cantidad, noWrap: true, alignment:'center'}];
 			datosPDF.materiales.push($.extend(false,[],aux));
 		});
@@ -330,7 +338,7 @@ export default Ember.Controller.extend({
 			{text: 'Código', style: 'tableHeader'}, 
 			{text: 'Nombre', style: 'tableHeader'}, 
 			{text: 'Descripción', style: 'tableHeader'},
-			{text: 'Serial', style: 'tableHeader'},
+			{text: 'S/N', style: 'tableHeader'},
 			{text: 'Cantidad', style: 'tableHeader'}, 
 		]);
 
@@ -350,8 +358,8 @@ export default Ember.Controller.extend({
 	                    { text: datosPDF.nro_orden , bold:true},
 	                    { text: ' y nota de entrega '},
 	                    { text: datosPDF.nota_entrega , bold:true},
-	                    { text: ' el material que se adquiere para hacer reposición del almacén de '},
-	                    { text: 'SISTELRED C.A. RIF: J-30994445-2', bold:true},
+	                    { text: ' en el almacén de '},
+	                    { text: 'SISTELRED, C.A. RIF: J-30994445-2', bold:true},
 	                    { text: '. Los materiales adquiridos se listan a continuación: '},
 	                ],style:'texto'
 	            },
@@ -368,8 +376,8 @@ export default Ember.Controller.extend({
 
 	            { 
 	           		text: [
-	                    { text: 'Acta que se efectúa en la ciudad de Guatire, el día '},
-	                    { text: datosPDF.fecha + "."},
+	                    { text: 'Acta que se efectúa en la ciudad de Guatire, '},
+	                    { text: 'a los ' + datosPDF.dias + ' dias del mes de ' + datosPDF.mes + ' del año ' + datosPDF.anio + "."},
 	                ],style:'texto'
 	            },
 
@@ -381,6 +389,7 @@ export default Ember.Controller.extend({
 				               	table: {
 								headerRows: 4,
 								keepWithHeaderRows: 1,
+								style:'tablaFirma',
 								body: [
 									[
 										{
@@ -389,8 +398,10 @@ export default Ember.Controller.extend({
 							                    { text: 'SISTELRED: \n' , bold:true, style:'encabezado'},
 							                    { text: datosPDF.almacenista_nombre, bold: true, style:'encabezado'},
 							            	],
-							            	margin:[90,10,90,10],
+							            	
 							            	//fillColor: '#00952e',
+							            	style:'marginFirmaEncabezado',
+							            	/*alignment:'left',*/
 							            	fillColor: '#337ab7',
 							        	}, 
 
@@ -401,13 +412,13 @@ export default Ember.Controller.extend({
 							            {
 							            	rowSpan: 3, 
 							            	text: [
-							                    { text: 'Firma y Sello: ', alignment:'center' , style:'texto'},
-							                    { text: '\r\r    Nombre: ', style:'firma'},
-							                    { text: '\r\r    Cargo: ', style:'firma'},
-							                    { text: '\r\r    Firma: \r\r', style:'firma'},
+							                    { text: 'Nombre: \r\r', style:'firma'},
+							                    { text: 'Cargo: \r\r', style:'firma'},
+							                    { text: 'Firma y Sello: \r\r', style:'firma'},
 						            		],
-							            	alignment:'center'
-							            	,margin:[10,10,10,10]
+							            	/*alignment:'center'*/
+							            	style:'marginFirma',
+							            	/*,margin:[0,6,0,6]*/
 							            },
 						            ],
 
@@ -423,7 +434,7 @@ export default Ember.Controller.extend({
 		}else if (datosPDF.tipo === "Egreso"){
 			content.push(
 				{
-					text:'Acta de ' + datosPDF.tipo + " de Material" + datosPDF.codigo_movimiento,
+					text:'Acta de ' + datosPDF.tipo + " de Material",
 					style: 'titulo',
 				},
 				{ 
@@ -435,11 +446,11 @@ export default Ember.Controller.extend({
 	                    { text: ' C.I. '},
 	                    { text: 'V-' + datosPDF.tecnico_ci , bold:true},
 	                    { text: ', para ser utilizados en la etapa '},
-	                    { text: datosPDF.etapa_letra + " - " + datosPDF.etapa_nombre, bold:true},
+	                    { text: datosPDF.etapa_letra, bold:true},
 	                    { text: ' del proyecto '},
 	                    { text: datosPDF.proyecto_codigo, bold:true},
 	                    { text: ' que tiene por nombre '},
-	                      { text: datosPDF.proyecto_nombre,},
+	                    { text: datosPDF.proyecto_nombre, bold:true},
 	                    { text: '. Los materiales que se entregan se listan a continuación: '},
 	                ],style:'texto'
 	            },
@@ -456,8 +467,8 @@ export default Ember.Controller.extend({
 
 	            { 
 	           		text: [
-	                    { text: 'Acta que se efectúa en la ciudad de Guatire, el día '},
-	                    { text: datosPDF.fecha + "."},
+	                     { text: 'Acta que se efectúa en la ciudad de Guatire, '},
+	                    { text: 'a los ' + datosPDF.dias + ' dias del mes de ' + datosPDF.mes + ' del año ' + datosPDF.anio + "."},
 	                ],style:'texto'
 	            },
 	            {
@@ -465,25 +476,31 @@ export default Ember.Controller.extend({
 						widths: ['*', '*'],
 						headerRows: 4,
 						keepWithHeaderRows: 1,
-
+						style:'tablaFirma',
 						body: [
 							[
 								{
 									text: [
-					                    { text: 'Técnico Responsable: \n' , style:'encabezado'},
-					                    { text: datosPDF.tecnico_nombre, bold: true, style:'encabezado'},
+					                    { text: 'Técnico Responsable: \n' , style:'encabezado',},
+					                    { text: datosPDF.tecnico_nombre, bold: true, style:'encabezado', },
 					            	],
-					            	margin:[10,10,10,10],
+
+					            	/*margin:[10,10,10,10],*/
+					            	/*style:'marginFirmaEncabezado',*/
+
+					            	style:'marginFirmaEncabezadoAmbas',
 					            	//fillColor: '#00952e',
 					            	fillColor: '#337ab7',
 					        	}, 
 
 					            { 	
 					            	text: [
-					                    { text: 'Por SISTELRED, C.A.: \n' , style:'encabezado'},
-					                    { text: datosPDF.almacenista_nombre, bold: true, style:'encabezado'},
+					                    { text: 'Por SISTELRED, C.A.: \n' , style:'encabezado', },
+					                    { text: datosPDF.almacenista_nombre, bold: true, style:'encabezado', },
 					           	 	],
-					           	 	margin:[10,10,10,10],
+					           	 	/*margin:[10,10,10,10],*/
+					           	 	/*style:'marginFirmaEncabezado',*/
+					           	 	style:'marginFirmaEncabezadoAmbas',
 					           	 	//fillColor: '#00952e',
 					           	 	fillColor: '#337ab7'
 					        	}
@@ -492,21 +509,21 @@ export default Ember.Controller.extend({
 					            {
 					            	rowSpan: 3, 
 					            	text: [
-					                    { text: '\r\r    Cédula: ', style:'firma'},
-					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+					                    { text: '\rCédula: ', style:'firma'},
+					                    { text: '\r\rFirma: \r', style:'firma'},
 				            		],
-					            	alignment:'center'
-					            	,margin:[10,10,10,10]
+					            	alignment:'center',
+					            	style:'margenFirma'
 					            },
 
 					            {
 					            	rowSpan: 3, 
 					            	text: [
-					                    { text: '\r\r    Cédula: ', style:'firma'},
-					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+					                    { text: '\rCédula: ', style:'firma'},
+					                    { text: '\r\r    Firma y Sello: \r\r', style:'firma'},
 				            		],
-					            	alignment:'center'
-					            	,margin:[10,10,10,10]
+					            	alignment:'center',
+					            	style:'margenFirma',
 					            },
 				            ],
 
@@ -528,7 +545,7 @@ export default Ember.Controller.extend({
 				{ 
 	           		text: [
 	                    { text: 'Por medio de la presente, '},
-	                    { text: 'SISTELRED C.A. RIF J-30994445-2' , bold:true},
+	                    { text: 'SISTELRED, C.A. RIF J-30994445-2' , bold:true},
 	                    { text: ' recibe del técnico '},
 	                    { text: datosPDF.tecnico_nombre , bold:true},
 	                    { text: ' C.I. '},
@@ -538,7 +555,7 @@ export default Ember.Controller.extend({
 	                    { text: ' que tiene por nombre '},
 	                    { text: datosPDF.proyecto_nombre, bold:true},
 	                    { text: ', el material sobrante de la etapa '},
-	                    { text: datosPDF.etapa_letra + " - " + datosPDF.etapa_nombre, bold:true},
+	                    { text: datosPDF.etapa_letra , bold:true},
 	                    { text: '. Los materiales que se entregan se listan a continuación: '},
 	                ],style:'texto'
 	            },
@@ -555,11 +572,12 @@ export default Ember.Controller.extend({
 
 	            { 
 	           		text: [
-	                    { text: 'Acta que se efectúa en la ciudad de Guatire, el día '},
-	                    { text: datosPDF.fecha + "."},
+	                    { text: 'Acta que se efectúa en la ciudad de Guatire, '},
+	                    { text: 'a los ' + datosPDF.dias + ' dias del mes de ' + datosPDF.mes + ' del año ' + datosPDF.anio + "."},
 	                ],style:'texto'
 	            },
 	            {
+	            	style:'tablaFirma',
 					table: {
 						widths: ['*', '*'],
 						headerRows: 3,
@@ -572,7 +590,8 @@ export default Ember.Controller.extend({
 					                    { text: 'Técnico Responsable: \n' , style:'encabezado'},
 					                    { text: datosPDF.tecnico_nombre, bold: true, style:'encabezado'},
 					            	],
-					            	margin:[10,10,10,10],
+					            	/*margin:[10,10,10,10],*/
+					            	style: 'marginFirmaEncabezadoAmbas',
 					            	//fillColor: '#00952e',
 					            	fillColor: '#337ab7',
 					        	}, 
@@ -582,7 +601,8 @@ export default Ember.Controller.extend({
 					                    { text: 'Por SISTELRED, C.A.: \n' , style:'encabezado'},
 					                    { text: datosPDF.almacenista_nombre, bold: true, style:'encabezado'},
 					           	 	],
-					           	 	margin:[10,10,10,10],
+					           	 	/*margin:[10,10,10,10],*/
+					           	 	style:'marginFirmaEncabezadoAmbas',
 					           	 	//fillColor: '#00952e',
 					           	 	fillColor: '#337ab7'
 					        	}
@@ -591,21 +611,23 @@ export default Ember.Controller.extend({
 					            {
 					            	rowSpan: 2, 
 					            	text: [
-					                    { text: '\r\r    Cédula: ', style:'firma'},
+					                    { text: '\rCédula: ', style:'firma'},
 					                    { text: '\r\r    Firma: \r\r', style:'firma'},
 				            		],
-					            	alignment:'center'
-					            	,margin:[10,10,10,10]
+					            	alignment:'center',
+					            	/*margin:[10,10,10,10]*/
+					            	style:'marginFirmaAmbas'
 					            },
 
 					            {
 					            	rowSpan: 2, 
 					            	text: [
-					                    { text: '\r\r    Cédula: ', style:'firma'},
-					                    { text: '\r\r    Firma: \r\r', style:'firma'},
+					                    { text: '\rCédula: ', style:'firma'},
+					                    { text: '\r\rFirma: \r\r', style:'firma'},
 				            		],
-					            	alignment:'center'
-					            	,margin:[10,10,10,10]
+					            	alignment:'center',
+					            	style:'marginFirmaAmbas'
+					            	/*,margin:[10,10,10,10]*/
 					            },
 				            ],
 				            [ '', ''],
@@ -636,12 +658,15 @@ export default Ember.Controller.extend({
 				texto: {
 					fontSize: 12,
 					alignment:'justify',
-					margin:[0,20,0,20]
+					margin:[0,6,0,6]
 				},
 				firma: {
 					fontSize: 12,
 					alignment:'left',
 					margin:[10,0,10,0]
+				},
+				tablaFirma:{
+					margin:[0,2,0,2]
 				},
 				encabezado:{
 					color:"#FFFFFF"
@@ -657,8 +682,21 @@ export default Ember.Controller.extend({
 				},
 				tablaMateriales: {
 					fontSize:9,
-					margin: [0, 15 , 0, 15],
+					margin: [0, 6 , 0, 6],
 				},
+				marginFirmaEncabezado:{
+					margin:[10,6,170,6],
+				},
+				marginFirmaEncabezadoAmbas:{
+					margin:[10,6,10,6],
+					/*alignment:'center'*/
+				},
+				marginFirmaAmbas:{
+					margin:[10,6,6,6],
+				},
+				marginFirma:{
+					margin:[10,6,0,6],
+				}
 
 			},
 			footer: function(page, pages) { 

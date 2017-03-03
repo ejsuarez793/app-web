@@ -568,6 +568,7 @@ export default Ember.Controller.extend({
   "act_eco": "Desktop Support Technician"
 }];*/
 
+
 		var mayores_montos = [];
 		var menores_montos = [];
 		var mayores_proyectos = [];
@@ -650,7 +651,7 @@ export default Ember.Controller.extend({
 		modalBody.style=originalStyle;
 	},*/
 	generarPDFResumen(){
-		console.log("generando...");
+		/*console.log("generando...");*/
 		/*
 		var resumen = this.get('resumen');
 		console.log(resumen);
@@ -661,8 +662,15 @@ export default Ember.Controller.extend({
 		var menores_proyectos = this.get('menores_proyectos');
 		var mayores_encuestas = this.get('mayores_encuestas');
 		var menores_encuestas = this.get('menores_encuestas');
-		var fecha_resumen = this.get('fecha_resumen');
+		/*var fecha_resumen = this.get('fecha_resumen');*/
+		var nombre_meses_minus = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+		var fecha = new Date();
+		var dias = "0" + fecha.getDate();
+		dias = dias.substring( dias.length-2, dias.length);
+		var mes =  nombre_meses_minus[fecha.getMonth()];
+		var anio = fecha.getFullYear();
 		var vendedor_nombre = Cookies.getJSON('current').nombre1 + " " + Cookies.getJSON('current').apellido1;
+		
 		
 		/*console.log(mayores_montos);*/
 		var content = [];
@@ -678,7 +686,7 @@ export default Ember.Controller.extend({
 						style: 'titulo',
 					},
 					{
-						text: fecha_resumen,
+						text: dias + " de " + mes + " de " + anio,
 						style: 'subheader',
 					},
 		    );
@@ -694,7 +702,7 @@ export default Ember.Controller.extend({
 				aux = [{text:cliente.rif, noWrap: true}, 
 				{text: cliente.nombre}, 
 				{text: cliente.act_eco},
-				{text: cliente.nro_proyectos, noWrap: true, color:'#3c763d', bold:true},
+				{text: cliente.nro_proyectos, noWrap: true, color:'#3c763d', bold:true, alignment:'center'},
 				{text: cliente.promedio_monto_mostrar, noWrap: true, style: 'numero'}];
 				body.push($.extend(false,[],aux));
 				
@@ -739,7 +747,7 @@ export default Ember.Controller.extend({
 				aux = [{text:cliente.rif, noWrap: true}, 
 				{text: cliente.nombre}, 
 				{text: cliente.act_eco},
-				{text: cliente.nro_proyectos, noWrap: true, color:'#a94442', bold:true,},
+				{text: cliente.nro_proyectos, noWrap: true, color:'#a94442', bold:true, alignment:'center'},
 				{text: cliente.promedio_monto_mostrar, noWrap: true, style: 'numero'}];
 				body.push($.extend(false,[],aux));
 				
@@ -776,7 +784,7 @@ export default Ember.Controller.extend({
 
 			//MAYOR MONTO TOTAL EN PROYECTOS
 			aux_titulo = {
-				text: 'Mayor monto total en proyectos',
+				text: 'Clientes con mayor facturación',
 				style: 'subheader1',
 				alignment:'left'
 			};
@@ -786,7 +794,7 @@ export default Ember.Controller.extend({
 				aux = [{text:cliente.rif, noWrap: true}, 
 				{text: cliente.nombre}, 
 				{text: cliente.act_eco},
-				{text: cliente.nro_proyectos, noWrap: true},
+				{text: cliente.nro_proyectos, noWrap: true, alignment:'center'},
 				{text: cliente.monto_total_mostrar, noWrap: true, style:'numero', color:'#3c763d', bold:true,}];
 				body.push($.extend(false,[],aux));
 				
@@ -826,7 +834,7 @@ export default Ember.Controller.extend({
 
 			//MENOR MONTO TOTAL EN PROYECTOS
 			aux_titulo = {
-				text: 'Menor monto total en proyectos',
+				text: 'Clientes con menor facturación',
 				style: 'subheader1',
 				alignment:'left'
 			};
@@ -836,7 +844,7 @@ export default Ember.Controller.extend({
 				aux = [{text:cliente.rif, noWrap: true}, 
 				{text: cliente.nombre}, 
 				{text: cliente.act_eco},
-				{text: cliente.nro_proyectos, noWrap: true},
+				{text: cliente.nro_proyectos, noWrap: true, alignment:'center'},
 				{text: cliente.monto_total_mostrar, noWrap: true, style:'numero', color:'#a94442', bold:true}];
 				body.push($.extend(false,[],aux));
 				
@@ -877,7 +885,7 @@ export default Ember.Controller.extend({
 
 			//MAYOR PROMEDIO EN ENCUESTAS
 			aux_titulo = {
-				text: 'Mayor promedio en encuestas',
+				text: 'Mayor grado de satisfacción',
 				style: 'subheader1',
 				alignment:'left'
 			};
@@ -887,10 +895,10 @@ export default Ember.Controller.extend({
 				aux = [{text:cliente.rif, noWrap: true}, 
 				{text: cliente.nombre}, 
 				{text: cliente.act_eco},
-				{text: cliente.nro_encuestas, noWrap: true},
+				{text: cliente.nro_encuestas, noWrap: true, alignment:'center'},
 				{text:
-					[{text: cliente.promedio_encuestas, noWrap: true, color:'#3c763d', bold:true,},
-					{text: ' /5', noWrap: true}]
+					[{text: cliente.promedio_encuestas, noWrap: true, color:'#3c763d', bold:true},
+					{text: ' /5', noWrap: true}], alignment:'center'
 				}];
 				body.push($.extend(false,[],aux));
 				
@@ -930,7 +938,7 @@ export default Ember.Controller.extend({
 
 			//MENOR PROMEDIO EN ENCUESTAS
 			aux_titulo = {
-				text: 'Menor promedio en encuestas',
+				text: 'Menor grado de satisfacción',
 				style: 'subheader1',
 				alignment:'left'
 			};
@@ -940,10 +948,10 @@ export default Ember.Controller.extend({
 				aux = [{text:cliente.rif, noWrap: true}, 
 				{text: cliente.nombre}, 
 				{text: cliente.act_eco},
-				{text: cliente.nro_encuestas, noWrap: true},
+				{text: cliente.nro_encuestas, noWrap: true, alignment:'center'},
 				{text:
 					[{text: cliente.promedio_encuestas, noWrap: true, color:'#a94442', bold:true},
-					{text: ' /5', noWrap: true}]
+					{text: ' /5', noWrap: true}], alignment:'center'
 				}
 				];
 				body.push($.extend(false,[],aux));
@@ -986,7 +994,7 @@ export default Ember.Controller.extend({
 
 			var docDefinition = {
 			info: {
-			    title: 'Resumen Clientes Sistelred ' + fecha_resumen,
+			    title: 'Resumen Clientes Sistelred ' +  dias + " de " + mes + " de " + anio,
 			    author: vendedor_nombre,
 			    /*subject: 'subject of document',
 			    keywords: 'keywords for document',*/
@@ -1018,13 +1026,13 @@ export default Ember.Controller.extend({
 				subheader:{
 					fontSize:14,
 					alignment:'center',
-					margin:[0,0,0,10]
+					margin:[0,0,0,20]
 				},
 				subheader1:{
 					fontSize:12,
 					alignment:'center',
 					bold:true,
-					margin:[0,15,0,15]
+					margin:[0,6,0,2]
 				},
 				tableHeader: {
 					fontSize: 12,
@@ -1037,7 +1045,7 @@ export default Ember.Controller.extend({
 				},
 				tablaMateriales: {
 					fontSize:9,
-					margin: [0, 15 , 0, 15],
+					margin: [0, 2, 0, 6],
 				},
 
 
@@ -1045,7 +1053,7 @@ export default Ember.Controller.extend({
 			footer: function(page, pages) { 
 				    return { 
 				        columns: [ 
-				            { text: 'Resumen Clientes Sistelred ' + fecha_resumen, italics: true , fontSize:8},
+				            { text: 'Resumen Clientes Sistelred ' +  dias + " de " + mes + " de " + anio, italics: true , fontSize:8},
 				            { 
 				                alignment: 'right',
 				                text: [
